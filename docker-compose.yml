@@ -1,0 +1,18 @@
+
+version: "3"
+services:
+#  redis:
+#    image: redis
+#    ports:
+#      - "6379:6379"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0.7
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: 123
+    ports:
+      - "8180:8180"
+    command:
+      - start-dev
+      - --http-port=8180

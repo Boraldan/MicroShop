@@ -1,0 +1,33 @@
+server:
+  port: 8080
+#  servlet:
+#    session:
+#      cookie:
+#        http-only: off
+
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          spring:
+            issuer-uri: http://localhost:8180
+        registration:
+          reg-client:
+            provider: spring
+            client-id: client
+            client-secret: "secret"
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_basic
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: user.read,openid
+
+#spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+#    exclude: org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+

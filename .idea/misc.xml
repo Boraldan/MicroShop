@@ -1,0 +1,31 @@
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/Entity/pom.xml" />
+        <option value="$PROJECT_DIR$/Storage/pom.xml" />
+        <option value="$PROJECT_DIR$/Order/pom.xml" />
+        <option value="$PROJECT_DIR$/Cart/pom.xml" />
+        <option value="$PROJECT_DIR$/Eureka/pom.xml" />
+        <option value="$PROJECT_DIR$/EntityMicro/pom.xml" />
+        <option value="$PROJECT_DIR$/Bank/pom.xml" />
+        <option value="$PROJECT_DIR$/Gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/Front/pom.xml" />
+        <option value="$PROJECT_DIR$/Shop/pom.xml" />
+        <option value="$PROJECT_DIR$/OAuth2/pom.xml" />
+        <option value="$PROJECT_DIR$/Account/pom.xml" />
+        <option value="$PROJECT_DIR$/KeyCloak/pom.xml" />
+      </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/Entity/pom.xml" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

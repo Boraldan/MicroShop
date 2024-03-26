@@ -1,0 +1,67 @@
+package boraldan.entitymicro.cart.entity;
+
+import jakarta.persistence.*;
+import jdk.jfr.Timestamp;
+import lombok.*;
+
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@Entity
+@Table(name = "cart")
+public class Cart {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToMany(mappedBy = "cart")
+    private List<CartUnit> cartUnit;
+
+    @JoinColumn(name = "customer_id")
+    private Long customerId;
+
+    @JoinColumn(name = "coupon_id")
+    private Long couponId;
+
+    @Column(name = "sub_total")
+    BigDecimal subTotal = getSubTotalPrice();
+
+    @Column(name = "total")
+    BigDecimal total;
+
+    @Column(name = "creat_at")
+    @Timestamp
+    private LocalDateTime creatAt;
+
+    public Cart() {
+        cartUnit = new ArrayList<>();
+    }
+
+    private BigDecimal getSubTotalPrice() {
+        BigDecimal subTotal = new BigDecimal(0);
+        if (cartUnit != null) {
+            for (CartUnit item : cartUnit) {
+                subTotal = subTotal.add(item.getPrice());
+            }
+        }
+        return subTotal;
+    }
+//
+//    private BigDecimal getPriceTotal() {
+//        if (coupon != null) {
+//            return subTotal = subTotal.subtract(subTotal.multiply(BigDecimal.valueOf(coupon.getDiscount() / 100)));
+//        }
+//        return subTotal;
+//    }
+
+    public int itemsInCart() {
+        return cartUnit.stream().mapToInt(CartUnit::getQuantity).sum();
+    }
+}
