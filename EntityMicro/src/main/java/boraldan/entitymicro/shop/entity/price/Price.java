@@ -1,11 +1,9 @@
 package boraldan.entitymicro.shop.entity.price;
 
-import boraldan.entitymicro.global.category.Category;
-import boraldan.entitymicro.shop.entity.item.Item;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.awt.geom.Arc2D;
 import java.math.BigDecimal;
 
 @Getter
@@ -33,10 +31,21 @@ public class Price {
     @Column(name = "custom_price")
     protected BigDecimal customPrice;
 
-    public BigDecimal getCustomPrice() {
+//    private BigDecimal getCustomPrice() {
+//        if (coefficient != null) {
+//            customPrice = customPrice.multiply(BigDecimal.valueOf(coefficient));
+//        }
+//        return customPrice;
+//    }
+
+    public void setCoefficient(double coefficient){
+        this.coefficient = coefficient;
+        this.initCustomPrice();
+    }
+
+    protected void initCustomPrice() {
         if (coefficient != null) {
-            customPrice = customPrice.multiply(BigDecimal.valueOf(coefficient));
+           this.customPrice = basePrice.multiply(BigDecimal.valueOf(coefficient));
         }
-        return customPrice;
     }
 }

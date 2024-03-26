@@ -25,8 +25,7 @@ public class BikeWheel extends Item {
     @Column(name = "season")
     private String season;
 
-    @Column(name = "price")
-    private BigDecimal price;
+
 
 //
 //    @ElementCollection

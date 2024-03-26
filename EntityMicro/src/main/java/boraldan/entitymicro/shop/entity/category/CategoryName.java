@@ -1,4 +1,4 @@
-package boraldan.entitymicro.global.category;
+package boraldan.entitymicro.shop.entity.category;
 
 import lombok.Data;
 

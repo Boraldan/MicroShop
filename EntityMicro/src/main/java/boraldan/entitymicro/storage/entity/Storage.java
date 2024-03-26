@@ -1,13 +1,9 @@
 package boraldan.entitymicro.storage.entity;
 
-import boraldan.entitymicro.global.category.CategoryName;
-import boraldan.entitymicro.storage.entity.transport.car.CarStorage;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter

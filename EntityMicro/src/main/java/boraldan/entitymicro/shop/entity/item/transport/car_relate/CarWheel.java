@@ -25,8 +25,6 @@ public class CarWheel extends Item {
     @Column(name = "season")
     private String season;
 
-    @Column(name = "price")
-    private BigDecimal price;
 
 //    @ElementCollection
 //    private List<String> images;

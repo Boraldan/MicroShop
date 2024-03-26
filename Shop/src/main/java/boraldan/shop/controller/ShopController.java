@@ -2,10 +2,13 @@ package boraldan.shop.controller;
 
 
 import boraldan.entitymicro.bank.entity.Account;
-import boraldan.entitymicro.global.category.CategoryName;
-import boraldan.entitymicro.shop.dto.ItemsDto;
+import boraldan.entitymicro.shop.entity.category.CategoryName;
+import boraldan.entitymicro.shop.entity.item.transport.Fuel;
 import boraldan.entitymicro.shop.entity.item.transport.car.Car;
 import boraldan.entitymicro.shop.dto.CarDto;
+import boraldan.entitymicro.shop.entity.item.transport.car.Types;
+import boraldan.entitymicro.shop.entity.price.CarPrice;
+import boraldan.entitymicro.shop.entity.price.CarPriceBuilder;
 import boraldan.entitymicro.test.Fly;
 import boraldan.entitymicro.test.Lot;
 import boraldan.shop.controller.feign.BankFeign;
@@ -14,10 +17,12 @@ import boraldan.shop.mq.bank.MqShopService;
 import boraldan.shop.repository.CategoryRepo;
 import boraldan.shop.repository.FlyRepo;
 import boraldan.shop.repository.ItemRepo;
+import boraldan.shop.service.CarPriceServiceV1_0;
 import boraldan.shop.service.ICarService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
@@ -45,6 +50,39 @@ public class ShopController {
     private final BankFeign bankFeign;
     private final MqShopService mqShopService;
     private final RedisTemplate<String, Object> redis;
+    private final CarPriceServiceV1_0 carPriceService;
+
+    public static int counter;
+
+
+    @GetMapping("/addcar")
+    public ResponseEntity<?> addCar() {
+
+        Car car = new Car();
+        car.setName("Vesta_%s".formatted(++counter));
+        car.setFactory("Lada_%s".formatted(++counter));
+        car.setYear(2010);
+        car.setTypes(Types.SEDAN);
+        car.setFuel(Fuel.GASOLINE);
+        car.setCategory(categoryRepo.findByCategoryName(CategoryName.CAR).get());
+        CarPrice carPrice = carPriceService.save(new CarPriceBuilder().setBasePrice(10000).setCoefficient(1.1).builder());
+        car.setPrice(carPrice);
+        car = carService.save(car);
+
+        carPrice.setCar(car);
+        carPriceService.save(carPrice);
+
+        System.out.println("Запрос Car1 --> 1 " + car);
+        return new ResponseEntity<>(car, HttpStatus.OK);
+    }
+
+    @GetMapping("/dellcar")
+    public ResponseEntity<?> dellCar() {
+
+        carService.dellById(4L);
+
+        return  ResponseEntity.ok().build();
+    }
 
 
     @GetMapping("/session")
@@ -103,7 +141,7 @@ public class ShopController {
 
     @GetMapping("/category")
     public ResponseEntity<?> category() {
-        return new ResponseEntity<>(categoryRepo.findByCategoryName(CategoryName.BIKE).get().getItems(), HttpStatus.OK);
+        return new ResponseEntity<>(categoryRepo.findByCategoryName(CategoryName.CAR).get().getItems(), HttpStatus.OK);
     }
 
     @GetMapping("/accounts")

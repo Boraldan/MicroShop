@@ -15,10 +15,17 @@ import lombok.*;
 @Table(name = "car_price")
 public class CarPrice extends Price {
 
-    //    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    // @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JsonBackReference
-    @MapsId  // или так @JoinColumn(name = "car_id", referencedColumnName = "id")
+    @JoinColumn(name = "car_id", referencedColumnName = "id")
     @OneToOne
     private Car car;
 
+    @Override
+    public String toString() {
+        return "CarPrice{" +
+                "id=" + id +
+                ", basePrice=" + basePrice +
+                '}';
+    }
 }

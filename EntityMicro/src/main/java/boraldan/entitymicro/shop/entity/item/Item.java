@@ -1,9 +1,7 @@
 package boraldan.entitymicro.shop.entity.item;
 
-import boraldan.entitymicro.global.category.Category;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import boraldan.entitymicro.shop.entity.category.Category;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 

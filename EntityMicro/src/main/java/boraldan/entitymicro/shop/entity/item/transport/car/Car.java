@@ -12,16 +12,12 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-//@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "car")
 public class Car extends Item {
 
     @Column(name = "name")
     private String name;
-
-    //    @Column(name = "price")
-    //    private BigDecimal price;
 
     @Column(name = "factory")
     private String factory;
@@ -37,8 +33,8 @@ public class Car extends Item {
     @Enumerated(EnumType.STRING)
     private Fuel fuel;
 
-    @JsonManagedReference
-    @OneToOne(mappedBy = "car")
+    //    @JsonManagedReference
+    @OneToOne(mappedBy = "car", cascade = CascadeType.REMOVE)
     private CarPrice price;
 
 //    @ElementCollection

@@ -1,6 +1,6 @@
 package boraldan.entitymicro.shop.dto;
 
-import boraldan.entitymicro.global.category.CategoryName;
+import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.shop.entity.item.transport.Fuel;
 import boraldan.entitymicro.shop.entity.item.transport.car.Types;
 import boraldan.entitymicro.shop.entity.price.CarPrice;

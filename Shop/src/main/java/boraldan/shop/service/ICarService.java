@@ -9,4 +9,6 @@ public interface ICarService {
     Optional<Car> getById(Long id);
     List<Car> getAll();
     Car save(Car car);
+
+    void dellById(Long id);
 }

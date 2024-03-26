@@ -5,6 +5,7 @@ import boraldan.shop.repository.CarRepo;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +25,14 @@ public class CarService implements ICarService {
         return carRepo.findAll();
     }
 
+    @Transactional
     public Car save(Car car) {
         return carRepo.save(car);
     }
+
+    @Transactional
+    public void dellById(Long id){
+        carRepo.deleteById(id);
+    }
+
 }
