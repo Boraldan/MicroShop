@@ -3,7 +3,7 @@ package boraldan.entitymicro.shop.entity.item.transport.bike;
 
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.shop.entity.item.transport.Fuel;
-import boraldan.entitymicro.shop.entity.price.BikePrice;
+import boraldan.entitymicro.shop.entity.price.item_price.BikePrice;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +12,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-//@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "bike")
 public class Bike extends Item {
@@ -34,12 +34,12 @@ public class Bike extends Item {
     private Fuel fuel;
 
     @JsonManagedReference
-    @OneToOne(mappedBy = "bike")
+    @OneToOne(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private BikePrice price;
 
-//    @ElementCollection
-//    private List<String> images;
-
-
+    public void setPrice(BikePrice price) {
+        this.price = price;
+        price.setItem(this);
+    }
 
 }

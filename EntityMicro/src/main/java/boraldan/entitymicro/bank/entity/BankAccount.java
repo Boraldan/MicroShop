@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 @Data
 @Entity
-public class Account {
+public class BankAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

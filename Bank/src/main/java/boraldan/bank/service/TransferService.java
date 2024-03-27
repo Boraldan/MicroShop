@@ -2,7 +2,7 @@ package boraldan.bank.service;
 
 
 import boraldan.bank.repository.AccountRepository;
-import boraldan.entitymicro.bank.entity.Account;
+import boraldan.entitymicro.bank.entity.BankAccount;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -19,18 +18,18 @@ public class TransferService {
 
     private final AccountRepository accountRepository;
 
-    public Account getByCard(Long card){
+    public BankAccount getByCard(Long card){
         return accountRepository.findByCard(card);
     }
 
-    public List<Account> getAllAccounts() {
+    public List<BankAccount> getAllAccounts() {
         return accountRepository.findAll();
     }
 
     @Transactional
     public void transferMoney(long idSender, long idReceiver, BigDecimal amount) {
-        Account sender = accountRepository.findById(idSender).get();
-        Account receiver = accountRepository.findById(idReceiver).get();
+        BankAccount sender = accountRepository.findById(idSender).get();
+        BankAccount receiver = accountRepository.findById(idReceiver).get();
 
         sender.setAmount(sender.getAmount().subtract(amount));
         receiver.setAmount(receiver.getAmount().add(amount));
@@ -42,8 +41,8 @@ public class TransferService {
     @Transactional
     public ResponseEntity<?> transferShop(long bayerCard, long sellerCard, BigDecimal amount) {
         try {
-            Account sender = accountRepository.findByCard(bayerCard);
-            Account receiver = accountRepository.findByCard(sellerCard);
+            BankAccount sender = accountRepository.findByCard(bayerCard);
+            BankAccount receiver = accountRepository.findByCard(sellerCard);
 
             sender.setAmount(sender.getAmount().subtract(amount));
             receiver.setAmount(receiver.getAmount().add(amount));

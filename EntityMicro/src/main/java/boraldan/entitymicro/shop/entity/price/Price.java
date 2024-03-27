@@ -1,9 +1,12 @@
 package boraldan.entitymicro.shop.entity.price;
 
+import boraldan.entitymicro.shop.entity.item.Item;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Getter
@@ -17,10 +20,15 @@ import java.math.BigDecimal;
 //@Table(name = "price")
 public class Price {
 
-//    @GeneratedValue(strategy = GenerationType.AUTO) // для strategy = InheritanceType.TABLE_PER_CLASS)
     @Id
+//    @GeneratedValue(strategy = GenerationType.AUTO) // для strategy = InheritanceType.TABLE_PER_CLASS)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
+
+    @JsonBackReference
+    @JoinColumn(name = "item_id", referencedColumnName = "id")
+    @OneToOne
+    protected Item item;
 
     @Column(name = "base_price")
     protected BigDecimal basePrice;
@@ -31,21 +39,14 @@ public class Price {
     @Column(name = "custom_price")
     protected BigDecimal customPrice;
 
-//    private BigDecimal getCustomPrice() {
-//        if (coefficient != null) {
-//            customPrice = customPrice.multiply(BigDecimal.valueOf(coefficient));
-//        }
-//        return customPrice;
-//    }
-
-    public void setCoefficient(double coefficient){
+    public void setCoefficient(double coefficient) {
         this.coefficient = coefficient;
         this.initCustomPrice();
     }
 
     protected void initCustomPrice() {
         if (coefficient != null) {
-           this.customPrice = basePrice.multiply(BigDecimal.valueOf(coefficient));
+            this.customPrice = basePrice.multiply(BigDecimal.valueOf(coefficient));
         }
     }
 }

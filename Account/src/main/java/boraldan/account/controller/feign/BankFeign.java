@@ -3,7 +3,7 @@ package boraldan.account.controller.feign;
 
 
 import boraldan.entitymicro.bank.dto.PayDTO;
-import boraldan.entitymicro.bank.entity.Account;
+import boraldan.entitymicro.bank.entity.BankAccount;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,5 +22,5 @@ public interface BankFeign {
     ResponseEntity<?> transferShop(@RequestBody PayDTO payDTO);
 
     @GetMapping("/accounts")
-    List<Account> getAllAccounts();
+    List<BankAccount> getAllAccounts();
 }

@@ -4,7 +4,7 @@ package boraldan.bank.controller;
 import boraldan.bank.util.ValidPayDTO;
 import boraldan.entitymicro.bank.dto.PayDTO;
 import boraldan.entitymicro.bank.dto.TransferDTO;
-import boraldan.entitymicro.bank.entity.Account;
+import boraldan.entitymicro.bank.entity.BankAccount;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +46,7 @@ public class AccountController {
     }
 
     @GetMapping("/accounts")
-    public List<Account> getAllAccounts() {
+    public List<BankAccount> getAllAccounts() {
         return transferService.getAllAccounts();
     }
 }

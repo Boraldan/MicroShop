@@ -3,7 +3,7 @@ package boraldan.entitymicro.shop.entity.item.transport.car;
 
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.shop.entity.item.transport.Fuel;
-import boraldan.entitymicro.shop.entity.price.CarPrice;
+import boraldan.entitymicro.shop.entity.price.item_price.CarPrice;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,6 +12,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "car")
 public class Car extends Item {
@@ -33,8 +34,9 @@ public class Car extends Item {
     @Enumerated(EnumType.STRING)
     private Fuel fuel;
 
-    //    @JsonManagedReference
-    @OneToOne(mappedBy = "car", cascade = CascadeType.REMOVE)
+    @JsonManagedReference
+    @OneToOne(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}) // из библиотеке JPA
+//    @Cascade(org.hibernate.annotations.CascadeType.ALL) // из библиотеки Hibernate
     private CarPrice price;
 
 //    @ElementCollection
@@ -42,10 +44,16 @@ public class Car extends Item {
 //    @Column(name = "image")
 //    private List<String> images;
 
-    public String itemTitle() {
-        return id + name;
-    }
 
+    /**
+     * Устанавливаем двухсторонию связь между CarPrice и Item для сохранения в db
+     *
+     * @param price цена на товар
+     */
+    public void setPrice(CarPrice price) {
+        this.price = price;
+        price.setItem(this);
+    }
 
     @Override
     public String toString() {

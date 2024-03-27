@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-@Getter
-@Setter
-@NoArgsConstructor
 @Entity
 @Table(name = "car_storage")
 public class CarStorage extends Storage {

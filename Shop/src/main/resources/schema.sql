@@ -7,9 +7,7 @@ CREATE TABLE IF NOT EXISTS  categories
 CREATE TABLE IF NOT EXISTS item
 (
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
-    category_id  BIGINT,
-
-    FOREIGN KEY (category_id) REFERENCES categories (id)
+    category_id  BIGINT REFERENCES categories (id)
 );
 
 CREATE TABLE IF NOT EXISTS car
@@ -54,17 +52,23 @@ CREATE TABLE car_price (
                            base_price DECIMAL(19, 2),
                            coefficient DOUBLE,
                            custom_price DECIMAL(19, 2),
-                           car_id BIGINT,
-                           FOREIGN KEY (car_id) REFERENCES car(id)
+                           item_id BIGINT REFERENCES item(id)
 );
+
+-- CREATE TABLE car_price (
+--                            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+--                            base_price DECIMAL(19, 2),
+--                            coefficient DOUBLE,
+--                            custom_price DECIMAL(19, 2),
+--                            car_id BIGINT  REFERENCES car(id)
+-- );
 
 CREATE TABLE bike_price (
                            id BIGINT AUTO_INCREMENT PRIMARY KEY,
                            base_price DECIMAL(19, 2),
                            coefficient DOUBLE,
                            custom_price DECIMAL(19, 2),
-                           bike_id BIGINT,
-                           FOREIGN KEY (bike_id) REFERENCES bike(id)
+                           item_id BIGINT REFERENCES item(id)
 );
 
 CREATE TABLE IF NOT EXISTS fly
