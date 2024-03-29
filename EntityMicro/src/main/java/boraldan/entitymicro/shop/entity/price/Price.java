@@ -1,12 +1,13 @@
 package boraldan.entitymicro.shop.entity.price;
 
 import boraldan.entitymicro.shop.entity.item.Item;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.annotation.PostConstruct;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Getter
@@ -18,14 +19,15 @@ import java.math.BigDecimal;
 //@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 //@Inheritance(strategy = InheritanceType.JOINED)
 //@Table(name = "price")
-public class Price {
+public class Price implements Cloneable {
 
     @Id
 //    @GeneratedValue(strategy = GenerationType.AUTO) // для strategy = InheritanceType.TABLE_PER_CLASS)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
-    @JsonBackReference
+    //    @JsonBackReference
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "item_id", referencedColumnName = "id")
     @OneToOne
     protected Item item;
@@ -48,5 +50,10 @@ public class Price {
         if (coefficient != null) {
             this.customPrice = basePrice.multiply(BigDecimal.valueOf(coefficient));
         }
+    }
+
+    @Override
+    public Price clone() throws CloneNotSupportedException {
+        return (Price) super.clone();
     }
 }

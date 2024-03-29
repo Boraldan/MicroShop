@@ -4,7 +4,6 @@ package boraldan.entitymicro.shop.entity.item.transport.car;
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.shop.entity.item.transport.Fuel;
 import boraldan.entitymicro.shop.entity.price.item_price.CarPrice;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,9 +33,8 @@ public class Car extends Item {
     @Enumerated(EnumType.STRING)
     private Fuel fuel;
 
-    @JsonManagedReference
+//  @Cascade(org.hibernate.annotations.CascadeType.ALL) // из библиотеки Hibernate
     @OneToOne(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}) // из библиотеке JPA
-//    @Cascade(org.hibernate.annotations.CascadeType.ALL) // из библиотеки Hibernate
     private CarPrice price;
 
 //    @ElementCollection
@@ -44,9 +42,8 @@ public class Car extends Item {
 //    @Column(name = "image")
 //    private List<String> images;
 
-
     /**
-     * Устанавливаем двухсторонию связь между CarPrice и Item для сохранения в db
+     * Устанавливаем двухстороннюю связь между CarPrice и Item для сохранения в db
      *
      * @param price цена на товар
      */

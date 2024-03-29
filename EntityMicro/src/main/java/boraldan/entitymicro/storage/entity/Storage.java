@@ -5,18 +5,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
-//@Inheritance(strategy = InheritanceType.JOINED)
-//@Entity
-//@Table(name = "storage")
-@MappedSuperclass
+//@MappedSuperclass
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Entity
+@Table(name = "t_storage")
 public class Storage {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    protected UUID id;
 
 //    @Column(name = "category_name", columnDefinition = "VARCHAR")
 //    @Enumerated(EnumType.STRING)

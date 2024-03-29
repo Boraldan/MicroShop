@@ -1,13 +1,13 @@
-CREATE TABLE IF NOT EXISTS  categories
+CREATE TABLE IF NOT EXISTS  t_category
 (
     id            BIGINT AUTO_INCREMENT PRIMARY KEY,
     category_name VARCHAR(50),
     description   VARCHAR(300)
 );
-CREATE TABLE IF NOT EXISTS item
+CREATE TABLE IF NOT EXISTS t_item
 (
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
-    category_id  BIGINT REFERENCES categories (id)
+    category_id  BIGINT REFERENCES t_category (id)
 );
 
 CREATE TABLE IF NOT EXISTS car
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS car
     types     VARCHAR(255),
     fuel      VARCHAR(255)
 --                      storage_id BIGINT,
---                      FOREIGN KEY (id) REFERENCES item(id)
+--                      FOREIGN KEY (id) REFERENCES t_item(id)
 );
 CREATE TABLE IF NOT EXISTS bike
 (
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS bike
     year_prod INTEGER,
     fuel      VARCHAR(255)
 --                       storage_id BIGINT,
---                       FOREIGN KEY (id) REFERENCES item(id)
+--                       FOREIGN KEY (id) REFERENCES t_item(id)
 );
 
 CREATE TABLE bike_wheel (
@@ -52,24 +52,37 @@ CREATE TABLE car_price (
                            base_price DECIMAL(19, 2),
                            coefficient DOUBLE,
                            custom_price DECIMAL(19, 2),
-                           item_id BIGINT REFERENCES item(id)
+                           item_id BIGINT REFERENCES t_item(id)
 );
 
--- CREATE TABLE car_price (
---                            id BIGINT AUTO_INCREMENT PRIMARY KEY,
---                            base_price DECIMAL(19, 2),
---                            coefficient DOUBLE,
---                            custom_price DECIMAL(19, 2),
---                            car_id BIGINT  REFERENCES car(id)
--- );
 
 CREATE TABLE bike_price (
                            id BIGINT AUTO_INCREMENT PRIMARY KEY,
                            base_price DECIMAL(19, 2),
                            coefficient DOUBLE,
                            custom_price DECIMAL(19, 2),
-                           item_id BIGINT REFERENCES item(id)
+                           item_id BIGINT REFERENCES t_item(id)
 );
+
+CREATE TABLE car_wheel_price (
+                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                           base_price DECIMAL(19, 2),
+                           coefficient DOUBLE,
+                           custom_price DECIMAL(19, 2),
+                           item_id BIGINT REFERENCES t_item(id)
+);
+
+
+CREATE TABLE bike_wheel_price (
+                            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                            base_price DECIMAL(19, 2),
+                            coefficient DOUBLE,
+                            custom_price DECIMAL(19, 2),
+                            item_id BIGINT REFERENCES t_item(id)
+);
+
+
+
 
 CREATE TABLE IF NOT EXISTS fly
 (

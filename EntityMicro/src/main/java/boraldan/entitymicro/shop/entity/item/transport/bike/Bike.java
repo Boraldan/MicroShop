@@ -4,7 +4,6 @@ package boraldan.entitymicro.shop.entity.item.transport.bike;
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.shop.entity.item.transport.Fuel;
 import boraldan.entitymicro.shop.entity.price.item_price.BikePrice;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,7 +32,6 @@ public class Bike extends Item {
     @Enumerated(EnumType.STRING)
     private Fuel fuel;
 
-    @JsonManagedReference
     @OneToOne(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private BikePrice price;
 

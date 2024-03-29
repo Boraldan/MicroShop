@@ -1,9 +1,11 @@
 package boraldan.entitymicro.shop.entity.category;
 
 import boraldan.entitymicro.shop.entity.item.Item;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -11,7 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "categories")
+@Table(name = "t_category")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +27,7 @@ public class Category {
     @Column(name = "description")
     private String description;
 
-
-    @JsonBackReference
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // убирает зацикливание в JSON
     @OneToMany(mappedBy = "category", targetEntity = Item.class)
     private List<Item> items;
 

@@ -2,11 +2,13 @@ package boraldan.shop.controller;
 
 
 import boraldan.entitymicro.bank.entity.BankAccount;
+import boraldan.entitymicro.shop.dto.CarDto;
 import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.shop.entity.item.transport.Fuel;
+import boraldan.entitymicro.shop.entity.item.transport.bike.Bike;
 import boraldan.entitymicro.shop.entity.item.transport.car.Car;
-import boraldan.entitymicro.shop.dto.CarDto;
 import boraldan.entitymicro.shop.entity.item.transport.car.Types;
+import boraldan.entitymicro.shop.entity.price.item_price.BikePrice;
 import boraldan.entitymicro.shop.entity.price.item_price.CarPrice;
 import boraldan.entitymicro.test.Fly;
 import boraldan.entitymicro.test.Lot;
@@ -16,10 +18,13 @@ import boraldan.shop.mq.bank.MqShopService;
 import boraldan.shop.repository.CategoryRepo;
 import boraldan.shop.repository.FlyRepo;
 import boraldan.shop.repository.ItemRepo;
+import boraldan.shop.service.BikePriceServiceV1;
+import boraldan.shop.service.BikeServiceV1;
 import boraldan.shop.service.CarPriceServiceV1;
 import boraldan.shop.service.CarService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -49,10 +54,32 @@ public class ShopController {
     private final MqShopService mqShopService;
     private final RedisTemplate<String, Object> redis;
     private final CarPriceServiceV1 carPriceService;
+    private final BikePriceServiceV1 bikePriceService;
+    private final BikeServiceV1 bikeService;
+
 
     public static int counter;
 
+    @SneakyThrows
+    @GetMapping("/addbike")
+    public ResponseEntity<?> addBike() {
 
+        Bike bike = new Bike();
+        bike.setName("bike_%s".formatted(++counter));
+        bike.setFactory("bike_%s".formatted(++counter));
+        bike.setYear(2010);
+        bike.setFuel(Fuel.GASOLINE);
+        bike.setCategory(categoryRepo.findByCategoryName(CategoryName.BIKE).get());
+
+        BikePrice bikePrice = bikePriceService.getPriceBuilder().setBasePrice(1000).setCoefficient(1.2).builder();
+        bike.setPrice(bikePrice);
+        bike = bikeService.save(bike);
+
+        System.out.println("Запрос bike --> 1 " + bike);
+        return new ResponseEntity<>(bike, HttpStatus.OK);
+    }
+
+    @SneakyThrows
     @GetMapping("/addcar")
     public ResponseEntity<?> addCar() {
 
@@ -66,19 +93,36 @@ public class ShopController {
 
         CarPrice carPrice = carPriceService.getPriceBuilder().setBasePrice(2000).setCoefficient(1.5).builder();
         car.setPrice(carPrice);
-
         car = carService.save(car);
 
         System.out.println("Запрос Car1 --> 1 " + car);
         return new ResponseEntity<>(car, HttpStatus.OK);
     }
 
+    @GetMapping("/car")
+    public ResponseEntity<?> getCar() {
+        Car car = carService.getById(2L).get();
+        CarDto carDTO = convertToCarDTO(car);
+        System.out.println("Запрос CarDto --> 2 " + carDTO);
+
+        carDTO.setStorage(storageFeign.getQuantity(car).getBody());
+
+        return new ResponseEntity<>(carDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/allstor")
+    public ResponseEntity<?> allstor() {
+        return new ResponseEntity<>(storageFeign.all(), HttpStatus.OK);
+    }
+
+
+
     @GetMapping("/dellcar")
     public ResponseEntity<?> dellCar() {
 
         carService.dellById(4L);
 
-        return  ResponseEntity.ok().build();
+        return ResponseEntity.ok().build();
     }
 
 
@@ -123,12 +167,12 @@ public class ShopController {
         return new ResponseEntity<>("Send. Waiting...", HttpStatus.OK);
     }
 
-
 //    @GetMapping("/items")
 //    public ResponseEntity<ItemsDto> items() {
 //        ItemsDto itemsDTO = new ItemsDto();
 //        itemsDTO.setItems(itemRepo.findAll());
 //        return new ResponseEntity<>(itemsDTO, HttpStatus.OK);
+
 //    }
 
     @GetMapping("/items")
@@ -152,30 +196,6 @@ public class ShopController {
         Lot lot = new Lot();
         lot.setLot(15);
         return new ResponseEntity<>(lot, HttpStatus.OK);
-    }
-
-    @GetMapping("/car")
-    public ResponseEntity<?> getCar() {
-        Car car = carService.getById(2L).get();
-        System.out.println("Запрос Car --> 1 " + car);
-        System.out.println(car.getCategory().getCategoryName());
-        CarDto carDTO = convertToCarDTO(car);
-        System.out.println("Запрос CarDto --> 2 " + carDTO);
-
-        carDTO.setQuantity(storageFeign.getQuantity(car).getBody().getQuantity());
-
-        System.out.println("Запрос CarDto --> 3 " + carDTO);
-
-        Car car1 = new Car();
-        car1.setCategory(categoryRepo.findByCategoryName(CategoryName.CAR).get());
-
-
-        System.out.println("Запрос Car1 --> 1 " + car1);
-
-//        carService.save(car1);
-
-
-        return new ResponseEntity<>(car, HttpStatus.OK);
     }
 
     @GetMapping("/fly")

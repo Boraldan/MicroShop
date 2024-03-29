@@ -1,13 +1,9 @@
-
 -- Вставка данных
--- INSERT INTO storage (category_name) VALUES ('CAR');
-INSERT INTO car_storage (item_id, quantity, reserve) VALUES (1,  5, 2);
--- INSERT INTO car_storage (car_id, quantity, reserve) VALUES (2, 1, 3, 1);
-
--- INSERT INTO storage (category_name) VALUES ('CAR');
-INSERT INTO car_storage (item_id, quantity, reserve) VALUES (2,  1, 1);
+INSERT INTO car_storage (id, item_id, quantity, reserve) VALUES (UUID(), 7,  15, 2);
+INSERT INTO car_storage (id,item_id, quantity, reserve) VALUES (UUID(),2,  11, 1);
+INSERT INTO car_storage (id,item_id, quantity, reserve) VALUES (UUID(),5,  12, 2);
 
 
-INSERT INTO bike_storage (item_id, quantity, reserve) VALUES (1,  2, 3);
-INSERT INTO bike_storage (item_id, quantity, reserve) VALUES (2,  7, 7);
+INSERT INTO bike_storage (id,item_id, quantity, reserve) VALUES (UUID(), 11,  22, 3);
+-- INSERT INTO bike_storage (item_id, quantity, reserve) VALUES (22,  27, 7);
 

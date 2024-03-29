@@ -3,7 +3,6 @@ package boraldan.entitymicro.storage.entity.transport.bike_relate.wheel;
 
 import boraldan.entitymicro.storage.entity.Storage;
 import jakarta.persistence.*;
-import lombok.*;
 
 
 @Entity

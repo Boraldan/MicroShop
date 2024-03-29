@@ -1,4 +1,4 @@
-INSERT INTO categories (category_name, description)
+INSERT INTO t_category (category_name, description)
 VALUES ('CAR', 'Description for Category1'),
        ('BIKE', 'Description for Category2');
 

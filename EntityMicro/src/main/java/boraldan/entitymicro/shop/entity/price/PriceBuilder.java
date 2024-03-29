@@ -1,5 +1,7 @@
 package boraldan.entitymicro.shop.entity.price;
 
+import lombok.SneakyThrows;
+
 import java.math.BigDecimal;
 
 public class PriceBuilder<T extends Price> {
@@ -20,9 +22,10 @@ public class PriceBuilder<T extends Price> {
         return this;
     }
 
+    @SneakyThrows
     public T builder() {
         this.price.initCustomPrice();
-        return price;
+        return (T) price.clone();
     }
 
 }

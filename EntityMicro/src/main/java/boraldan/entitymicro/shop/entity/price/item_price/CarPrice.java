@@ -1,20 +1,18 @@
 package boraldan.entitymicro.shop.entity.price.item_price;
 
-import boraldan.entitymicro.shop.entity.item.Item;
-import boraldan.entitymicro.shop.entity.item.transport.car.Car;
 import boraldan.entitymicro.shop.entity.price.Price;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.Cascade;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
-
-
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "car_price")
 public class CarPrice extends Price {
+
+//    @Override
+//    public CarPrice clone() throws CloneNotSupportedException {
+//        return (CarPrice) super.clone();
+//    }
 
 }
