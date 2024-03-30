@@ -4,33 +4,23 @@ import boraldan.entitymicro.storage.entity.dto.StorageDto;
 import boraldan.storage.repository.StorageJpaRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface StorageService<T, R extends StorageJpaRepository<T>> {
-
-//    T getByItemId(Long itemId);
-//
-//    T saveNew (StorageDto storageDto);
-//
-
     R getStorageRepo();
 
-    default T getByItemId(Long itemId) {
-        return getStorageRepo().findByItemId(itemId).orElse(null);
+    default T getById(UUID id) {
+        return getStorageRepo().findById(id).orElse(null);
     }
 
     default T saveNew(StorageDto storageDto) {
-        if (storageDto.getItemId() == null) {
-            return getStorageRepo().save(convertToStorageItem(storageDto));
-        }
-        //TODO  подумать, что делать, если пришел объект с id, который уже есть в базе
-        return convertToStorageItem(storageDto);
+        return getStorageRepo().save(convertToStorageItem(storageDto, storageDto.getClazz()));
     }
 
     default List<T> getAll() {
         return getStorageRepo().findAll();
     }
 
-    T convertToStorageItem(StorageDto storageDto);
-    // return getModelMapper().map(storageDto, T.class);
+     T convertToStorageItem(StorageDto storageDto, Class<?> clazz);
 
 }

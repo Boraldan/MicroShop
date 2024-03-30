@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,6 +29,10 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     protected Category category;
+
+    @Column(name = "storage_id")
+    protected UUID storageId;
+
 
     public <T extends Item> T getThisItem(Class<T> clazz) {
         return clazz.cast(this);

@@ -1,4 +1,4 @@
-package boraldan.storage.config;
+package boraldan.storage.configure;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

@@ -2,7 +2,9 @@ package boraldan.shop.controller.feign;
 
 
 import boraldan.entitymicro.shop.entity.item.transport.car.Car;
+import boraldan.entitymicro.storage.entity.Storage;
 import boraldan.entitymicro.storage.entity.dto.StorageAllDto;
+import boraldan.entitymicro.storage.entity.dto.StorageDto;
 import boraldan.entitymicro.storage.entity.transport.car.CarStorage;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Primary;
@@ -24,6 +26,11 @@ public interface StorageFeign {
 //    ResponseEntity<?> transferShop(@RequestBody PayDTO payDTO);
     @GetMapping("all")
     ResponseEntity<?> all();
+
+    @PostMapping("addcarstor")
+    ResponseEntity<Storage> addCar(@RequestBody StorageDto storageDto);
+
+
 }
 
 /**
@@ -41,5 +48,10 @@ class StorageFeignFallback implements StorageFeign {
     @GetMapping("all")
     public ResponseEntity<?> all() {
         return new ResponseEntity<>(new StorageAllDto(), HttpStatus.OK);
+    }
+
+    @PostMapping("addcarstor")
+    public ResponseEntity<Storage> addCar(@RequestBody StorageDto storageDto) {
+        return new ResponseEntity<>(new Storage(), HttpStatus.OK);
     }
 }

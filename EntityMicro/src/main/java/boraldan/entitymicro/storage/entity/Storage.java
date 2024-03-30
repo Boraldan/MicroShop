@@ -24,8 +24,8 @@ public class Storage {
 //    @Enumerated(EnumType.STRING)
 //    private CategoryName categoryName;
 
-    @Column(name = "item_id")
-    protected Long itemId;
+//    @Column(name = "item_id")
+//    protected Long itemId;
 
     @Column(name = "quantity")
     protected long quantity;

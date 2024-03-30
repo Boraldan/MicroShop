@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS  t_category
 CREATE TABLE IF NOT EXISTS t_item
 (
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
-    category_id  BIGINT REFERENCES t_category (id)
+    category_id  BIGINT REFERENCES t_category (id),
+    storage_id UUID
 );
 
 CREATE TABLE IF NOT EXISTS car
@@ -18,7 +19,7 @@ CREATE TABLE IF NOT EXISTS car
     year_prod INTEGER,
     types     VARCHAR(255),
     fuel      VARCHAR(255)
---                      storage_id BIGINT,
+
 --                      FOREIGN KEY (id) REFERENCES t_item(id)
 );
 CREATE TABLE IF NOT EXISTS bike

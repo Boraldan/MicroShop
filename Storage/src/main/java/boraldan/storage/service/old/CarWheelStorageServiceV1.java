@@ -1,11 +1,8 @@
-package boraldan.storage.service;
+package boraldan.storage.service.old;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-@RequiredArgsConstructor
-@Service
-public class CarWheelStorageServiceV1   {
+//@RequiredArgsConstructor
+//@Service
+//public class CarWheelStorageServiceV1   {
 
 //    private final CarWheelStorageRepo carWheelStorageRepo;
 //    private final ModelMapper modelMapper;
@@ -30,4 +27,4 @@ public class CarWheelStorageServiceV1   {
 //        return modelMapper.map(storageDto, CarWheelStorage.class);
 //    }
 
-}
+//}

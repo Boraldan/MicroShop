@@ -1,11 +1,8 @@
-package boraldan.storage.service;
+package boraldan.storage.service.old;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-@RequiredArgsConstructor
-@Service
-public class BikeStorageServiceV1 {
+//@RequiredArgsConstructor
+//@Service
+//public class BikeStorageServiceV1 {
 
 //    private final BikeStorageRepo bikeStorageRepo;
 //
@@ -18,4 +15,4 @@ public class BikeStorageServiceV1 {
 //        return null;
 //    }
 
-}
+//}

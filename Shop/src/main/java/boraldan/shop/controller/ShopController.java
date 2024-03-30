@@ -10,6 +10,9 @@ import boraldan.entitymicro.shop.entity.item.transport.car.Car;
 import boraldan.entitymicro.shop.entity.item.transport.car.Types;
 import boraldan.entitymicro.shop.entity.price.item_price.BikePrice;
 import boraldan.entitymicro.shop.entity.price.item_price.CarPrice;
+import boraldan.entitymicro.storage.entity.Storage;
+import boraldan.entitymicro.storage.entity.dto.StorageDto;
+import boraldan.entitymicro.storage.entity.transport.car.CarStorage;
 import boraldan.entitymicro.test.Fly;
 import boraldan.entitymicro.test.Lot;
 import boraldan.shop.controller.feign.BankFeign;
@@ -93,6 +96,13 @@ public class ShopController {
 
         CarPrice carPrice = carPriceService.getPriceBuilder().setBasePrice(2000).setCoefficient(1.5).builder();
         car.setPrice(carPrice);
+
+        StorageDto storageDto = new StorageDto();
+        storageDto.setQuantity(3);
+        storageDto.setReserve(3);
+        storageDto.setClazz(CarStorage.class);
+        Storage storage = storageFeign.addCar(storageDto).getBody();
+        car.setStorageId(storage != null ? storage.getId() : null);
         car = carService.save(car);
 
         System.out.println("Запрос Car1 --> 1 " + car);
