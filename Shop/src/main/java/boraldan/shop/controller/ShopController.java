@@ -11,7 +11,9 @@ import boraldan.entitymicro.shop.entity.item.transport.car.Types;
 import boraldan.entitymicro.shop.entity.price.item_price.BikePrice;
 import boraldan.entitymicro.shop.entity.price.item_price.CarPrice;
 import boraldan.entitymicro.storage.entity.Storage;
+import boraldan.entitymicro.storage.entity.dto.ListStorageDto;
 import boraldan.entitymicro.storage.entity.dto.StorageDto;
+import boraldan.entitymicro.storage.entity.dto.StorageDtoBuilder;
 import boraldan.entitymicro.storage.entity.transport.car.CarStorage;
 import boraldan.entitymicro.test.Fly;
 import boraldan.entitymicro.test.Lot;
@@ -84,7 +86,7 @@ public class ShopController {
 
     @SneakyThrows
     @GetMapping("/addcar")
-    public ResponseEntity<?> addCar() {
+    public ResponseEntity<Car> addCar() {
 
         Car car = new Car();
         car.setName("Vesta_%s".formatted(++counter));
@@ -101,7 +103,7 @@ public class ShopController {
         storageDto.setQuantity(3);
         storageDto.setReserve(3);
         storageDto.setClazz(CarStorage.class);
-        Storage storage = storageFeign.addCar(storageDto).getBody();
+        Storage storage = storageFeign.saveItem(storageDto).getBody();
         car.setStorageId(storage != null ? storage.getId() : null);
         car = carService.save(car);
 
@@ -115,14 +117,14 @@ public class ShopController {
         CarDto carDTO = convertToCarDTO(car);
         System.out.println("Запрос CarDto --> 2 " + carDTO);
 
-        carDTO.setStorage(storageFeign.getQuantity(car).getBody());
+        carDTO.setStorage(storageFeign.getQuantity(new StorageDtoBuilder().setClazz(CarStorage.class).build()).getBody());
 
         return new ResponseEntity<>(carDTO, HttpStatus.OK);
     }
 
     @GetMapping("/allstor")
-    public ResponseEntity<?> allstor() {
-        return new ResponseEntity<>(storageFeign.all(), HttpStatus.OK);
+    public ResponseEntity<ListStorageDto> allstor() {
+        return storageFeign.getAll(new StorageDtoBuilder().setClazz(Storage.class).build());
     }
 
 

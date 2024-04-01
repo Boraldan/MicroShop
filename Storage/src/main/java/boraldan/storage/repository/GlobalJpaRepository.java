@@ -6,5 +6,5 @@ import org.springframework.data.repository.NoRepositoryBean;
 import java.util.UUID;
 
 @NoRepositoryBean
-public interface StorageJpaRepository<T> extends JpaRepository<T, UUID> {
+public interface GlobalJpaRepository<T> extends JpaRepository<T, UUID> {
 }

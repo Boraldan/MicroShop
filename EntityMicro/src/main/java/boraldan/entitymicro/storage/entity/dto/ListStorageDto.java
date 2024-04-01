@@ -6,6 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class StorageAllDto {
-    List<Storage> list;
+public class ListStorageDto {
+    private Class<?> clazz;
+    private List<Storage> list;
 }

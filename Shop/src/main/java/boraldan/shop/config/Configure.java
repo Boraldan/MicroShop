@@ -1,12 +1,11 @@
 package boraldan.shop.config;
 
-import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class Config {
+public class Configure {
 
     @Bean
     public ModelMapper modelMapper() {

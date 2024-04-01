@@ -16,6 +16,10 @@ import lombok.*;
 @Table(name = "car")
 public class Car extends Item {
 
+//  @Cascade(org.hibernate.annotations.CascadeType.ALL) // из библиотеки Hibernate
+    @OneToOne(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}) // из библиотеке JPA
+    private CarPrice price;
+
     @Column(name = "name")
     private String name;
 
@@ -33,9 +37,6 @@ public class Car extends Item {
     @Enumerated(EnumType.STRING)
     private Fuel fuel;
 
-//  @Cascade(org.hibernate.annotations.CascadeType.ALL) // из библиотеки Hibernate
-    @OneToOne(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}) // из библиотеке JPA
-    private CarPrice price;
 
 //    @ElementCollection
 //    @CollectionTable(name = "car_images", joinColumns = @JoinColumn(name = "car_id"))

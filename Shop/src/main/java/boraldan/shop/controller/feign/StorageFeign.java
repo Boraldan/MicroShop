@@ -1,34 +1,31 @@
 package boraldan.shop.controller.feign;
 
 
-import boraldan.entitymicro.shop.entity.item.transport.car.Car;
 import boraldan.entitymicro.storage.entity.Storage;
-import boraldan.entitymicro.storage.entity.dto.StorageAllDto;
+import boraldan.entitymicro.storage.entity.dto.ListStorageDto;
 import boraldan.entitymicro.storage.entity.dto.StorageDto;
-import boraldan.entitymicro.storage.entity.transport.car.CarStorage;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Primary
 @FeignClient(name = "storage", fallback = StorageFeignFallback.class)
 public interface StorageFeign {
 
-    @PostMapping("car/quantity")
-    ResponseEntity<CarStorage> getQuantity(@RequestBody Car car);
+    @PostMapping("/quantity")
+    ResponseEntity<Storage> getQuantity(@RequestBody StorageDto storageDto);
 
-    //    @PostMapping("/transfershop")
-//    ResponseEntity<?> transferShop(@RequestBody PayDTO payDTO);
-    @GetMapping("all")
-    ResponseEntity<?> all();
 
-    @PostMapping("addcarstor")
-    ResponseEntity<Storage> addCar(@RequestBody StorageDto storageDto);
+    @PostMapping("/all")
+    ResponseEntity<ListStorageDto> getAll(@RequestBody StorageDto storageDto);
+
+    @PutMapping("/save")
+    ResponseEntity<Storage> saveItem(@RequestBody StorageDto storageDto);
 
 
 }
@@ -41,17 +38,17 @@ class StorageFeignFallback implements StorageFeign {
 
     // можно вернуть, что нам надо для дальнейшей обработки
     @Override
-    public ResponseEntity<CarStorage> getQuantity(Car car) {
-        return new ResponseEntity<>(new CarStorage(), HttpStatus.OK);
+    public ResponseEntity<Storage> getQuantity(StorageDto storageDto) {
+        return new ResponseEntity<>(new Storage(), HttpStatus.OK);
     }
 
-    @GetMapping("all")
-    public ResponseEntity<?> all() {
-        return new ResponseEntity<>(new StorageAllDto(), HttpStatus.OK);
+    @Override
+    public ResponseEntity<ListStorageDto> getAll(@RequestBody StorageDto storageDto) {
+        return new ResponseEntity<>(new ListStorageDto(), HttpStatus.OK);
     }
 
-    @PostMapping("addcarstor")
-    public ResponseEntity<Storage> addCar(@RequestBody StorageDto storageDto) {
+    @Override
+    public ResponseEntity<Storage> saveItem(@RequestBody StorageDto storageDto) {
         return new ResponseEntity<>(new Storage(), HttpStatus.OK);
     }
 }

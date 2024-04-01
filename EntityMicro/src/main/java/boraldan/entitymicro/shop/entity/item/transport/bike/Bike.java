@@ -16,6 +16,9 @@ import lombok.*;
 @Table(name = "bike")
 public class Bike extends Item {
 
+    @OneToOne(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private BikePrice price;
+
     @Column(name = "name")
     private String name;
 
@@ -32,8 +35,6 @@ public class Bike extends Item {
     @Enumerated(EnumType.STRING)
     private Fuel fuel;
 
-    @OneToOne(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private BikePrice price;
 
     public void setPrice(BikePrice price) {
         this.price = price;
