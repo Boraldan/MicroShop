@@ -1,6 +1,8 @@
 package boraldan.entitymicro.shop.entity.item;
 
 import boraldan.entitymicro.shop.entity.category.Category;
+import boraldan.entitymicro.shop.entity.price.Price;
+import boraldan.entitymicro.storage.entity.Storage;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +16,7 @@ import java.util.UUID;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "t_item")
-public class Item {
+public abstract class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,12 +32,41 @@ public class Item {
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     protected Category category;
 
+
     @Column(name = "storage_id")
     protected UUID storageId;
 
+    @Transient
+    protected Storage storage;
+
+    @Transient
+    protected Class<?> clazz;
+
+    @Transient
+    protected Class<?> storageClazz;
+
+    public abstract Price getPrice();
+
+//    public abstract Class<?> getClazz();
+//
+//    public abstract void setClazz(Class<?> clazz);
+//
+//    public abstract Class<?> getStorageClazz();
+//
+//    public abstract void setStorageClazz(Class<?> storageClazz);
+
+
+
+
+    
+
+    public abstract String getName();
+
+    public abstract String getDescription();
 
     public <T extends Item> T getThisItem(Class<T> clazz) {
         return clazz.cast(this);
     }
+
 
 }

@@ -2,8 +2,10 @@ package boraldan.shop.controller;
 
 
 import boraldan.entitymicro.bank.entity.BankAccount;
-import boraldan.entitymicro.shop.dto.CarDto;
+import boraldan.entitymicro.shop.dto.ListItemDto;
+import boraldan.entitymicro.shop.dto.ListItemDtoBuilder;
 import boraldan.entitymicro.shop.entity.category.CategoryName;
+import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.shop.entity.item.transport.Fuel;
 import boraldan.entitymicro.shop.entity.item.transport.bike.Bike;
 import boraldan.entitymicro.shop.entity.item.transport.car.Car;
@@ -12,8 +14,10 @@ import boraldan.entitymicro.shop.entity.price.item_price.BikePrice;
 import boraldan.entitymicro.shop.entity.price.item_price.CarPrice;
 import boraldan.entitymicro.storage.entity.Storage;
 import boraldan.entitymicro.storage.entity.dto.ListStorageDto;
+import boraldan.entitymicro.storage.entity.dto.ListStorageDtoBuilder;
 import boraldan.entitymicro.storage.entity.dto.StorageDto;
 import boraldan.entitymicro.storage.entity.dto.StorageDtoBuilder;
+import boraldan.entitymicro.storage.entity.transport.bike.BikeStorage;
 import boraldan.entitymicro.storage.entity.transport.car.CarStorage;
 import boraldan.entitymicro.test.Fly;
 import boraldan.entitymicro.test.Lot;
@@ -40,7 +44,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Log4j2
 @RestController
@@ -62,8 +69,14 @@ public class ShopController {
     private final BikePriceServiceV1 bikePriceService;
     private final BikeServiceV1 bikeService;
 
-
     public static int counter;
+
+    @GetMapping("/item")
+    public ResponseEntity<Item> item() {
+        Item item = itemRepo.findById(1L).orElse(null);
+        item.setStorage(storageFeign.getQuantity(new StorageDtoBuilder().setId(item.getStorageId()).setStorageClazz(item.getStorageClazz()).build()).getBody());
+        return new ResponseEntity<>(item, HttpStatus.OK);
+    }
 
     @SneakyThrows
     @GetMapping("/addbike")
@@ -78,6 +91,14 @@ public class ShopController {
 
         BikePrice bikePrice = bikePriceService.getPriceBuilder().setBasePrice(1000).setCoefficient(1.2).builder();
         bike.setPrice(bikePrice);
+
+        StorageDto storageDto = new StorageDto();
+        storageDto.setQuantity(5);
+        storageDto.setReserve(5);
+        storageDto.setStorageClazz(BikeStorage.class);
+        Storage storage = storageFeign.saveItem(storageDto).getBody();
+        bike.setStorageId(storage != null ? storage.getId() : null);
+
         bike = bikeService.save(bike);
 
         System.out.println("Запрос bike --> 1 " + bike);
@@ -102,7 +123,7 @@ public class ShopController {
         StorageDto storageDto = new StorageDto();
         storageDto.setQuantity(3);
         storageDto.setReserve(3);
-        storageDto.setClazz(CarStorage.class);
+        storageDto.setStorageClazz(CarStorage.class);
         Storage storage = storageFeign.saveItem(storageDto).getBody();
         car.setStorageId(storage != null ? storage.getId() : null);
         car = carService.save(car);
@@ -110,24 +131,6 @@ public class ShopController {
         System.out.println("Запрос Car1 --> 1 " + car);
         return new ResponseEntity<>(car, HttpStatus.OK);
     }
-
-    @GetMapping("/car")
-    public ResponseEntity<?> getCar() {
-        Car car = carService.getById(2L).get();
-        CarDto carDTO = convertToCarDTO(car);
-        System.out.println("Запрос CarDto --> 2 " + carDTO);
-
-        carDTO.setStorage(storageFeign.getQuantity(new StorageDtoBuilder().setClazz(CarStorage.class).build()).getBody());
-
-        return new ResponseEntity<>(carDTO, HttpStatus.OK);
-    }
-
-    @GetMapping("/allstor")
-    public ResponseEntity<ListStorageDto> allstor() {
-        return storageFeign.getAll(new StorageDtoBuilder().setClazz(Storage.class).build());
-    }
-
-
 
     @GetMapping("/dellcar")
     public ResponseEntity<?> dellCar() {
@@ -179,17 +182,15 @@ public class ShopController {
         return new ResponseEntity<>("Send. Waiting...", HttpStatus.OK);
     }
 
-//    @GetMapping("/items")
-//    public ResponseEntity<ItemsDto> items() {
-//        ItemsDto itemsDTO = new ItemsDto();
-//        itemsDTO.setItems(itemRepo.findAll());
-//        return new ResponseEntity<>(itemsDTO, HttpStatus.OK);
-
-//    }
-
     @GetMapping("/items")
-    public ResponseEntity<?> items() {
-        return new ResponseEntity<>(itemRepo.findAll(), HttpStatus.OK);
+    public ResponseEntity<ListItemDto> items() {
+        List<Item> itemList = itemRepo.findAll();
+        System.out.println(itemList);
+        List<UUID> uuidList = itemList.stream().map(Item::getStorageId).toList();
+        System.out.println(uuidList);
+        ListStorageDto listStorageDto = storageFeign.getByList(new ListStorageDtoBuilder().setStorageClazz(Storage.class).setUuidList(uuidList).build()).getBody();
+
+        return new ResponseEntity<>(mapToItemList(itemList, listStorageDto), HttpStatus.OK);
     }
 
     @GetMapping("/category")
@@ -217,13 +218,28 @@ public class ShopController {
         return new ResponseEntity<>(fly, HttpStatus.OK);
     }
 
-    private CarDto convertToCarDTO(Car car) {
-        return modelMapper.map(car, CarDto.class);
-    }
+//    private CarDto convertToCarDTO(Car car) {
+//        return modelMapper.map(car, CarDto.class);
+//    }
 
 //    вариант добавить свой маппинг отдельных полей в классе
 //    modelMapper.createTypeMap(Car.class, CarDTO.class)
 //            .addMapping(src -> src.getPrice().getCustomPrice(), CarDTO::setPrice);
 
 
+    private ListItemDto mapToItemList(List<Item> itemList, ListStorageDto listStorageDto) {
+        Map<UUID, Storage> storageMap = new HashMap<>();
+        for (Storage entity : listStorageDto.getStorageList()) {
+            storageMap.put(entity.getId(), entity);
+        }
+
+        List<Item> newItemList = itemList.stream().map(el -> {
+            el.setStorage(storageMap.get(el.getStorageId()));
+            return el;
+        }).toList();
+
+        return new ListItemDtoBuilder().setItemList(newItemList).build();
+
+
+    }
 }

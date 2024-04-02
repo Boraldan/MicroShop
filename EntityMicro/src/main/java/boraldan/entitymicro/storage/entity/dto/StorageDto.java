@@ -7,7 +7,7 @@ import java.util.UUID;
 @Data
 public class StorageDto {
     private UUID id;
-    private Class<?> clazz;
+    private Class<?> storageClazz;
     private long quantity;
     private long reserve;
 

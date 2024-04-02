@@ -1,8 +1,7 @@
 package boraldan.front.service;
 
 import boraldan.entitymicro.cart.dto.CartsDTO;
-import boraldan.entitymicro.shop.dto.CarDto;
-import boraldan.entitymicro.shop.dto.ItemsDto;
+import boraldan.entitymicro.shop.dto.ListItemDto;
 import boraldan.entitymicro.test.Fly;
 import boraldan.entitymicro.test.Lot;
 import boraldan.front.api.UrlApi;
@@ -27,15 +26,15 @@ public class ServiceApi implements IServiceApi {
         return response.getBody();
     }
 
-    @Override
-    public CarDto getCar() {
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-        ResponseEntity<CarDto> response = template.exchange(URLApi.getCar_api(), HttpMethod.GET, entity, CarDto.class);
-        CarDto car = response.getBody();
-        System.out.println(car.toString());
-        return car;
-    }
+//    @Override
+//    public CarDto getCar() {
+//        HttpEntity<String> entity = new HttpEntity<>(headers);
+//        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+//        ResponseEntity<CarDto> response = template.exchange(URLApi.getCar_api(), HttpMethod.GET, entity, CarDto.class);
+//        CarDto car = response.getBody();
+//        System.out.println(car.toString());
+//        return car;
+//    }
 
     @Override
     public Fly getFly() {
@@ -48,10 +47,10 @@ public class ServiceApi implements IServiceApi {
     }
 
     @Override
-    public ItemsDto getItems() {
+    public ListItemDto getItems() {
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<ItemsDto> responce = template.exchange(URLApi.getItems_api(), HttpMethod.GET, entity, ItemsDto.class);
+        ResponseEntity<ListItemDto> responce = template.exchange(URLApi.getItems_api(), HttpMethod.GET, entity, ListItemDto.class);
         return responce.getBody();
     }
 

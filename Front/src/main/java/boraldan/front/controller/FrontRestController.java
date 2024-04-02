@@ -2,7 +2,7 @@ package boraldan.front.controller;
 
 import boraldan.entitymicro.cart.dto.CartsDTO;
 import boraldan.entitymicro.cart.entity.Cart;
-import boraldan.entitymicro.shop.dto.ItemsDto;
+import boraldan.entitymicro.shop.dto.ListItemDto;
 import boraldan.entitymicro.test.Fly;
 import boraldan.front.service.HeaderService;
 import boraldan.front.service.IServiceApi;
@@ -100,10 +100,10 @@ public class FrontRestController {
     }
 
 
-    @GetMapping("/car")
-    public String car() {
-        return serviceApi.getCar().toString();
-    }
+//    @GetMapping("/car")
+//    public String car() {
+//        return serviceApi.getCar().toString();
+//    }
 
     @GetMapping("/fly")
     public String fly() {
@@ -111,7 +111,7 @@ public class FrontRestController {
     }
 
     @GetMapping("/items")
-    public ResponseEntity<ItemsDto> items() {
+    public ResponseEntity<ListItemDto> items() {
         return new ResponseEntity<>(serviceApi.getItems(), HttpStatus.OK);
     }
 

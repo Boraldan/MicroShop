@@ -1,7 +1,10 @@
 package boraldan.storage.configure;
 
 import boraldan.entitymicro.storage.entity.Storage;
+import boraldan.entitymicro.storage.entity.transport.bike.BikeStorage;
+import boraldan.entitymicro.storage.entity.transport.bike_relate.wheel.BikeWheelStorage;
 import boraldan.entitymicro.storage.entity.transport.car.CarStorage;
+import boraldan.entitymicro.storage.entity.transport.car_relate.wheel.CarWheelStorage;
 import boraldan.storage.repository.GlobalJpaRepository;
 import boraldan.storage.service.GlobalStorageService;
 import boraldan.storage.service.StorageService;
@@ -27,6 +30,24 @@ public class ServiceStorageConfig {
             GlobalJpaRepository<CarStorage> storageRepo) {
         return new GlobalStorageService<>(storageRepo, modelMapper);
     }
+    @Bean
+    public StorageService<CarWheelStorage, GlobalJpaRepository<CarWheelStorage>> carWheelStorageService(
+            GlobalJpaRepository<CarWheelStorage> storageRepo) {
+        return new GlobalStorageService<>(storageRepo, modelMapper);
+    }
+
+    @Bean
+    public StorageService<BikeStorage, GlobalJpaRepository<BikeStorage>> bikeStorageService(
+            GlobalJpaRepository<BikeStorage> storageRepo) {
+        return new GlobalStorageService<>(storageRepo, modelMapper);
+    }
+
+    @Bean
+    public StorageService<BikeWheelStorage, GlobalJpaRepository<BikeWheelStorage>> bikeWheelStorageService(
+            GlobalJpaRepository<BikeWheelStorage> storageRepo) {
+        return new GlobalStorageService<>(storageRepo, modelMapper);
+    }
+
 
 
 }

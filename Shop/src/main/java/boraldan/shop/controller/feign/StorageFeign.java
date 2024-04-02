@@ -21,8 +21,8 @@ public interface StorageFeign {
     ResponseEntity<Storage> getQuantity(@RequestBody StorageDto storageDto);
 
 
-    @PostMapping("/all")
-    ResponseEntity<ListStorageDto> getAll(@RequestBody StorageDto storageDto);
+    @PostMapping("/list")
+    ResponseEntity<ListStorageDto> getByList(@RequestBody ListStorageDto listStorageDto);
 
     @PutMapping("/save")
     ResponseEntity<Storage> saveItem(@RequestBody StorageDto storageDto);
@@ -43,7 +43,7 @@ class StorageFeignFallback implements StorageFeign {
     }
 
     @Override
-    public ResponseEntity<ListStorageDto> getAll(@RequestBody StorageDto storageDto) {
+    public ResponseEntity<ListStorageDto> getByList(@RequestBody ListStorageDto listStorageDto) {
         return new ResponseEntity<>(new ListStorageDto(), HttpStatus.OK);
     }
 

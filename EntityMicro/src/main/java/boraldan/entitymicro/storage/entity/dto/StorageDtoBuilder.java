@@ -15,8 +15,8 @@ public class StorageDtoBuilder {
         return this;
     }
 
-    public StorageDtoBuilder setClazz(Class<?> clazz) {
-        this.storageDto.setClazz(clazz);
+    public StorageDtoBuilder setStorageClazz(Class<?> storageClazz) {
+        this.storageDto.setStorageClazz(storageClazz);
         return this;
     }
 

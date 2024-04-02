@@ -4,13 +4,13 @@ package boraldan.entitymicro.shop.entity.item.transport.bike;
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.shop.entity.item.transport.Fuel;
 import boraldan.entitymicro.shop.entity.price.item_price.BikePrice;
+import boraldan.entitymicro.storage.entity.transport.bike.BikeStorage;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "bike")
@@ -35,10 +35,23 @@ public class Bike extends Item {
     @Enumerated(EnumType.STRING)
     private Fuel fuel;
 
+    public Bike() {
+        this.clazz = Bike.class;
+        this.storageClazz = BikeStorage.class;
+    }
 
     public void setPrice(BikePrice price) {
         this.price = price;
         price.setItem(this);
     }
 
+    @Override
+    public String getDescription() {
+        return "Описание товара ....";
+    }
+
+    @Override
+    public <T extends Item> T getThisItem(Class<T> clazz) {
+        return null;
+    }
 }
