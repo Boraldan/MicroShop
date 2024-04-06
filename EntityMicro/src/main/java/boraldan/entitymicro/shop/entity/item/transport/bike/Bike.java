@@ -1,6 +1,8 @@
 package boraldan.entitymicro.shop.entity.item.transport.bike;
 
 
+import boraldan.entitymicro.shop.entity.category.Category;
+import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.shop.entity.item.transport.Fuel;
 import boraldan.entitymicro.shop.entity.price.item_price.BikePrice;
@@ -36,8 +38,11 @@ public class Bike extends Item {
     private Fuel fuel;
 
     public Bike() {
-        this.clazz = Bike.class;
+        this.itemClazz = Bike.class;
         this.storageClazz = BikeStorage.class;
+        this.category = new Category();
+        category.setCategoryName(CategoryName.BIKE);
+        this.priceClazz = BikePrice.class;
     }
 
     public void setPrice(BikePrice price) {

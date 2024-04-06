@@ -4,14 +4,34 @@ import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.price.Price;
 import boraldan.entitymicro.storage.entity.Storage;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;
 
+//@JsonInclude(JsonInclude.Include.NON_ABSTRACT)
+//@JsonInclude(JsonInclude.Include.ALWAYS)
+
+
+// мешает стандартной десириализации из Json
+//@JsonTypeInfo(
+//        use = JsonTypeInfo.Id.NAME,
+//        include = JsonTypeInfo.As.PROPERTY,
+//        property = "type"
+//)
+//@JsonSubTypes({
+//        @JsonSubTypes.Type(value = Item.class, name = "item"),
+//        @JsonSubTypes.Type(value = Car.class, name = "car"),
+//        @JsonSubTypes.Type(value = Bike.class, name = "bike")
+//        // Добавьте сюда другие подклассы Item при необходимости
+//})
+
+//@JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -32,7 +52,6 @@ public abstract class Item {
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     protected Category category;
 
-
     @Column(name = "storage_id")
     protected UUID storageId;
 
@@ -40,25 +59,15 @@ public abstract class Item {
     protected Storage storage;
 
     @Transient
-    protected Class<?> clazz;
+    protected Class<?> itemClazz;
 
     @Transient
     protected Class<?> storageClazz;
 
+    @Transient
+    protected Class<?> priceClazz;
+
     public abstract Price getPrice();
-
-//    public abstract Class<?> getClazz();
-//
-//    public abstract void setClazz(Class<?> clazz);
-//
-//    public abstract Class<?> getStorageClazz();
-//
-//    public abstract void setStorageClazz(Class<?> storageClazz);
-
-
-
-
-    
 
     public abstract String getName();
 

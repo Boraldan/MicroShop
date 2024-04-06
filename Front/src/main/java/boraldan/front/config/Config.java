@@ -9,9 +9,10 @@ import org.springframework.web.client.RestTemplate;
 public class Config {
 
     @Bean
-    public RestTemplate template(){
+    public RestTemplate restTemplate() {
         return new RestTemplate();
-    };
+    }
+
 
     @Bean
     public HttpHeaders headers()

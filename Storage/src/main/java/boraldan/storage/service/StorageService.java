@@ -1,9 +1,8 @@
 package boraldan.storage.service;
 
+import boraldan.entitymicro.storage.dto.ListStorageDto;
+import boraldan.entitymicro.storage.dto.ListStorageDtoBuilder;
 import boraldan.entitymicro.storage.entity.Storage;
-import boraldan.entitymicro.storage.entity.dto.ListStorageDto;
-import boraldan.entitymicro.storage.entity.dto.ListStorageDtoBuilder;
-import boraldan.entitymicro.storage.entity.dto.StorageDto;
 import boraldan.storage.repository.GlobalJpaRepository;
 
 import java.util.List;
@@ -24,15 +23,40 @@ public interface StorageService<T extends Storage, R extends GlobalJpaRepository
         return new ListStorageDtoBuilder().setStorageList(storageList).build();
     }
 
-    default T save(StorageDto storageDto) {
-        return getStorageRepo().save(convertToStorageItem(storageDto, storageDto.getStorageClazz()));
+    default T save(Storage storage) {
+        return getStorageRepo().save(convertToStorageItem(storage, storage.getStorageClazz()));
     }
 
-    default void delete(StorageDto storageDto) {
-         getStorageRepo().delete(convertToStorageItem(storageDto, storageDto.getStorageClazz()));
+    default void delete(Storage storage) {
+        getStorageRepo().delete(convertToStorageItem(storage, storage.getStorageClazz()));
     }
 
-     T convertToStorageItem(StorageDto storageDto, Class<?> clazz);
+    T convertToStorageItem(Storage storage, Class<?> clazz);
+
+
+
+//
+//    R getStorageRepo();
+//
+//    default T getById(UUID id) {
+//        return getStorageRepo().findById(id).orElse(null);
+//    }
+//
+//    default ListStorageDto getByList(ListStorageDto listStorageDto){
+//        List<UUID> uuidList =listStorageDto.getUuidList().stream().filter(Objects::nonNull).toList();
+//        List<T> storageList =  getStorageRepo().findAllById(uuidList);
+//        return new ListStorageDtoBuilder().setStorageList(storageList).build();
+//    }
+//
+//    default T save(StorageDto storageDto) {
+//        return getStorageRepo().save(convertToStorageItem(storageDto, storageDto.getStorageClazz()));
+//    }
+//
+//    default void delete(StorageDto storageDto) {
+//         getStorageRepo().delete(convertToStorageItem(storageDto, storageDto.getStorageClazz()));
+//    }
+//
+//     T convertToStorageItem(StorageDto storageDto, Class<?> clazz);
 
 
 }

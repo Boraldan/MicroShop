@@ -1,13 +1,19 @@
 package boraldan.entitymicro.shop.entity.item.transport.car;
 
 
+import boraldan.entitymicro.shop.entity.category.Category;
+import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.shop.entity.item.transport.Fuel;
 import boraldan.entitymicro.shop.entity.price.item_price.CarPrice;
 import boraldan.entitymicro.storage.entity.transport.car.CarStorage;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
+//@JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,9 +22,11 @@ import lombok.*;
 @Table(name = "car")
 public class Car extends Item {
 
+//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 
     //  @Cascade(org.hibernate.annotations.CascadeType.ALL) // из библиотеки Hibernate
-    @OneToOne(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}) // из библиотеке JPA
+    //  @OneToOne(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}) // из библиотеке JPA
+    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL) // из библиотеке JPA
     private CarPrice price;
 
     @Column(name = "name")
@@ -31,8 +39,12 @@ public class Car extends Item {
     private Integer year;
 
     public Car() {
-        this.clazz = Car.class;
+        this.itemClazz = Car.class;
         this.storageClazz = CarStorage.class;
+        this.category = new Category();
+        category.setCategoryName(CategoryName.CAR);
+        this.priceClazz = CarPrice.class;
+
     }
 
     @Column(name = "types", columnDefinition = "VARCHAR")

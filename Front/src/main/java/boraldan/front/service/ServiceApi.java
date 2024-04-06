@@ -1,14 +1,18 @@
 package boraldan.front.service;
 
 import boraldan.entitymicro.cart.dto.CartsDTO;
-import boraldan.entitymicro.shop.dto.ListItemDto;
+import boraldan.entitymicro.shop.entity.category.Category;
+import boraldan.entitymicro.shop.entity.item.transport.car.Car;
 import boraldan.entitymicro.test.Fly;
 import boraldan.entitymicro.test.Lot;
 import boraldan.front.api.UrlApi;
 import lombok.AllArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -46,12 +50,13 @@ public class ServiceApi implements IServiceApi {
         return fly;
     }
 
-    @Override
-    public ListItemDto getItems() {
-        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<ListItemDto> responce = template.exchange(URLApi.getItems_api(), HttpMethod.GET, entity, ListItemDto.class);
-        return responce.getBody();
+    public List<Car> getItems(Category category) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        HttpEntity<Category> entity = new HttpEntity<>(category, headers);
+        ResponseEntity<List<Car>> response = template.exchange(URLApi.getItems_api(), HttpMethod.POST, entity, new ParameterizedTypeReference<>() {});
+        return response.getBody();
+
     }
 
 

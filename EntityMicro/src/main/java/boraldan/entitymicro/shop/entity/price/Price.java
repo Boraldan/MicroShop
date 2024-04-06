@@ -2,6 +2,7 @@ package boraldan.entitymicro.shop.entity.price;
 
 import boraldan.entitymicro.shop.entity.item.Item;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.Expose;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +27,7 @@ public class Price implements Cloneable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
+    @Expose(serialize = false)
     //    @JsonBackReference
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "item_id", referencedColumnName = "id")

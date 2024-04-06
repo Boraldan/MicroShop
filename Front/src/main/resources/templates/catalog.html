@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Category</title>
+</head>
+<body>
+<form action="#" th:action="@{/catalog}" th:object="${category}" method="post">
+    <div>
+        <label for="categoryName">Category Name:</label>
+        <select id="categoryName" name="categoryName">
+            <option th:each="name : ${T(boraldan.entitymicro.shop.entity.category.CategoryName).values()}"
+                    th:value="${name}" th:text="${name}"></option>
+        </select>
+    </div>
+    <div>
+        <button type="submit">Get Category Item</button>
+    </div>
+</form>
+
+<h1>Items</h1>
+<div th:if="${items}">
+    <table border="1">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Category</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${items}">
+            <td th:text="${item.id}">ID</td>
+            <td th:text="${item.name}">Name</td>
+            <td th:text="${item.description}">Description</td>
+            <td th:text="${item.category.categoryName}">CategoryName</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

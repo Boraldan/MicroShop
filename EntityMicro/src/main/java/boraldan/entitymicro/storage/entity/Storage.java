@@ -2,14 +2,13 @@ package boraldan.entitymicro.storage.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;
 
 @Getter
 @Setter
-@NoArgsConstructor
+//@NoArgsConstructor
 //@MappedSuperclass
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Entity
@@ -26,7 +25,15 @@ public class Storage {
     @Column(name = "reserve")
     protected long reserve;
 
-//
+    @Transient
+    protected Class<?> storageClazz;
+
+    public Storage() {
+        this.storageClazz = this.getClass();
+    }
+
+
+    //
 //    public <T extends Storage> T getThisStorage(Class<T> clazz) {
 //        return clazz.cast(this);
 //    }
