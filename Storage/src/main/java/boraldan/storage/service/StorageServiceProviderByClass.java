@@ -7,7 +7,6 @@ import boraldan.entitymicro.storage.entity.transport.car.CarStorage;
 import boraldan.entitymicro.storage.entity.transport.car_relate.wheel.CarWheelStorage;
 import boraldan.storage.repository.GlobalJpaRepository;
 import jakarta.annotation.PostConstruct;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,9 +15,9 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class StorageServiceProvider {
+public class StorageServiceProviderByClass {
 
-    @Getter
+//    @Getter
     private Map<Class<?>, StorageService<?, ?>> mapBeanStorage;
     private final StorageService<Storage, GlobalJpaRepository<Storage>> storageService;
     private final StorageService<CarStorage, GlobalJpaRepository<CarStorage>> carStorageService;
@@ -27,12 +26,16 @@ public class StorageServiceProvider {
     private final StorageService<BikeWheelStorage, GlobalJpaRepository<BikeWheelStorage>> bikeWheelStorageService;
 
     @PostConstruct
-    public void initBeanMap() {
+    private void initBeanMap() {
         this.mapBeanStorage = new HashMap<>();
         mapBeanStorage.put(Storage.class, storageService);
         mapBeanStorage.put(CarStorage.class, carStorageService);
         mapBeanStorage.put(CarWheelStorage.class, carWheelStorageService);
         mapBeanStorage.put(BikeStorage.class, bikeStorageService);
         mapBeanStorage.put(BikeWheelStorage.class, bikeWheelStorageService);
+    }
+
+    public <T extends Storage, R extends GlobalJpaRepository<T>> StorageService<T, R> getService(Class<?> clazz) {
+        return (StorageService<T, R>) this.mapBeanStorage.get(clazz);
     }
 }

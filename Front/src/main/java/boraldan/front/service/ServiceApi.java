@@ -2,7 +2,7 @@ package boraldan.front.service;
 
 import boraldan.entitymicro.cart.dto.CartsDTO;
 import boraldan.entitymicro.shop.entity.category.Category;
-import boraldan.entitymicro.shop.entity.item.transport.car.Car;
+import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.test.Fly;
 import boraldan.entitymicro.test.Lot;
 import boraldan.front.api.UrlApi;
@@ -50,11 +50,11 @@ public class ServiceApi implements IServiceApi {
         return fly;
     }
 
-    public List<Car> getItems(Category category) {
+    public List<Item> getItems(Category category) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         HttpEntity<Category> entity = new HttpEntity<>(category, headers);
-        ResponseEntity<List<Car>> response = template.exchange(URLApi.getItems_api(), HttpMethod.POST, entity, new ParameterizedTypeReference<>() {});
+        ResponseEntity<List<Item>> response = template.exchange(URLApi.getItems_api(), HttpMethod.POST, entity, new ParameterizedTypeReference<>() {});
         return response.getBody();
 
     }

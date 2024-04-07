@@ -1,4 +1,4 @@
-package boraldan.shop.session;
+package boraldan.shop._test;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;

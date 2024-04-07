@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS  t_category
 CREATE TABLE IF NOT EXISTS t_item
 (
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title      VARCHAR(255),
     category_id  BIGINT REFERENCES t_category (id),
     storage_id UUID
 );
@@ -48,8 +49,18 @@ CREATE TABLE car_wheel (
    season VARCHAR
 );
 
+
+CREATE TABLE price (
+                           id UUID PRIMARY KEY,
+                           base_price DECIMAL(19, 2),
+                           coefficient DOUBLE,
+                           custom_price DECIMAL(19, 2),
+                           item_id BIGINT REFERENCES t_item(id)
+);
+
+
 CREATE TABLE car_price (
-                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                           id UUID PRIMARY KEY,
                            base_price DECIMAL(19, 2),
                            coefficient DOUBLE,
                            custom_price DECIMAL(19, 2),
@@ -58,7 +69,7 @@ CREATE TABLE car_price (
 
 
 CREATE TABLE bike_price (
-                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                            id UUID PRIMARY KEY,
                            base_price DECIMAL(19, 2),
                            coefficient DOUBLE,
                            custom_price DECIMAL(19, 2),
@@ -66,7 +77,7 @@ CREATE TABLE bike_price (
 );
 
 CREATE TABLE car_wheel_price (
-                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                 id UUID PRIMARY KEY,
                            base_price DECIMAL(19, 2),
                            coefficient DOUBLE,
                            custom_price DECIMAL(19, 2),
@@ -75,7 +86,7 @@ CREATE TABLE car_wheel_price (
 
 
 CREATE TABLE bike_wheel_price (
-                            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                  id UUID PRIMARY KEY,
                             base_price DECIMAL(19, 2),
                             coefficient DOUBLE,
                             custom_price DECIMAL(19, 2),

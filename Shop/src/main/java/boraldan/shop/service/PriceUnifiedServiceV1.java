@@ -3,6 +3,9 @@ package boraldan.shop.service;
 import boraldan.shop.repository.PriceUnifiedRepo;
 import boraldan.shop.service.i_service.PriceUnifiedService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @RequiredArgsConstructor
 public class PriceUnifiedServiceV1<T>  implements PriceUnifiedService<T, PriceUnifiedRepo<T>> {
@@ -15,11 +18,12 @@ public class PriceUnifiedServiceV1<T>  implements PriceUnifiedService<T, PriceUn
     }
 
     @Override
-    public T getById(Long id) {
+    public T getById(UUID id) {
         return PriceUnifiedService.super.getById(id);
     }
 
     @Override
+    @Transactional
     public T save(T price) {
         return PriceUnifiedService.super.save(price);
     }

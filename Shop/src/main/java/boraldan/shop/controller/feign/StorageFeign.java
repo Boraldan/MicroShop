@@ -23,6 +23,9 @@ public interface StorageFeign {
     @PostMapping("/list")
     ResponseEntity<ListStorageDto> getByList(@RequestBody ListStorageDto listStorageDto);
 
+    @PostMapping("/listbycategory")
+    ResponseEntity<ListStorageDto> getListByCategory(@RequestBody ListStorageDto listStorageDto);
+
     @PutMapping("/save")
     ResponseEntity<Storage> saveItem(@RequestBody Storage storage);
 
@@ -45,6 +48,11 @@ class StorageFeignFallback implements StorageFeign {
 
     @Override
     public ResponseEntity<ListStorageDto> getByList(@RequestBody ListStorageDto listStorageDto) {
+        return new ResponseEntity<>(new ListStorageDto(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    public ResponseEntity<ListStorageDto> getListByCategory(ListStorageDto listStorageDto) {
         return new ResponseEntity<>(new ListStorageDto(), HttpStatus.BAD_REQUEST);
     }
 

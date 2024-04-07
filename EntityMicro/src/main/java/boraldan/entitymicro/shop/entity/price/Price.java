@@ -2,7 +2,6 @@ package boraldan.entitymicro.shop.entity.price;
 
 import boraldan.entitymicro.shop.entity.item.Item;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.annotations.Expose;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,24 +9,25 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@MappedSuperclass
-//@Entity
-//@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+//@MappedSuperclass
 //@Inheritance(strategy = InheritanceType.JOINED)
-//@Table(name = "price")
-public class Price implements Cloneable {
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Table(name = "price")
+public class Price  {
 
     @Id
 //    @GeneratedValue(strategy = GenerationType.AUTO) // для strategy = InheritanceType.TABLE_PER_CLASS)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    protected UUID id;
 
-    @Expose(serialize = false)
+//    @Expose(serialize = false) //gson аннотация
     //    @JsonBackReference
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "item_id", referencedColumnName = "id")
@@ -54,8 +54,8 @@ public class Price implements Cloneable {
         }
     }
 
-    @Override
-    public Price clone() throws CloneNotSupportedException {
-        return (Price) super.clone();
-    }
+//    @Override
+//    public Price clone() throws CloneNotSupportedException {
+//        return (Price) super.clone();
+//    }
 }

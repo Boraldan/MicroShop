@@ -60,7 +60,7 @@ public class ItemUnifiedServiceV1<T extends Item> implements ItemUnifiedService<
     @Override
     @Transactional
     public <E extends Item> T save(E item) {
-        item.setCategory(categoryService.findByCategoryName(item.getCategory().getCategoryName()).get());
+        item.setCategory(categoryService.getCategoryByCategoryName(item.getCategory().getCategoryName()).get());
         return ItemUnifiedService.super.save(item);
     }
 

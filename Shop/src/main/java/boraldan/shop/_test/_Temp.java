@@ -1,9 +1,9 @@
-package boraldan.shop;
+package boraldan.shop._test;
 
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.shop.entity.item.transport.car.Car;
 import boraldan.entitymicro.storage.entity.Storage;
-import boraldan.shop.session.TestGson;
+import boraldan.shop._test.TestGson;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

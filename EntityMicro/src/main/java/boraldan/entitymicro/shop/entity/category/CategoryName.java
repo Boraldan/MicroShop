@@ -1,9 +1,7 @@
 package boraldan.entitymicro.shop.entity.category;
 
-import lombok.Data;
-
-
 public enum CategoryName {
+    ITEM,
     CAR, CAR_WHEEL,
     BIKE, BIKE_WHEEL
 }

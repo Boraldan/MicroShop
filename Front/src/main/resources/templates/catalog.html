@@ -24,16 +24,16 @@
         <thead>
         <tr>
             <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
+            <th>title</th>
+            <th>price</th>
             <th>Category</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="item : ${items}">
             <td th:text="${item.id}">ID</td>
-            <td th:text="${item.name}">Name</td>
-            <td th:text="${item.description}">Description</td>
+            <td th:text="${item.title}">title</td>
+            <td th:text="${item.price.getBasePrice()}">price</td>
             <td th:text="${item.category.categoryName}">CategoryName</td>
         </tr>
         </tbody>

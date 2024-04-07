@@ -2,12 +2,14 @@ package boraldan.shop.service.i_service;
 
 import boraldan.shop.repository.PriceUnifiedRepo;
 
+import java.util.UUID;
+
 
 public interface PriceUnifiedService<T, R extends PriceUnifiedRepo<T>> {
 
     R getPriceRepo();
 
-    default T getById(Long id) {
+    default T getById(UUID id) {
         return getPriceRepo().findById(id).orElse(null);
     }
 

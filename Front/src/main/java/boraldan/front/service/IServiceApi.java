@@ -3,7 +3,7 @@ package boraldan.front.service;
 
 import boraldan.entitymicro.cart.dto.CartsDTO;
 import boraldan.entitymicro.shop.entity.category.Category;
-import boraldan.entitymicro.shop.entity.item.transport.car.Car;
+import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.test.Fly;
 import boraldan.entitymicro.test.Lot;
 
@@ -17,7 +17,7 @@ public interface IServiceApi {
     Fly getFly();
 
 //    ListItemDto getItems(Category category);
-    List<Car> getItems(Category category);
+    List<Item> getItems(Category category);
     CartsDTO getCarts();
 
     String getCard();

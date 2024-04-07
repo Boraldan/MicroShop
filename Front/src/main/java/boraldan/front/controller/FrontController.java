@@ -2,7 +2,7 @@ package boraldan.front.controller;
 
 
 import boraldan.entitymicro.shop.entity.category.Category;
-import boraldan.entitymicro.shop.entity.item.transport.car.Car;
+import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.front.service.IServiceApi;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -55,7 +55,7 @@ public class FrontController {
         System.out.println(category);
 //        ListItemDto listItemDto = serviceApi.getItems(category);
 //        model.addAttribute("items", listItemDto.getItemList());
-        List<Car> carList= serviceApi.getItems(category);
+        List<Item> carList= serviceApi.getItems(category);
         model.addAttribute("items", carList);
         System.out.println(carList);
         return "catalog";

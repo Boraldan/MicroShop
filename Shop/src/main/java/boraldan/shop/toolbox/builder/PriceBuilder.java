@@ -1,8 +1,7 @@
-package boraldan.shop.service.builder;
+package boraldan.shop.toolbox.builder;
 
 import boraldan.entitymicro.shop.entity.price.Price;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import lombok.SneakyThrows;
 import org.modelmapper.ModelMapper;
 
 import java.lang.reflect.Type;
@@ -28,9 +27,10 @@ public class PriceBuilder {
         return this;
     }
 
-    @SneakyThrows
+//    @SneakyThrows
     public <T extends Price> T builder() {
-        return convertTo(price.clone(), clazz);
+//        return convertTo(price.clone(), clazz);
+        return convertTo(price, clazz);
     }
 
     private <T extends Price> T convertTo(Price price, Class<?> clazz) {

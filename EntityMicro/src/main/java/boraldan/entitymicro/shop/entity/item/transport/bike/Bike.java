@@ -8,7 +8,10 @@ import boraldan.entitymicro.shop.entity.item.transport.Fuel;
 import boraldan.entitymicro.shop.entity.price.item_price.BikePrice;
 import boraldan.entitymicro.storage.entity.transport.bike.BikeStorage;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -18,8 +21,8 @@ import lombok.*;
 @Table(name = "bike")
 public class Bike extends Item {
 
-    @OneToOne(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private BikePrice price;
+//    @OneToOne(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+//    private BikePrice price;
 
     @Column(name = "name")
     private String name;
@@ -39,6 +42,7 @@ public class Bike extends Item {
 
     public Bike() {
         this.itemClazz = Bike.class;
+        this.price = new BikePrice();
         this.storageClazz = BikeStorage.class;
         this.category = new Category();
         category.setCategoryName(CategoryName.BIKE);
@@ -50,13 +54,9 @@ public class Bike extends Item {
         price.setItem(this);
     }
 
-    @Override
+
     public String getDescription() {
         return "Описание товара ....";
     }
 
-    @Override
-    public <T extends Item> T getThisItem(Class<T> clazz) {
-        return null;
-    }
 }

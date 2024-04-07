@@ -26,8 +26,8 @@ public class Car extends Item {
 
     //  @Cascade(org.hibernate.annotations.CascadeType.ALL) // из библиотеки Hibernate
     //  @OneToOne(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}) // из библиотеке JPA
-    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL) // из библиотеке JPA
-    private CarPrice price;
+//    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL) // из библиотеке JPA
+//    private CarPrice price;
 
     @Column(name = "name")
     private String name;
@@ -40,11 +40,11 @@ public class Car extends Item {
 
     public Car() {
         this.itemClazz = Car.class;
+        this.priceClazz = CarPrice.class;
         this.storageClazz = CarStorage.class;
+        this.price = new CarPrice();
         this.category = new Category();
         category.setCategoryName(CategoryName.CAR);
-        this.priceClazz = CarPrice.class;
-
     }
 
     @Column(name = "types", columnDefinition = "VARCHAR")
@@ -61,16 +61,15 @@ public class Car extends Item {
 //    private List<String> images;
 
     // Устанавливаем двухстороннюю связь между CarPrice и Item для сохранения в db
+
     public void setPrice(CarPrice price) {
         this.price = price;
         price.setItem(this);
     }
 
-    @Override
     public String getDescription() {
         return "Описание товара ....";
     }
-
 
     @Override
     public String toString() {

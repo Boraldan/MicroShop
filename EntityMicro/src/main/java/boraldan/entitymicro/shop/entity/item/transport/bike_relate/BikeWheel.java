@@ -6,8 +6,9 @@ import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.shop.entity.price.item_price.BikeWheelPrice;
 import boraldan.entitymicro.storage.entity.transport.bike_relate.wheel.BikeWheelStorage;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -30,12 +31,13 @@ public class BikeWheel extends Item {
     @Column(name = "season")
     private String season;
 
-    @JsonManagedReference
-    @OneToOne(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private BikeWheelPrice price;
+//    @JsonManagedReference
+//    @OneToOne(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+//    private BikeWheelPrice price;
 
     public BikeWheel() {
         this.itemClazz = BikeWheel.class;
+        this.price = new BikeWheelPrice();
         this.storageClazz = BikeWheelStorage.class;
         this.category = new Category();
         category.setCategoryName(CategoryName.BIKE_WHEEL);
@@ -48,8 +50,6 @@ public class BikeWheel extends Item {
         price.setItem(this);
     }
 
-
-    @Override
     public String getDescription() {
         return "Описание товара ....";
     }
