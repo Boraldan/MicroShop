@@ -8,7 +8,7 @@
     <file url="file://$PROJECT_DIR$/Eureka/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Front/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Gateway/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/KeyCloak/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/KeyCloakMaster/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/OAuth2/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Order/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Shop/src/main/java" charset="UTF-8" />

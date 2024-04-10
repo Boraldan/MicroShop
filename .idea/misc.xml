@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="MavenProjectsManager">
@@ -22,6 +23,8 @@
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/Entity/pom.xml" />
+        <option value="$PROJECT_DIR$/OAuth2/pom.xml" />
+        <option value="$PROJECT_DIR$/Order/pom.xml" />
       </set>
     </option>
   </component>

@@ -22,7 +22,7 @@ public class Cart {
     private Long id;
 
     @OneToMany(mappedBy = "cart")
-    private List<CartUnit> cartUnit;
+    private List<UnitCart> unitCart;
 
     @JoinColumn(name = "customer_id")
     private Long customerId;
@@ -41,13 +41,13 @@ public class Cart {
     private LocalDateTime creatAt;
 
     public Cart() {
-        cartUnit = new ArrayList<>();
+        unitCart = new ArrayList<>();
     }
 
     private BigDecimal getSubTotalPrice() {
         BigDecimal subTotal = new BigDecimal(0);
-        if (cartUnit != null) {
-            for (CartUnit item : cartUnit) {
+        if (unitCart != null) {
+            for (UnitCart item : unitCart) {
                 subTotal = subTotal.add(item.getPrice());
             }
         }
@@ -62,6 +62,6 @@ public class Cart {
 //    }
 
     public int itemsInCart() {
-        return cartUnit.stream().mapToInt(CartUnit::getQuantity).sum();
+        return unitCart.stream().mapToInt(UnitCart::getQuantity).sum();
     }
 }
