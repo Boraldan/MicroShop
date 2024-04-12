@@ -5,24 +5,59 @@ server:
 #      cookie:
 #        http-only: off
 
-spring:
-#  security:
-#    oauth2:
-#      client:
-#        provider:
-#          spring:
-#            issuer-uri: http://localhost:8180
-#        registration:
-#          reg-client:
-#            provider: spring
-#            client-id: client
-#            client-secret: "secret"
-#            authorization-grant-type: authorization_code
-#            client-authentication-method: client_secret_basic
-#            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-#            scope: user.read,openid
+### local variable
+microshop:
+  service:
+    shop:
+      uri: http://localhost:8765
+      registration-id: keycloak
 
-#spring:
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+#            issuer-uri: http://127.0.0.1:18079/realms/master
+            issuer-uri: http://localhost:18079/realms/master
+#            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            client-id: my-front-app
+            client-secret: q9NqxhVTeFlxcuKuOSiNUYEmj16AJ4cC
+            scope:
+              - openid
+              - microprofile-jwt
+              - view_catalog
+#      resourceserver:
+#        jwt:
+#          issuer-uri: http://127.0.0.1:18079/realms/master
+
+### setting for admin keycloak
+  #        provider:
+  #          keycloak:
+  #            #            issuer-uri: http://localhost:18079/realms/shop-realm
+  #            issuer-uri: http://localhost:18079/realms/master
+  #            user-name-attribute: preferred_username
+  #        registration:
+  #          my-front-app-client-credentials:
+  #            provider: keycloak
+  #            authorization-grant-type: client_credentials
+  #            client-id: my-front-app
+  #            client-secret: q9NqxhVTeFlxcuKuOSiNUYEmj16AJ4cC
+  #            scope:
+  #              - openid
+  #              - microprofile-jwt
+  #          my-front-app-authorization-code:
+  #            provider: keycloak
+  #            authorization-grant-type: client_credentials
+  #            client-id: my-front-app
+  #            client-secret: q9NqxhVTeFlxcuKuOSiNUYEmj16AJ4cC
+  #            scope:
+  #              - openid
+  #              - microprofile-jwt
+
+  #spring:
   jpa:
     hibernate:
       ddl-auto: none

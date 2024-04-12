@@ -5,6 +5,7 @@ import boraldan.entitymicro.bank.entity.BankAccount;
 import boraldan.entitymicro.shop.dto.ListItemDto;
 import boraldan.entitymicro.shop.dto.ListItemDtoBuilder;
 import boraldan.entitymicro.shop.entity.category.Category;
+import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.shop.entity.item.transport.Fuel;
 import boraldan.entitymicro.shop.entity.item.transport.bike.Bike;
@@ -35,6 +36,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,19 +57,23 @@ public class ShopController {
     private final MqShopService mqShopService;
     private final RedisTemplate<String, Object> redis;
 
+
     @PostMapping("/category")
-    public ResponseEntity<?> category(@RequestBody Category category) {
-        System.out.println("1 - " + category);
+    public ResponseEntity<?> category2(@RequestBody Category category, Principal principal) {
+        // TODO: 11.04.2024 добавить валидации
+        System.out.println(principal);
+        System.out.println(category);
 
-        List<Item> itemList = categoryService.getListByCategoryName(category.getCategoryName());
-
-//        List<Car> itemList = categoryService.findByCategoryName(CategoryName.CAR).get().getItems().stream()
-//                .map(el -> (Car) el).toList();
-
-//        ListItemDto listItemDto = new  ListItemDtoBuilder().setItemList(itemList).build();
-
-        return new ResponseEntity<>(itemList, HttpStatus.OK);
+        List<Item> itemList;
+        if (category.getCategoryName().equals(CategoryName.ITEM)) {
+            itemList = itemService.getService(Item.class).getAll();
+        } else {
+            itemList = categoryService.getListByCategoryName(category.getCategoryName());
+        }
+        return new ResponseEntity<>(new ListItemDtoBuilder().setItemList(itemList).build(), HttpStatus.OK);
     }
+
+
 
     @GetMapping("/item")
     public ResponseEntity<Item> item() {

@@ -13,7 +13,6 @@ public class Config {
         return new RestTemplate();
     }
 
-
     @Bean
     public HttpHeaders headers()
     {

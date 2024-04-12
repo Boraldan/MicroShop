@@ -7,18 +7,15 @@ spring:
   profiles:
     active: rabbit
   cloud:
-## Spring Cloud Circuit Breaker
-    openfeign:
+    openfeign:             ## Spring Cloud Circuit Breaker
       circuitbreaker:
         enabled: true
-## Rabbit MQ
-    function:
+    function:              ## Rabbit MQ
       definition: newMessageShop
     stream:
       bindings:
         newMessageShop-out-0:
           destination: bank-destination
-
   h2:
     console:
       enabled: true
@@ -35,6 +32,71 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:18079/realms/master
+
+#      client:
+#        registration:
+#          keycloak:
+#            client-id: my-shop-app
+#            client-secret: EKmfrpy6cFbp9tyat35XvolCSxCmtKoi
+#            scope:
+#              - view_catalog
+#        provider:
+#          keycloak:
+#            issuer-uri: http://127.0.0.1:18079/realms/master
+
+
+
+
+
+
+
+#  security:
+#    oauth2:
+#      client:
+##        provider:
+##          keycloak:
+##            issuer-uri: http://127.0.0.1:18079/realms/master
+##            user-name-attribute: preferred_username
+##        registration:
+##          keycloak:
+##            client-id: my-shop-app
+##            client-secret: EKmfrpy6cFbp9tyat35XvolCSxCmtKoi
+##            authorization-grant-type: authorization_code
+##            scope:
+##              - openid
+##              - microprofile-jwt
+#        provider:
+#          keycloak:
+#            #            issuer-uri: http://localhost:18079/realms/shop-realm
+#            issuer-uri: http://localhost:18079/realms/master
+#            user-name-attribute: preferred_username
+#        registration:
+#          my-shop-app-client-credentials:
+#            provider: keycloak
+#            client-id: my-shop-app
+#            client-secret: EKmfrpy6cFbp9tyat35XvolCSxCmtKoi
+#            authorization-grant-type: authorization_code
+#            scope:
+#              - openid
+#              - microprofile-jwt
+#          my-shop-app-authorization-code:
+#            provider: keycloak
+#            client-id: my-shop-app
+#            client-secret: EKmfrpy6cFbp9tyat35XvolCSxCmtKoi
+#            authorization-grant-type: authorization_code
+#            scope:
+#              - openid
+#              - microprofile-jwt
+#      resourceserver:
+#        jwt:
+#          issuer-uri: http://127.0.0.1:18079/realms/master
+
 
 
 #  datasource:
