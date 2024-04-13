@@ -25,8 +25,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(customizer -> customizer
-//                                .anyRequest().permitAll()
-                                .anyRequest().authenticated()
+                                .requestMatchers("/addcar").hasRole("CUSTOMER")
+                                .anyRequest().permitAll()
+//                                .anyRequest().authenticated()
+
+//                                .requestMatchers("/account/**").hasRole("CUSTOMER")
 //                        .anyRequest().hasRole("CUSTOMER")
                 )
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))

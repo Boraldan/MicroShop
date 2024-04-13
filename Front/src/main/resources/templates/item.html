@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Item Details</title>
+</head>
+<body>
+<h1>Item Details</h1>
+<ul>
+    <li>ID: <span th:text="${item.id}"></span></li>
+    <li>Title: <span th:text="${item.title}"></span></li>
+    <li>Category: <span th:text="${item.category.categoryName}"></span></li>
+    <li>Price: <span th:text="${item.price.getBasePrice()}"></span></li>
+    <li>Storage ID: <span th:text="${item.storageId}"></span></li>
+</ul>
+</body>
+</html>
+

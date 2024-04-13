@@ -22,9 +22,9 @@ import boraldan.shop.controller.feign.BankFeign;
 import boraldan.shop.controller.feign.StorageFeign;
 import boraldan.shop.mq.bank.MqShopService;
 import boraldan.shop.repository.FlyRepo;
-import boraldan.shop.toolbox.builder.PriceBuilder;
 import boraldan.shop.service.i_service.CategoryService;
 import boraldan.shop.service.provider.ItemServiceClassProvider;
+import boraldan.shop.toolbox.builder.PriceBuilder;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -36,7 +36,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,9 +58,8 @@ public class ShopController {
 
 
     @PostMapping("/category")
-    public ResponseEntity<?> category2(@RequestBody Category category, Principal principal) {
+    public ResponseEntity<?> category2(@RequestBody Category category) {
         // TODO: 11.04.2024 добавить валидации
-        System.out.println(principal);
         System.out.println(category);
 
         List<Item> itemList;

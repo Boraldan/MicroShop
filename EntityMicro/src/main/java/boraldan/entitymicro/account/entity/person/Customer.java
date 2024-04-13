@@ -27,7 +27,7 @@ public class Customer extends Person {
 
     @Override
     public String info() {
-        return "%d : %s : %s : %s".formatted(id, name, email, role);
+        return "%d : %s : %s".formatted(id, name, email );
     }
 
 }

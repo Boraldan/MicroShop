@@ -23,15 +23,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(configurer -> configurer
-//                        .anyRequest().permitAll()
-                        .anyRequest().hasRole("CUSTOMER")
+                        .anyRequest().permitAll()
+//                        .anyRequest().hasRole("CUSTOMER")
 //                        .requestMatchers("/**").hasAuthority("SCOPE_view_catalog")
 //                        .anyRequest().access(allOf(hasRole("CUSTOMER"), hasAuthority("SCOPE_view_catalog")))
                 )
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(CsrfConfigurer::disable)
                 .oauth2ResourceServer(configurer -> configurer.jwt(jwt -> {
-
                     JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
                     jwtAuthenticationConverter.setPrincipalClaimName("preferred_username");
                     jwt.jwtAuthenticationConverter(jwtAuthenticationConverter);
@@ -51,17 +50,15 @@ public class SecurityConfig {
 
 
 
-    //   для ресурса, частично работает    -------------------------
+    //   для ресурса, заточенная под scope авторизацию     -------------------------
 
 //    @Bean
 //    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 //        return http
 //                .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
 ////                                .anyRequest().permitAll()  // работает
-//                                .anyRequest().hasRole("CUSTOMER") //  не работает  < -----------
 ////                                .requestMatchers("/**").hasAuthority("SCOPE_view_catalog")  // работает
-//
-////                        .anyRequest().access(allOf(hasRole("CUSTOMER"), hasAuthority("SCOPE_view_catalog")))
+
 ////                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
 ////                        .requestMatchers(HttpMethod.POST, "/catalogue-api/products")
 ////                        .hasAuthority("SCOPE_edit_catalogue")

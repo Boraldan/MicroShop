@@ -31,6 +31,14 @@ public class RestClientProductsRestClient {
                 .body(ListItemDto.class);
     }
 
+    public Item addCar() {
+        return this.restClient
+                .get()
+                .uri("/shop/addcar")
+                .retrieve()
+                .body(Item.class);
+    }
+
     public List<Item> findAllProducts(String filter) {
         return this.restClient
                 .get()
@@ -38,6 +46,7 @@ public class RestClientProductsRestClient {
                 .retrieve()
                 .body(PRODUCTS_TYPE_REFERENCE);
     }
+
 
 //    @Override
 //    public Item createProduct(String title, String details) {

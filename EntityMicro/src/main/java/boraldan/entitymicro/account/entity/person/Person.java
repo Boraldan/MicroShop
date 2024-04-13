@@ -24,6 +24,8 @@ public class Person {
     @Column(name = "id")
     protected Long id;
 
+
+
     @Column(name = "name")
     protected String name;
 
@@ -42,8 +44,8 @@ public class Person {
     @Column(name = "card")
     protected Long card;
 
-    @Column(name = "role")
-    protected String role;
+//    @Column(name = "role")
+//    protected String role;
 
 //    @OneToOne(mappedBy = "person", targetEntity = PersonPassword.class)
 //    protected Password password;

@@ -15,6 +15,11 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 
 import java.io.IOException;
 
+/**
+ * Класс ловит исходящий запрос. Если в заголовке нет JWT токкена, то отправляет на сервер для аутентификации
+ * и после внедряет токкен в хеддер.
+ */
+
 @RequiredArgsConstructor
 public class OAuthClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
@@ -36,9 +41,6 @@ public class OAuthClientHttpRequestInterceptor implements ClientHttpRequestInter
                             .build());
             request.getHeaders().setBearerAuth(authorizedClient.getAccessToken().getTokenValue());
         }
-
-        System.out.println( "class OAuthClientHttpRequestInterceptor --> " + request.getHeaders());
-
         return execution.execute(request, body);
     }
 }

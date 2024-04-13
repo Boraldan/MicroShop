@@ -47,9 +47,16 @@ public class FrontController {
         return "catalog";
     }
 
+    @GetMapping("/addcar")
+    public String addCar(Model model) {
+        model.addAttribute("item", restClient.addCar());
+        return "item";
+    }
+
+
+
     @PostMapping("/catalog")
     public String getCatalog(@ModelAttribute("category") Category category, Model model, Principal principal) {
-        System.out.println(principal.toString());
         ListItemDto listItemDto = this.restClient.findItem(category);
         model.addAttribute("items", listItemDto.getItemList());
         return "catalog";
