@@ -1,4 +1,4 @@
-package boraldan.shop.config_oauth2;
+package boraldan.account.config_oauth2;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,9 +22,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(configurer -> configurer
-                        .anyRequest().permitAll()
-//                        .anyRequest().hasRole("CUSTOMER")
-//                        .requestMatchers("/**").hasAuthority("SCOPE_view_catalog")
+//                                .requestMatchers("/h2", "/h2/**").permitAll()
+                                .requestMatchers("/**").hasRole("CUSTOMER")
+//                                .anyRequest().permitAll()
+                                .anyRequest().authenticated()
+//                                .anyRequest().hasRole("CUSTOMER")
 //                        .anyRequest().access(allOf(hasRole("CUSTOMER"), hasAuthority("SCOPE_view_catalog")))
                 )
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -44,6 +46,7 @@ public class SecurityConfig {
                             Stream.concat(jwtGrantedAuthoritiesConverter.convert(token).stream(),
                                     customJwtGrantedAuthoritiesConverter.convert(token).stream()).toList());
                 }))
+
                 .build();
     }
 

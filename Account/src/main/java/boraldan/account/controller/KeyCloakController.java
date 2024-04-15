@@ -1,17 +1,22 @@
-package boraldan.keycloak.all;
+package boraldan.account.controller;
 
+
+import boraldan.account.dto.Counter;
+import boraldan.entitymicro.account.dto.UserDTO;
+import boraldan.account.keycloak.KeycloakUtils;
+import jakarta.ws.rs.core.Response;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.javabegin.micro.planner.users.dto.UserDTO;
-import ru.javabegin.micro.planner.users.mq.func.MessageFuncActions;
-import ru.javabegin.micro.planner.utils.rest.webclient.UserWebClientBuilder;
 
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /*
@@ -27,96 +32,74 @@ import java.util.List;
 Названия методов могут быть любыми, главное не дублировать их имена и URL mapping
 
 */
-
+@Log4j2
+@AllArgsConstructor
+@RequestMapping("/kc") // базовый URI
 @RestController
-@RequestMapping("/admin/user") // базовый URI
-public class AdminController {
+public class KeyCloakController {
 
     public static final String ID_COLUMN = "id"; // имя столбца id
     private static final int CONFLICT = 409; // если пользователь уже существует в KC и пытаемся создать такого же
-    private static final String USER_ROLE_NAME = "user"; // название роли из KC
+    private static final String USER_ROLE_NAME = "ROLE_CUSTOMER"; // название роли из KC
     private final KeycloakUtils keycloakUtils;
+    private final ModelMapper modelMapper;
 
+//    @PostMapping("/add")
+//    public ResponseEntity<?> add(@RequestBody UserDTO userDTO) {
 
-    // микросервисы для работы с пользователями
-    private UserWebClientBuilder userWebClientBuilder;
+    @GetMapping("/add")
+    public ResponseEntity<?> add() {
+        UserDTO userDTO = new UserDTO();
+        int num = Counter.getNum();
+        userDTO.setUsername("Gek_%d".formatted(num));
+        userDTO.setFio("firstName_%d".formatted(num));
+        userDTO.setEmail("gek_%d@mail.ru".formatted(num));
+        userDTO.setPassword("123");
 
-    // для отправки сообщения по требованию (реализовано с помощью функц. кода)
-    private MessageFuncActions messageFuncActions;
-
-    // используем автоматическое внедрение экземпляра класса через конструктор
-    // не используем @Autowired ля переменной класса, т.к. "Field injection is not recommended "
-    public AdminController(KeycloakUtils keycloakUtils, MessageFuncActions messageFuncActions, UserWebClientBuilder userWebClientBuilder) {
-        this.userWebClientBuilder = userWebClientBuilder;
-        this.messageFuncActions = messageFuncActions;
-        this.keycloakUtils = keycloakUtils;
-    }
-
-
-    // добавление
-    @PostMapping("/add")
-    public ResponseEntity add(@RequestBody UserDTO userDTO) {
+        System.out.println(userDTO);
 
         // проверка на обязательные параметры
-        if (!userDTO.getId().isBlank()) {
-            // id создается автоматически в БД (autoincrement), поэтому его передавать не нужно, иначе может быть конфликт уникальности значения
-            return new ResponseEntity("redundant param: id MUST be empty", HttpStatus.NOT_ACCEPTABLE);
-        }
+//        if (!userDTO.getId().isBlank()) {
+//            // id создается автоматически в БД (autoincrement), поэтому его передавать не нужно, иначе может быть конфликт уникальности значения
+//            return new ResponseEntity("redundant param: id MUST be empty", HttpStatus.NOT_ACCEPTABLE);
+//        }
 
         // если передали пустое значение
-        if (userDTO.getEmail() == null || userDTO.getEmail().trim().length() == 0) {
-            return new ResponseEntity("missed param: email", HttpStatus.NOT_ACCEPTABLE);
-        }
-
-        if (userDTO.getPassword() == null || userDTO.getPassword().trim().length() == 0) {
-            return new ResponseEntity("missed param: password", HttpStatus.NOT_ACCEPTABLE);
-        }
-
-        if (userDTO.getUsername() == null || userDTO.getUsername().trim().length() == 0) {
-            return new ResponseEntity("missed param: username", HttpStatus.NOT_ACCEPTABLE);
-        }
-
-        // добавляем пользователя
-//        userDTO = userService.add(userDTO);
-
-//        if (userDTO != null) {
-//            // заполняем начальные данные пользователя (в параллелном потоке)
-//            userWebClientBuilder.initUserData(userDTO.getId()).subscribe(result -> {
-//                        System.out.println("userDTO populated: " + result);
-//                    }
-//            );
-//        }
-
-//        if (userDTO != null) { // если пользователь добавился
-//            messageProducer.initUserData(userDTO.getId()); // отправляем сообщение в канал
-//        }
-
-//        if (userDTO != null) { // если пользователь добавился
-//            messageFuncActions.sendNewUserMessage(userDTO.getId()); // отправляем сообщение в канал
+//        if (userDTO.getEmail() == null || userDTO.getEmail().trim().length() == 0) {
+//            return new ResponseEntity("missed param: email", HttpStatus.NOT_ACCEPTABLE);
 //        }
 //
-//        return ResponseEntity.ok(userDTO); // возвращаем созданный объект со сгенерированным id
+//        if (userDTO.getPassword() == null || userDTO.getPassword().trim().length() == 0) {
+//            return new ResponseEntity("missed param: password", HttpStatus.NOT_ACCEPTABLE);
+//        }
+//
+//        if (userDTO.getUsername() == null || userDTO.getUsername().trim().length() == 0) {
+//            return new ResponseEntity("missed param: username", HttpStatus.NOT_ACCEPTABLE);
+//        }
 
 
         // создаем пользователя
-        Response createdResponse = keycloakUtils.createKeycloakUser(userDTO);
+        Response response = keycloakUtils.createKeycloakUser(userDTO);
 
-        if (createdResponse.getStatus() == CONFLICT) {
-            return new ResponseEntity("user or email already exists " + userDTO.getEmail(), HttpStatus.CONFLICT);
+        System.out.println(response.getStatus());
+
+        if (response.getStatus() == CONFLICT) {
+            return new ResponseEntity("User or email already exists " + userDTO.getEmail(), HttpStatus.CONFLICT);
         }
 
         // получаем его ID
-        String userId = CreatedResponseUtil.getCreatedId(createdResponse);
+        String userId = CreatedResponseUtil.getCreatedId(response);
 
         System.out.printf("User created with userId: %s%n", userId);
 
         List<String> defaultRoles = new ArrayList<>();
         defaultRoles.add(USER_ROLE_NAME); // эта роль должна присутствовать в KC на уровне Realm
-        defaultRoles.add("admin");
+//        defaultRoles.add("admin");
 
         keycloakUtils.addRoles(userId, defaultRoles);
 
-        return ResponseEntity.status(createdResponse.getStatus()).build();
+//        return ResponseEntity.status(createdResponse.getStatus()).build();
+        return ResponseEntity.ok(userDTO);
 
     }
 
@@ -147,14 +130,14 @@ public class AdminController {
         // save работает как на добавление, так и на обновление
         keycloakUtils.updateKeycloakUser(userDTO);
 
-        return new ResponseEntity(HttpStatus.OK); // просто отправляем статус 200 (операция прошла успешно)
+        return new ResponseEntity<>(HttpStatus.OK); // просто отправляем статус 200 (операция прошла успешно)
 
     }
 
 
     // для удаления используем типа запроса put, а не delete, т.к. он позволяет передавать значение в body, а не в адресной строке
     @PostMapping("/deletebyid")
-    public ResponseEntity deleteByUserId(@RequestBody String userId) {
+    public ResponseEntity<Void> deleteByUserId(@RequestBody String userId) {
 
 //        // можно обойтись и без try-catch, тогда будет возвращаться полная ошибка (stacktrace)
 //        // здесь показан пример, как можно обрабатывать исключение и отправлять свой текст/статус
@@ -167,7 +150,7 @@ public class AdminController {
 
         keycloakUtils.deleteKeycloakUser(userId);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.ok().build();
 
     }
 
@@ -188,8 +171,10 @@ public class AdminController {
 
 
     // получение объекта по id
-    @PostMapping("/id")
-    public ResponseEntity<UserRepresentation> findById(@RequestBody String userId) {
+//    @PostMapping("/id")
+    @GetMapping("/id")
+//    public ResponseEntity<String> findById(@RequestBody String userId) {
+    public ResponseEntity<UserDTO> findById() {
 
 //        Optional<User> userOptional = userService.findById(id);
 //
@@ -204,12 +189,18 @@ public class AdminController {
 //        }
 
 //        return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+//        return ResponseEntity.ok(keycloakUtils.findUserById(userId));
+        log.info("@GetMapping   1 ");
+        UserDTO userDTO = this.convertToUserDTO(keycloakUtils.findUserById("d40adf39-d573-4ed7-aa7a-36542e1c79f2"));
 
-
-        return ResponseEntity.ok(keycloakUtils.findUserById(userId));
-
-
+        return ResponseEntity.ok(userDTO);
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<String>> findAll() {
+        return ResponseEntity.ok(keycloakUtils.getAllUser());
+    }
+
 
     // получение уникального объекта по email
     @PostMapping("/search")
@@ -276,4 +267,16 @@ public class AdminController {
 //    }
 
 
+    private UserDTO convertToUserDTO(UserRepresentation userRepresentation) {
+        UserDTO userDTO = modelMapper.map(userRepresentation, UserDTO.class);
+        return addConvertToUserDTO(userRepresentation, userDTO);
+    }
+
+    public UserDTO addConvertToUserDTO(UserRepresentation userRepresentation, UserDTO existingUserDTO) {
+        Map<String, List<String>> attributes = userRepresentation.getAttributes();
+        if (attributes != null && !attributes.isEmpty()) {
+            modelMapper.map(attributes, existingUserDTO);
+        }
+        return existingUserDTO;
+    }
 }

@@ -3,11 +3,14 @@ server:
 spring:
   application:
     name: account
-#  security:
-#    oauth2:
-#      resourceserver:
-#        jwt:
-#          issuer-uri: http://localhost:8079
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:18079/realms/master
+  profiles:
+    active: kc
+
   h2:
     console:
       enabled: true

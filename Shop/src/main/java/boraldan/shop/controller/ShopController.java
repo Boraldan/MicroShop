@@ -60,7 +60,7 @@ public class ShopController {
     @PostMapping("/category")
     public ResponseEntity<?> category2(@RequestBody Category category) {
         // TODO: 11.04.2024 добавить валидации
-        System.out.println(category);
+        System.out.println( " category 1 --> " +  category);
 
         List<Item> itemList;
         if (category.getCategoryName().equals(CategoryName.ITEM)) {

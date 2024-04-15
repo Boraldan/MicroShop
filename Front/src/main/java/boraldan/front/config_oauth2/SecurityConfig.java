@@ -25,12 +25,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(customizer -> customizer
-                                .requestMatchers("/addcar").hasRole("CUSTOMER")
-                                .anyRequest().permitAll()
-//                                .anyRequest().authenticated()
-
-//                                .requestMatchers("/account/**").hasRole("CUSTOMER")
+//                        .requestMatchers("/account/**").hasRole("CUSTOMER")
+//                        .requestMatchers("/shop/addcar").hasRole("CUSTOMER")
 //                        .anyRequest().hasRole("CUSTOMER")
+                        .anyRequest().authenticated()
+//                        .anyRequest().permitAll()
                 )
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .oauth2Login(Customizer.withDefaults())

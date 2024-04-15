@@ -11,13 +11,12 @@ spring:
           enabled: true
           lower-case-service-id: true
 #      routes:
-#        - id: shop
-#          uri: lb://shop
+#        - id: account_route
+#          uri: lb://account
 #          predicates:
-#            - Path=/shop/**
-#            - Method=**
+#            - Path=/account/**
 #          filters:
-#            - StripPrefix=1
+#            - RewritePath=/account/(?<path>.*), /$\{path}
 eureka:
   client:
     service-url:

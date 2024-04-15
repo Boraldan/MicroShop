@@ -23,24 +23,23 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class OAuthClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
+    @Setter
+    private SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
     private final OAuth2AuthorizedClientManager authorizedClientManager;
-
     private final String registrationId;
 
-    @Setter
-    private SecurityContextHolderStrategy securityContextHolderStrategy =
-            SecurityContextHolder.getContextHolderStrategy();
-
     @Override
-    public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
-            throws IOException {
+    public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-            OAuth2AuthorizedClient authorizedClient = this.authorizedClientManager.authorize(
-                    OAuth2AuthorizeRequest.withClientRegistrationId(this.registrationId)
-                            .principal(this.securityContextHolderStrategy.getContext().getAuthentication())
-                            .build());
+            OAuth2AuthorizedClient authorizedClient = this.authorizedClientManager
+                    .authorize(OAuth2AuthorizeRequest.withClientRegistrationId(this.registrationId)
+                    .principal(this.securityContextHolderStrategy.getContext().getAuthentication())
+                    .build());
             request.getHeaders().setBearerAuth(authorizedClient.getAccessToken().getTokenValue());
         }
+
+        // TODO: 14.04.2024  добавить внедрение sessionID для анонимных пользователей, который будет ключом в Redis
+
         return execution.execute(request, body);
     }
 }

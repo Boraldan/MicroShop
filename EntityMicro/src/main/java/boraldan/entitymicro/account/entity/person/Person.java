@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,12 +24,13 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    protected Long id;
+    protected UUID id;
 
+    @Column(name = "username")
+    protected String username;
 
-
-    @Column(name = "name")
-    protected String name;
+    @Column(name = "fio")
+    protected String fio;
 
     @Column(name = "age")
     protected int age;
@@ -51,7 +54,7 @@ public class Person {
 //    protected Password password;
 
     public String info() {
-        return "%d : %s : %s".formatted(id, name, email);
+        return "%d : %s : %s".formatted(id, username, email);
     }
 
 }

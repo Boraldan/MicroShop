@@ -27,10 +27,6 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "coupon_id", referencedColumnName = "id")
-    private Coupon coupon;
-
     @Column(name = "sub_total")
     private BigDecimal subTotal;
 
@@ -59,6 +55,10 @@ public class Order {
 
     @OneToMany(mappedBy = "order")
     private List<UnitOrder> items;
+
+    @ManyToOne
+    @JoinColumn(name = "coupon_id", referencedColumnName = "id")
+    private Coupon coupon;
 
     public BigDecimal getSubTotal() {
         BigDecimal subTotal = BigDecimal.ZERO;

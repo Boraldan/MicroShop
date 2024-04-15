@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Information</title>
+</head>
+<body>
+<h2>User Information</h2>
+<div>
+    <p>ID: <span th:text="${user.id}"></span></p>
+    <p>Username: <span th:text="${user.username}"></span></p>
+    <p>Full Name: <span th:text="${user.fio}"></span></p>
+    <p>Age: <span th:text="${user.age}"></span></p>
+    <p>Phone: <span th:text="${user.phone}"></span></p>
+    <p>Email: <span th:text="${user.email}"></span></p>
+    <p>Card: <span th:text="${user.card}"></span></p>
+    <p>Role: <span th:text="${user.role}"></span></p>
+    <p>Cart ID: <span th:text="${user.cartId}"></span></p>
+</div>
+</body>
+</html>

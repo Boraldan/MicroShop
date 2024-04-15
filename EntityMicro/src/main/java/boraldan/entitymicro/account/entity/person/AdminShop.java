@@ -14,6 +14,6 @@ public class AdminShop extends Person{
 
     @Override
     public String info() {
-        return "%d : %s".formatted(id, name);
+        return "%d : %s".formatted(id, username);
     }
 }

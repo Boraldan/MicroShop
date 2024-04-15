@@ -1,5 +1,6 @@
 package boraldan.front.client;
 
+import boraldan.entitymicro.account.dto.UserDTO;
 import boraldan.entitymicro.shop.dto.ListItemDto;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.item.Item;
@@ -21,6 +22,26 @@ public class RestClientProductsRestClient {
             };
 
     private final RestClient restClient;
+
+
+    public UserDTO addAccount() {
+        return this.restClient.get()
+                .uri("/account/kc/add")
+                .retrieve()
+                .body(UserDTO.class);
+    }
+
+
+
+    public List<String> getAccount() {
+        return this.restClient.get()
+                .uri("/account/kc/all")
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {
+                });
+    }
+
+
 
     public ListItemDto findItem(Category category) {
         return this.restClient.post()

@@ -1,23 +1,26 @@
-package boraldan.keycloak.all;
+package boraldan.account.keycloak;
 
+
+import boraldan.entitymicro.account.dto.UserDTO;
+import jakarta.annotation.PostConstruct;
+import jakarta.ws.rs.core.Response;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.AbstractUserRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.javabegin.micro.planner.users.dto.UserDTO;
 
-import javax.annotation.PostConstruct;
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 
 @Service
 public class KeycloakUtils {
@@ -25,10 +28,13 @@ public class KeycloakUtils {
     // настройки из файла properties
     @Value("${keycloak.auth-server-url}")
     private String serverURL;
+
     @Value("${keycloak.realm}")
     private String realm;
+
     @Value("${keycloak.resource}")
     private String clientID;
+
     @Value("${keycloak.credentials.secret}")
     private String clientSecret;
 
@@ -40,18 +46,17 @@ public class KeycloakUtils {
     // создание объектов KC - будет выполняться после инициализации Spring бина
     @PostConstruct
     public Keycloak initKeycloak() {
-        if (keycloak == null) { // создаем объект только 1 раз
-
+        if (keycloak == null) {
             keycloak = KeycloakBuilder.builder()
                     .realm(realm)
                     .serverUrl(serverURL)
                     .clientId(clientID)
                     .clientSecret(clientSecret)
                     .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
+//                    .resteasyClient(new ResteasyClientBuilder().connectionPoolSize(10).build())
                     .build();
 
             realmResource = keycloak.realm(realm);
-
             usersResource = realmResource.users();
 
         }
@@ -67,6 +72,7 @@ public class KeycloakUtils {
 
         // данные пользователя (можете задавать или убирать любые поля - зависит от требуемого функционала)
         // специальный объект-контейнер UserRepresentation
+//        UserRepresentation kcUser = new UserRepresentation();
         UserRepresentation kcUser = new UserRepresentation();
         kcUser.setUsername(userDTO.getUsername());
         kcUser.setCredentials(Collections.singletonList(credentialRepresentation));
@@ -74,10 +80,24 @@ public class KeycloakUtils {
         kcUser.setEnabled(true);
         kcUser.setEmailVerified(false);
 
-        // вызов KC (всю внутреннюю кухню за нас делает библиотека - формирует REST запросы, заполняет параметры и пр.)
-        Response response = usersResource.create(kcUser);
 
-        return response;
+        // Установка дополнительных полей
+//        kcUser.singleAttribute("company", userDTO.getCompany());
+
+        // вызов KC (всю внутреннюю кухню за нас делает библиотека - формирует REST запросы, заполняет параметры и пр.)
+        Response creatResponse = usersResource.create(kcUser);
+
+
+
+//        Response response = keycloak.realm(realm).users().create(kcUser);
+
+        if (creatResponse.getStatus() == 201) {
+            System.out.println("User created successfully!");
+        } else {
+            System.out.println(" 1 creatResponse  -- >  Failed to create user!");
+        }
+
+        return creatResponse;
 
     }
 
@@ -109,18 +129,25 @@ public class KeycloakUtils {
     }
 
     // поиск уникального пользователя
-    public UserRepresentation findUserById(String userId){
+    public UserRepresentation findUserById(String userId) {
         // получаем пользователя
         return usersResource.get(userId).toRepresentation();
     }
+
+    // поиск уникального пользователя
+    public List<String> getAllUser() {
+        // получаем пользователя
+        return usersResource.list().stream().map(AbstractUserRepresentation::getUsername).toList();
+    }
+
 
     // поиск пользователя по любым атрибутам (вхождение текста)
     public List<UserRepresentation> searchKeycloakUsers(String text) {
 
         // получаем пользователя
         return usersResource.searchByAttributes(text);
-
     }
+
     // добавление роли пользователю
     public void addRoles(String userId, List<String> roles) {
 
@@ -149,6 +176,7 @@ public class KeycloakUtils {
         passwordCredentials.setValue(password);
         return passwordCredentials;
     }
+
 
 
 }
