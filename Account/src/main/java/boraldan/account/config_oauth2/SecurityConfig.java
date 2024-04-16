@@ -22,7 +22,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(configurer -> configurer
-//                                .requestMatchers("/h2", "/h2/**").permitAll()
+
+                                .requestMatchers("/auth/singup").permitAll()
+                                .requestMatchers("/h2").permitAll()
                                 .requestMatchers("/**").hasRole("CUSTOMER")
 //                                .anyRequest().permitAll()
                                 .anyRequest().authenticated()

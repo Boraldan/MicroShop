@@ -1,7 +1,8 @@
 package boraldan.account.keycloak;
 
 
-import boraldan.entitymicro.account.dto.UserDTO;
+import boraldan.entitymicro.account.dto.PersonDTO;
+import boraldan.entitymicro.account.dto.SingUpDto;
 import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.OAuth2Constants;
@@ -23,9 +24,8 @@ import java.util.List;
 
 
 @Service
-public class KeycloakUtils {
+public class KeycloakService {
 
-    // настройки из файла properties
     @Value("${keycloak.auth-server-url}")
     private String serverURL;
 
@@ -42,8 +42,6 @@ public class KeycloakUtils {
     private static RealmResource realmResource; // доступ к API realm
     private static UsersResource usersResource;   // доступ к API для работы с пользователями
 
-
-    // создание объектов KC - будет выполняться после инициализации Spring бина
     @PostConstruct
     public Keycloak initKeycloak() {
         if (keycloak == null) {
@@ -53,99 +51,84 @@ public class KeycloakUtils {
                     .clientId(clientID)
                     .clientSecret(clientSecret)
                     .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
-//                    .resteasyClient(new ResteasyClientBuilder().connectionPoolSize(10).build())
+//                    .resteasyClient(new ResteasyClientBuilderImpl().connectionPoolSize(10).build())
                     .build();
-
             realmResource = keycloak.realm(realm);
             usersResource = realmResource.users();
-
         }
         return keycloak;
     }
 
-
     // создание пользователя для KC
-    public Response createKeycloakUser(UserDTO userDTO) {
+    public Response createKeycloakUser(SingUpDto singUpDto) {
 
         // данные пароля - специальный объект-контейнер CredentialRepresentation
-        CredentialRepresentation credentialRepresentation = createPasswordCredentials(userDTO.getPassword());
+        CredentialRepresentation credentialRepresentation = createPasswordCredentials(singUpDto.getPassword());
 
         // данные пользователя (можете задавать или убирать любые поля - зависит от требуемого функционала)
         // специальный объект-контейнер UserRepresentation
-//        UserRepresentation kcUser = new UserRepresentation();
         UserRepresentation kcUser = new UserRepresentation();
-        kcUser.setUsername(userDTO.getUsername());
+        kcUser.setUsername(singUpDto.getUsername());
         kcUser.setCredentials(Collections.singletonList(credentialRepresentation));
-        kcUser.setEmail(userDTO.getEmail());
+        kcUser.setEmail(singUpDto.getEmail());
         kcUser.setEnabled(true);
         kcUser.setEmailVerified(false);
+        kcUser.setGroups(Collections.singletonList("Customer"));
 
-
-        // Установка дополнительных полей
+        // Установка дополнительных полей, которые заданы как атрибуты keycloak
 //        kcUser.singleAttribute("company", userDTO.getCompany());
 
+        //  можно выбрать любой realm в который будет сохраняться User
+        //  Response response = keycloak.realm(realm).users().create(kcUser);
+
         // вызов KC (всю внутреннюю кухню за нас делает библиотека - формирует REST запросы, заполняет параметры и пр.)
-        Response creatResponse = usersResource.create(kcUser);
-
-
-
-//        Response response = keycloak.realm(realm).users().create(kcUser);
-
-        if (creatResponse.getStatus() == 201) {
-            System.out.println("User created successfully!");
-        } else {
-            System.out.println(" 1 creatResponse  -- >  Failed to create user!");
-        }
-
-        return creatResponse;
-
+        return usersResource.create(kcUser);
     }
 
-    // удаление пользователя для KC
-    public void deleteKeycloakUser(String userId) {
 
-        // получаем пользователя
-        UserResource uniqueUserResource = usersResource.get(userId);
-        uniqueUserResource.remove();
 
-    }
 
-    // обновление пользователя для KC
-    public void updateKeycloakUser(UserDTO userDTO) {
-
-        // данные пароля - специальный объект-контейнер CredentialRepresentation
-        CredentialRepresentation credentialRepresentation = createPasswordCredentials(userDTO.getPassword());
-
-        // какие поля обновляем
-        UserRepresentation kcUser = new UserRepresentation();
-        kcUser.setUsername(userDTO.getUsername());
-        kcUser.setCredentials(Collections.singletonList(credentialRepresentation));
-        kcUser.setEmail(userDTO.getEmail());
-
-        // получаем пользователя
-        UserResource uniqueUserResource = usersResource.get(userDTO.getId());
-        uniqueUserResource.update(kcUser); // обновление
-
-    }
 
     // поиск уникального пользователя
-    public UserRepresentation findUserById(String userId) {
-        // получаем пользователя
+    public UserRepresentation getUserById(String userId) {
         return usersResource.get(userId).toRepresentation();
     }
 
     // поиск уникального пользователя
     public List<String> getAllUser() {
-        // получаем пользователя
         return usersResource.list().stream().map(AbstractUserRepresentation::getUsername).toList();
+    }
+
+    public  List<UserRepresentation> getListByUsername(String username) {
+       return  usersResource.searchByUsername(username, true);
+    }
+
+    public  List<UserRepresentation> getListByEmail(String email) {
+        return  usersResource.searchByEmail(email, true);
+    }
+
+    public Integer checkByUsernameAndEmail(String username, String email){
+        return usersResource.count(null, null, username, email);
     }
 
 
     // поиск пользователя по любым атрибутам (вхождение текста)
-    public List<UserRepresentation> searchKeycloakUsers(String text) {
-
-        // получаем пользователя
+    public List<UserRepresentation> getByAttributes(String text) {
         return usersResource.searchByAttributes(text);
+    }
+
+    public void updateKeycloakUser(PersonDTO personDTO) {
+        // данные пароля - специальный объект-контейнер CredentialRepresentation
+        CredentialRepresentation credentialRepresentation = createPasswordCredentials(personDTO.getPassword());
+
+        // какие поля обновляем
+        UserRepresentation kcUser = new UserRepresentation();
+        kcUser.setUsername(personDTO.getUsername());
+        kcUser.setCredentials(Collections.singletonList(credentialRepresentation));
+        kcUser.setEmail(personDTO.getEmail());
+
+        UserResource uniqueUserResource = usersResource.get(personDTO.getId());
+        uniqueUserResource.update(kcUser);
     }
 
     // добавление роли пользователю
@@ -168,6 +151,16 @@ public class KeycloakUtils {
 
     }
 
+    // удаление пользователя для KC
+    public void deleteKeycloakUser(String userId) {
+
+        // получаем пользователя
+        UserResource uniqueUserResource = usersResource.get(userId);
+        uniqueUserResource.remove();
+
+    }
+
+
     // данные о пароле
     private CredentialRepresentation createPasswordCredentials(String password) {
         CredentialRepresentation passwordCredentials = new CredentialRepresentation();
@@ -176,7 +169,6 @@ public class KeycloakUtils {
         passwordCredentials.setValue(password);
         return passwordCredentials;
     }
-
 
 
 }

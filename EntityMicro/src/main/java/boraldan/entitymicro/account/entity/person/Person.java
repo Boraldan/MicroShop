@@ -4,7 +4,6 @@ package boraldan.entitymicro.account.entity.person;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +21,7 @@ import java.util.UUID;
 public class Person {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     protected UUID id;
 
@@ -35,7 +34,6 @@ public class Person {
     @Column(name = "age")
     protected int age;
 
-    @NotNull
     @Column(name = "phone")
     protected Long phone;
 

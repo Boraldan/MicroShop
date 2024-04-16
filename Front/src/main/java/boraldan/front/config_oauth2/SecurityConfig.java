@@ -25,7 +25,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(customizer -> customizer
-//                        .requestMatchers("/account/**").hasRole("CUSTOMER")
+                        .requestMatchers("/auth/singup").permitAll()
 //                        .requestMatchers("/shop/addcar").hasRole("CUSTOMER")
 //                        .anyRequest().hasRole("CUSTOMER")
                         .anyRequest().authenticated()

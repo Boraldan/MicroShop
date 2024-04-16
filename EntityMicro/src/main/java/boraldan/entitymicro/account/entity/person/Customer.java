@@ -30,4 +30,17 @@ public class Customer extends Person {
         return "%d : %s : %s".formatted(id, username, email );
     }
 
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "cartId=" + cartId +
+                ", id=" + id +
+                ", username='" + username + '\'' +
+                ", fio='" + fio + '\'' +
+                ", age=" + age +
+                ", phone=" + phone +
+                ", email='" + email + '\'' +
+                ", card=" + card +
+                '}';
+    }
 }

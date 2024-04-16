@@ -4,9 +4,8 @@ import jakarta.servlet.http.HttpSessionEvent;
 import jakarta.servlet.http.HttpSessionListener;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 @AllArgsConstructor
 public class MySessionListener implements HttpSessionListener {
 

@@ -2,8 +2,9 @@ package boraldan.account.controller;
 
 
 import boraldan.account.dto.Counter;
-import boraldan.entitymicro.account.dto.UserDTO;
-import boraldan.account.keycloak.KeycloakUtils;
+import boraldan.account.keycloak.KeycloakService;
+import boraldan.entitymicro.account.dto.PersonDTO;
+import boraldan.entitymicro.account.dto.SingUpDto;
 import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -14,49 +15,35 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
-/*
-
-Чтобы дать меньше шансов для взлома (например, CSRF атак): POST/PUT запросы могут изменять/фильтровать закрытые данные, а GET запросы - для получения незащищенных данных
-Т.е. GET-запросы не должны использоваться для изменения/получения секретных данных
-
-Если возникнет exception - вернется код  500 Internal Server Error, поэтому не нужно все действия оборачивать в try-catch
-
-Используем @RestController вместо обычного @Controller, чтобы все ответы сразу оборачивались в JSON,
-иначе пришлось бы добавлять лишние объекты в код, использовать @ResponseBody для ответа, указывать тип отправки JSON
-
-Названия методов могут быть любыми, главное не дублировать их имена и URL mapping
-
-*/
+/**
+ * Чтобы дать меньше шансов для взлома (например, CSRF атак): POST/PUT запросы могут изменять/фильтровать закрытые данные,
+ * а GET запросы - для получения незащищенных данных
+ * т.е. GET-запросы не должны использоваться для изменения/получения секретных данных
+ */
 @Log4j2
 @AllArgsConstructor
-@RequestMapping("/kc") // базовый URI
+@RequestMapping("/kc")
 @RestController
 public class KeyCloakController {
 
     public static final String ID_COLUMN = "id"; // имя столбца id
     private static final int CONFLICT = 409; // если пользователь уже существует в KC и пытаемся создать такого же
     private static final String USER_ROLE_NAME = "ROLE_CUSTOMER"; // название роли из KC
-    private final KeycloakUtils keycloakUtils;
+    private final KeycloakService keycloakService;
     private final ModelMapper modelMapper;
 
-//    @PostMapping("/add")
+    //    @PostMapping("/add")
 //    public ResponseEntity<?> add(@RequestBody UserDTO userDTO) {
-
     @GetMapping("/add")
     public ResponseEntity<?> add() {
-        UserDTO userDTO = new UserDTO();
+        SingUpDto singUpDto = new SingUpDto();
         int num = Counter.getNum();
-        userDTO.setUsername("Gek_%d".formatted(num));
-        userDTO.setFio("firstName_%d".formatted(num));
-        userDTO.setEmail("gek_%d@mail.ru".formatted(num));
-        userDTO.setPassword("123");
-
-        System.out.println(userDTO);
+        singUpDto.setUsername("Gek_%d".formatted(num));
+        singUpDto.setEmail("gek_%d@mail.ru".formatted(num));
+        singUpDto.setPassword("123");
 
         // проверка на обязательные параметры
 //        if (!userDTO.getId().isBlank()) {
@@ -79,34 +66,31 @@ public class KeyCloakController {
 
 
         // создаем пользователя
-        Response response = keycloakUtils.createKeycloakUser(userDTO);
-
-        System.out.println(response.getStatus());
+        Response response = keycloakService.createKeycloakUser(singUpDto);
 
         if (response.getStatus() == CONFLICT) {
-            return new ResponseEntity("User or email already exists " + userDTO.getEmail(), HttpStatus.CONFLICT);
+            return new ResponseEntity("User or email already exists " + singUpDto.getEmail(), HttpStatus.CONFLICT);
         }
 
         // получаем его ID
         String userId = CreatedResponseUtil.getCreatedId(response);
-
         System.out.printf("User created with userId: %s%n", userId);
 
-        List<String> defaultRoles = new ArrayList<>();
-        defaultRoles.add(USER_ROLE_NAME); // эта роль должна присутствовать в KC на уровне Realm
-//        defaultRoles.add("admin");
-
-        keycloakUtils.addRoles(userId, defaultRoles);
+////        добавление role вручную----------
+//        List<String> defaultRoles = new ArrayList<>();
+//        defaultRoles.add(USER_ROLE_NAME); // эта роль должна присутствовать в KC на уровне Realm
+////        defaultRoles.add("admin");
+//        keycloakUtils.addRoles(userId, defaultRoles);
 
 //        return ResponseEntity.status(createdResponse.getStatus()).build();
-        return ResponseEntity.ok(userDTO);
+        return ResponseEntity.ok(singUpDto);
 
     }
 
 
     // обновление
     @PutMapping("/update")
-    public ResponseEntity<UserDTO> update(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<PersonDTO> update(@RequestBody PersonDTO userDTO) {
 
         // проверка на обязательные параметры
         if (userDTO.getId().isBlank()) {
@@ -128,7 +112,7 @@ public class KeyCloakController {
 
 
         // save работает как на добавление, так и на обновление
-        keycloakUtils.updateKeycloakUser(userDTO);
+        keycloakService.updateKeycloakUser(userDTO);
 
         return new ResponseEntity<>(HttpStatus.OK); // просто отправляем статус 200 (операция прошла успешно)
 
@@ -148,7 +132,7 @@ public class KeyCloakController {
 //            return new ResponseEntity("userId=" + userId + " not found", HttpStatus.NOT_ACCEPTABLE);
 //        }
 
-        keycloakUtils.deleteKeycloakUser(userId);
+        keycloakService.deleteKeycloakUser(userId);
 
         return ResponseEntity.ok().build();
 
@@ -174,7 +158,7 @@ public class KeyCloakController {
 //    @PostMapping("/id")
     @GetMapping("/id")
 //    public ResponseEntity<String> findById(@RequestBody String userId) {
-    public ResponseEntity<UserDTO> findById() {
+    public ResponseEntity<PersonDTO> findById() {
 
 //        Optional<User> userOptional = userService.findById(id);
 //
@@ -191,14 +175,14 @@ public class KeyCloakController {
 //        return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
 //        return ResponseEntity.ok(keycloakUtils.findUserById(userId));
         log.info("@GetMapping   1 ");
-        UserDTO userDTO = this.convertToUserDTO(keycloakUtils.findUserById("d40adf39-d573-4ed7-aa7a-36542e1c79f2"));
+        PersonDTO userDTO = this.convertToUserDTO(keycloakService.getUserById("d40adf39-d573-4ed7-aa7a-36542e1c79f2"));
 
         return ResponseEntity.ok(userDTO);
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<String>> findAll() {
-        return ResponseEntity.ok(keycloakUtils.getAllUser());
+        return ResponseEntity.ok(keycloakService.getAllUser());
     }
 
 
@@ -216,7 +200,7 @@ public class KeyCloakController {
 //            e.printStackTrace();
 //            return new ResponseEntity("email=" + email + " not found", HttpStatus.NOT_ACCEPTABLE);
 //        }
-        return ResponseEntity.ok(keycloakUtils.searchKeycloakUsers(email));
+        return ResponseEntity.ok(keycloakService.getByAttributes(email));
 
     }
 
@@ -267,12 +251,13 @@ public class KeyCloakController {
 //    }
 
 
-    private UserDTO convertToUserDTO(UserRepresentation userRepresentation) {
-        UserDTO userDTO = modelMapper.map(userRepresentation, UserDTO.class);
+    private PersonDTO convertToUserDTO(UserRepresentation userRepresentation) {
+
+        PersonDTO userDTO = modelMapper.map(userRepresentation, PersonDTO.class);
         return addConvertToUserDTO(userRepresentation, userDTO);
     }
 
-    public UserDTO addConvertToUserDTO(UserRepresentation userRepresentation, UserDTO existingUserDTO) {
+    public PersonDTO addConvertToUserDTO(UserRepresentation userRepresentation, PersonDTO existingUserDTO) {
         Map<String, List<String>> attributes = userRepresentation.getAttributes();
         if (attributes != null && !attributes.isEmpty()) {
             modelMapper.map(attributes, existingUserDTO);

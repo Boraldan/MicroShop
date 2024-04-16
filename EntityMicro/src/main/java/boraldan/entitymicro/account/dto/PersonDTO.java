@@ -6,7 +6,7 @@ import java.util.UUID;
 
 // пользователь - основной объект, с которым связаны все остальные (через внешние ключи)
 @Data
-public class UserDTO {
+public class PersonDTO {
     private String id;
     private String username;
     private String fio;

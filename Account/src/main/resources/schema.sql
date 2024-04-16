@@ -1,10 +1,10 @@
 CREATE TABLE t_person
 (
     id       UUID PRIMARY KEY,
-    username VARCHAR,
+    username VARCHAR NOT NULL,
     fio      VARCHAR,
     age      INTEGER,
-    phone    BIGINT  NOT NULL,
+    phone    BIGINT,
     email    VARCHAR NOT NULL,
     card     BIGINT
 );

@@ -1,5 +1,6 @@
 package boraldan.account.service;
 
+import boraldan.account.keycloak.KeycloakService;
 import boraldan.account.repository.person.CustomerRepo;
 import boraldan.account.service.i_service.CustomerService;
 import boraldan.entitymicro.account.entity.order.Order;
@@ -17,6 +18,7 @@ import java.util.UUID;
 public class CustomerServiceV1 implements CustomerService {
 
     private final CustomerRepo customerRepo;
+    private final KeycloakService kcService;
 
     @Override
     public Customer findById(UUID id) {
@@ -41,6 +43,9 @@ public class CustomerServiceV1 implements CustomerService {
     public Customer save(Customer customer) {
         return customerRepo.save(customer);
     }
+
+
+
 
     @Override
     public void delete(Customer customer) {

@@ -1,7 +1,8 @@
 package boraldan.front.controller;
 
 
-import boraldan.entitymicro.account.dto.UserDTO;
+import boraldan.entitymicro.account.dto.PersonDTO;
+import boraldan.entitymicro.account.dto.SingUpDto;
 import boraldan.entitymicro.shop.dto.ListItemDto;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.front.client.RestClientProductsRestClient;
@@ -46,14 +47,25 @@ public class FrontController {
 //    }
 
 
-
     @GetMapping("/account/add")
     public String addAccount(Model model) {
-        UserDTO userDTO = restClient.addAccount();
+        PersonDTO userDTO = restClient.addAccount();
         log.info("1 --> " + userDTO);
         model.addAttribute("user", userDTO);
         return "UserDto";
     }
+
+    @GetMapping("/auth/singup")
+    public String singUpCustomer() {
+        return "auth/singup";
+    }
+
+    @PostMapping("/auth/singup")
+    public String postCustomer(Model model, SingUpDto singUpDto) {
+        model.addAttribute("customer", restClient.singUpCustomer(singUpDto));
+        return "customer";
+    }
+
 
     @GetMapping("/account")
     public String getAccount(Model model) {
@@ -75,7 +87,6 @@ public class FrontController {
         model.addAttribute("item", restClient.addCar());
         return "item";
     }
-
 
 
     @PostMapping("/catalog")

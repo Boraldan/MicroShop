@@ -1,6 +1,8 @@
 package boraldan.front.client;
 
-import boraldan.entitymicro.account.dto.UserDTO;
+import boraldan.entitymicro.account.dto.PersonDTO;
+import boraldan.entitymicro.account.dto.SingUpDto;
+import boraldan.entitymicro.account.entity.person.Customer;
 import boraldan.entitymicro.shop.dto.ListItemDto;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.item.Item;
@@ -24,13 +26,21 @@ public class RestClientProductsRestClient {
     private final RestClient restClient;
 
 
-    public UserDTO addAccount() {
+    public PersonDTO addAccount() {
         return this.restClient.get()
                 .uri("/account/kc/add")
                 .retrieve()
-                .body(UserDTO.class);
+                .body(PersonDTO.class);
     }
 
+    public Customer singUpCustomer(SingUpDto singUpDto) {
+        return this.restClient.post()
+                .uri("/account/auth/singup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(singUpDto)
+                .retrieve()
+                .body(Customer.class);
+    }
 
 
     public List<String> getAccount() {
