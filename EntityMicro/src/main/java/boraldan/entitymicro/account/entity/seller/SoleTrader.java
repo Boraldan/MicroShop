@@ -17,6 +17,6 @@ public class SoleTrader extends Seller{
 
     @Override
     public String info() {
-        return "%d : %s : %s".formatted(id, soleName, email);
+        return "%s : %s : %s".formatted(id, soleName, email);
     }
 }

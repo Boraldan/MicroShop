@@ -12,8 +12,5 @@ import lombok.*;
 @Table(name = "admin_shop")
 public class AdminShop extends Person{
 
-    @Override
-    public String info() {
-        return "%d : %s".formatted(id, username);
-    }
+
 }

@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/authorize")
 @RestController
-public class AuthController {
+public class AuthorizeController {
 
     private final ModelMapper modelMapper;
     private final CustomerService customerService;
@@ -38,7 +38,7 @@ public class AuthController {
         if (responseJakarta.getStatus() != 201) {
             return new ResponseEntity<>("User not created ", HttpStatus.CONFLICT);
         }
-        Customer customer = customerService.save(convertToCustomer(singUpDto));
+        Customer customer = customerService.saveNew(convertToCustomer(singUpDto));
         return new ResponseEntity<>(customer, HttpStatus.OK);
     }
 

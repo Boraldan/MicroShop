@@ -20,11 +20,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "Seller")
+@Table(name = "t_seller")
 public class Seller {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     protected UUID id;
 
@@ -50,7 +50,7 @@ public class Seller {
     protected List<Order> orders;
 
     public String info() {
-        return "%d : %s".formatted(id, email);
+        return "%s : %s".formatted(id, email);
     }
 
 }

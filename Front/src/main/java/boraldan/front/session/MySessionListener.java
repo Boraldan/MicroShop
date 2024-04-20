@@ -1,28 +1,50 @@
 package boraldan.front.session;
 
+import boraldan.entitymicro.cart.entity.Cart;
+import boraldan.front.redis.RedisService;
+import boraldan.front.rest_client.CartRestClient;
 import jakarta.servlet.http.HttpSessionEvent;
 import jakarta.servlet.http.HttpSessionListener;
-import lombok.AllArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Component;
 
-//@Component
-@AllArgsConstructor
+@Component
+@RequiredArgsConstructor
 public class MySessionListener implements HttpSessionListener {
 
-    private final RedisTemplate<String, Object> redis;
+    private final RedisService redisService;
+    private final CartRestClient cartRestClient;
+
 
     @Override
     public void sessionCreated(HttpSessionEvent event) {
-        // Обработка события создания сессии
-        event.getSession().setMaxInactiveInterval(100);
+        event.getSession().setMaxInactiveInterval(20);
         System.out.println("Session Created: " + event.getSession().getId());
     }
 
     @Override
     public void sessionDestroyed(HttpSessionEvent event) {
 
-       // Обработка события закрытия сессии
-        redis.opsForValue().getOperations().delete(event.getSession().getId());
+        String username = "";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof OAuth2AuthenticationToken) {
+            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+            OAuth2User oauth2User = oauthToken.getPrincipal();
+            username = oauth2User.getName();
+        }
+        if (username.isBlank()) {
+            System.out.println("MySessionListener username --> " + username);
+            redisService.deleteCart(event.getSession().getId());
+        } else {
+            Cart cart = redisService.getOpsForValue().getAndDelete(username);
+            cartRestClient.saveCartSession(cart);
+            System.out.println("Удалили из Redis  и  записали новую в Cart-app");
+        }
+
         System.out.println("Session Destroyed: " + event.getSession().getId());
     }
 }

@@ -1,16 +1,16 @@
 
 CREATE TABLE cart (
-                      id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                      customer_id BIGINT,
-                      coupon_id BIGINT,
+                      id UUID PRIMARY KEY  ,
+                      customer_id UUID,
+                      coupon_id UUID,
                       sub_total DECIMAL(10, 2),
                       total DECIMAL(10, 2),
                       creat_at TIMESTAMP
 );
 
-CREATE TABLE cart_unit (
-                           id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                           cart_id BIGINT,
+CREATE TABLE unit_cart (
+                           id UUID PRIMARY KEY,
+                           cart_id UUID,
                            item_id BIGINT,
                            quantity INT,
                            price_item DECIMAL(10, 2),
@@ -18,8 +18,5 @@ CREATE TABLE cart_unit (
                            FOREIGN KEY (cart_id) REFERENCES cart(id)
 );
 
-INSERT INTO cart (customer_id, coupon_id, sub_total, total, creat_at)
-VALUES
-    (1, NULL, 100.00, 90.00, now()),
-    (2, 101, 75.50, 70.00, now()),
-    (3, NULL, 200.00, 190.00, now());
+INSERT INTO cart (id,  sub_total)
+VALUES ('747e74ce-0ed8-46a5-9ff5-981814d52076',  100.00 );

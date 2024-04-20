@@ -16,7 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "Customer")
+@Table(name = "customer")
 public class Customer extends Person {
 
     @Column(name = "cart_id")
@@ -25,10 +25,7 @@ public class Customer extends Person {
     @OneToMany (mappedBy = "customer")
     private List<Order> orders;
 
-    @Override
-    public String info() {
-        return "%d : %s : %s".formatted(id, username, email );
-    }
+
 
     @Override
     public String toString() {

@@ -36,6 +36,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ShopController {
     public static int counter;
-
     private final CategoryService categoryService;
     private final ItemServiceClassProvider itemService;
     private final FlyRepo flyRepo;
@@ -56,11 +56,14 @@ public class ShopController {
     private final MqShopService mqShopService;
     private final RedisTemplate<String, Object> redis;
 
-
     @PostMapping("/category")
-    public ResponseEntity<?> category2(@RequestBody Category category) {
-        // TODO: 11.04.2024 добавить валидации
-        System.out.println( " category 1 --> " +  category);
+    public ResponseEntity<?> category2(@RequestBody Category category,
+                                       Principal principal,
+                                       @RequestHeader("REDIS") String redisKey) {
+
+        System.out.println("category    1 -->  " + category);
+        System.out.println("principal   2 -->  " + principal);
+        System.out.println("redisKey    3 -->  " + redisKey);
 
         List<Item> itemList;
         if (category.getCategoryName().equals(CategoryName.ITEM)) {
@@ -70,7 +73,6 @@ public class ShopController {
         }
         return new ResponseEntity<>(new ListItemDtoBuilder().setItemList(itemList).build(), HttpStatus.OK);
     }
-
 
 
     @GetMapping("/item")

@@ -1,4 +1,4 @@
-package boraldan.front.client;
+package boraldan.front.rest_client;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

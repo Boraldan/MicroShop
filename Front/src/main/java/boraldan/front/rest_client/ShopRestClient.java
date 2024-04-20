@@ -1,4 +1,4 @@
-package boraldan.front.client;
+package boraldan.front.rest_client;
 
 import boraldan.entitymicro.account.dto.PersonDTO;
 import boraldan.entitymicro.account.dto.SingUpDto;
@@ -17,40 +17,15 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class RestClientProductsRestClient {
+public class ShopRestClient {
 
-    private static final ParameterizedTypeReference<List<Item>> PRODUCTS_TYPE_REFERENCE =
-            new ParameterizedTypeReference<>() {
-            };
-
+    private static final ParameterizedTypeReference<List<Item>> PRODUCTS_TYPE_REFERENCE;
     private final RestClient restClient;
 
-
-    public PersonDTO addAccount() {
-        return this.restClient.get()
-                .uri("/account/kc/add")
-                .retrieve()
-                .body(PersonDTO.class);
+    static {
+        PRODUCTS_TYPE_REFERENCE = new ParameterizedTypeReference<>() {
+        };
     }
-
-    public Customer singUpCustomer(SingUpDto singUpDto) {
-        return this.restClient.post()
-                .uri("/account/auth/singup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(singUpDto)
-                .retrieve()
-                .body(Customer.class);
-    }
-
-
-    public List<String> getAccount() {
-        return this.restClient.get()
-                .uri("/account/kc/all")
-                .retrieve()
-                .body(new ParameterizedTypeReference<>() {
-                });
-    }
-
 
 
     public ListItemDto findItem(Category category) {

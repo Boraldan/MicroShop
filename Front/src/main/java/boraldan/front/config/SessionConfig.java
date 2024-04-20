@@ -1,7 +1,6 @@
 package boraldan.front.config;
 
-//
-//import com.sun.net.httpserver.HttpServer;
+
 //import jakarta.servlet.ServletContext;
 //import jakarta.servlet.ServletException;
 //import org.springframework.boot.web.servlet.ServletContextInitializer;

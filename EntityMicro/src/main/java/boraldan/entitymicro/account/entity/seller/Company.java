@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "Company")
+@Table(name = "company")
 public class Company extends Seller {
 
     @Column(name = "company_name")
@@ -19,7 +19,7 @@ public class Company extends Seller {
 
     @Override
     public String info() {
-        return "%d : %s : %s".formatted(id, companyName, email);
+        return "%s : %s : %s".formatted(id, companyName, email);
     }
 }
 

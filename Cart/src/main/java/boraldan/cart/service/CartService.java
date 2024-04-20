@@ -2,15 +2,15 @@ package boraldan.cart.service;
 
 
 import boraldan.cart.repository.CartRepo;
-import boraldan.cart.repository.CartUnitRepo;
 import boraldan.entitymicro.cart.entity.Cart;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -18,15 +18,31 @@ import java.util.List;
 public class CartService {
 
     private final CartRepo cartRepo;
-    private final HttpSession session;
-//    private final CarService carService;
-//    private final CarValidator carValidator;
-//
 
-    public List<Cart> getCarts(){
+    public List<Cart> getAll() {
         return cartRepo.findAll();
     }
 
+    public Optional<Cart> getById(UUID cartId) {
+        return cartRepo.findById(cartId);
+    }
+
+    @Transactional
+    public Cart save(Cart cart) {
+        return cartRepo.save(cart);
+    }
+
+    @Transactional
+    public Cart saveNew() {
+        Cart cart = new Cart();
+        cart.setCreatAt(LocalDateTime.now());
+        return cartRepo.save(cart);
+    }
+
+    @Transactional
+    public Cart update(Cart cart) {
+        return cartRepo.save(cart);
+    }
 
 //    public List<Car> cloneCart() {
 //        Cart cart = (Cart) session.getAttribute("cart");

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart Information</title>
+</head>
+<body>
+<h2>Cart Information</h2>
+<div>
+  <p>ID: <span th:text="${cart.id}"></span></p>
+  <p>name: <span th:text="${cart.name}"></span></p>
+<!--  <p>Sub Total: <span th:text="${cart.subTotal}"></span></p>-->
+<!--  <p>Total: <span th:text="${cart.total}"></span></p>-->
+<!--  <p>Created At: <span th:text="${cart.creatAt}"></span></p>-->
+</div>
+<h3>Unit Cart Items</h3>
+<!--<ul>-->
+<!--  <li th:each="unitCart : ${cart.unitCart}">-->
+<!--    <span th:text="${unitCart.price}"></span> &lt;!&ndash; Assuming you want to display price &ndash;&gt;-->
+<!--  </li>-->
+<!--</ul>-->
+</body>
+</html>

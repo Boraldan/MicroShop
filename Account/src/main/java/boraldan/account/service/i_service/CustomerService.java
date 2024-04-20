@@ -12,6 +12,7 @@ public interface CustomerService {
     Optional<Customer> findByUsername(String username);
 
     Customer save(Customer customer);
+    Customer saveNew(Customer customer);
 
     void delete(Customer customer);
 }

@@ -18,13 +18,18 @@ import java.util.stream.Stream;
 @Configuration
 public class SecurityConfig {
 
+    // для отправки пользователей на страницу входа, если их токен доступа недействителен или отсутствует
+//    @Bean
+//    public BasicAuthenticationEntryPoint basicAuthenticationEntryPoint() {
+//        return new BasicAuthenticationEntryPoint();
+//    }
+
     //  для ресурса -------------  работает всё ----------------------
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(configurer -> configurer
-
-                                .requestMatchers("/auth/singup").permitAll()
-                                .requestMatchers("/h2").permitAll()
+                                .requestMatchers("/authorize/singup").permitAll()
+                                .requestMatchers("/h2", "/h2/**").permitAll()
                                 .requestMatchers("/**").hasRole("CUSTOMER")
 //                                .anyRequest().permitAll()
                                 .anyRequest().authenticated()

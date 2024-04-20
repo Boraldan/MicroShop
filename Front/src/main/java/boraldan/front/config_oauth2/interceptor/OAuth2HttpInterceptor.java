@@ -1,4 +1,4 @@
-package boraldan.front.config_oauth2;
+package boraldan.front.config_oauth2.interceptor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -20,8 +20,9 @@ import java.io.IOException;
  * и после внедряет токкен в хеддер.
  */
 
+
 @RequiredArgsConstructor
-public class OAuthClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
+public class OAuth2HttpInterceptor implements ClientHttpRequestInterceptor {
 
     @Setter
     private SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
@@ -30,6 +31,7 @@ public class OAuthClientHttpRequestInterceptor implements ClientHttpRequestInter
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+
         if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
             OAuth2AuthorizedClient authorizedClient = this.authorizedClientManager
                     .authorize(OAuth2AuthorizeRequest.withClientRegistrationId(this.registrationId)
@@ -38,7 +40,7 @@ public class OAuthClientHttpRequestInterceptor implements ClientHttpRequestInter
             request.getHeaders().setBearerAuth(authorizedClient.getAccessToken().getTokenValue());
         }
 
-        // TODO: 14.04.2024  добавить внедрение sessionID для анонимных пользователей, который будет ключом в Redis
+        System.out.println("1  my_intercept--> "  + request.getHeaders());
 
         return execution.execute(request, body);
     }

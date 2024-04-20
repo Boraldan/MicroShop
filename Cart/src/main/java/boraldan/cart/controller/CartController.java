@@ -1,20 +1,19 @@
 package boraldan.cart.controller;
 
 import boraldan.cart.service.CartService;
-
 import boraldan.entitymicro.cart.dto.CartsDTO;
+import boraldan.entitymicro.cart.entity.Cart;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,21 +23,27 @@ public class CartController {
     private final CartService cartService;
 
     @GetMapping("/carts")
-    public ResponseEntity<CartsDTO> carts(){
-        return new ResponseEntity<>(new CartsDTO(cartService.getCarts()), HttpStatus.OK);
+    public ResponseEntity<CartsDTO> carts() {
+        return new ResponseEntity<>(new CartsDTO(cartService.getAll()), HttpStatus.OK);
     }
 
+    @PostMapping("/get")
+    public ResponseEntity<Cart> getCartById(@RequestBody String stringUuid) {
+        UUID cartId = UUID.fromString(stringUuid);
+        Optional<Cart> cart = cartService.getById(cartId);
+        return new ResponseEntity<>(cart.orElse(null), HttpStatus.OK);
+    }
 
+    @GetMapping("/getnew")
+    public ResponseEntity<Cart> getNewCart() {
+        return new ResponseEntity<>(cartService.saveNew(), HttpStatus.OK);
+    }
 
-
-
-
-
-
-
-
-
-
+    @PostMapping("/savesession")
+    public ResponseEntity<Void> saveCart(@RequestBody Cart cart) {
+        Cart saveCart = cartService.save(cart);
+        return new ResponseEntity<>(saveCart == null ? HttpStatus.BAD_REQUEST : HttpStatus.OK);
+    }
 
 
 //    private final OrderServiceImpl orderServiceImpl;

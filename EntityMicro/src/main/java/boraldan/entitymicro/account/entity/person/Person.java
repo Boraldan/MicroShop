@@ -52,7 +52,7 @@ public class Person {
 //    protected Password password;
 
     public String info() {
-        return "%d : %s : %s".formatted(id, username, email);
+        return "%s : %s : %s".formatted(id, username, email);
     }
 
 }

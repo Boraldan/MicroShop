@@ -1,13 +1,15 @@
 package boraldan.front.controller;
 
 
-import boraldan.entitymicro.account.dto.PersonDTO;
-import boraldan.entitymicro.account.dto.SingUpDto;
+import boraldan.entitymicro.cart.entity.Cart;
 import boraldan.entitymicro.shop.dto.ListItemDto;
 import boraldan.entitymicro.shop.entity.category.Category;
-import boraldan.front.client.RestClientProductsRestClient;
+import boraldan.front.rest_client.ShopRestClient;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,14 +17,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
-import java.util.List;
 
 @Log4j2
 @Controller
 @RequiredArgsConstructor
-public class FrontController {
+public class ShopFrontController {
 
-    private final RestClientProductsRestClient restClient;
+    private final ShopRestClient restClient;
+    private final HttpSession httpSession;
 
 //    private final OAuth2AuthorizedClientManager authorizedClientManager;
 
@@ -47,38 +49,22 @@ public class FrontController {
 //    }
 
 
-    @GetMapping("/account/add")
-    public String addAccount(Model model) {
-        PersonDTO userDTO = restClient.addAccount();
-        log.info("1 --> " + userDTO);
-        model.addAttribute("user", userDTO);
-        return "UserDto";
+    @GetMapping("/carttest")
+    public String test(Model model, @AuthenticationPrincipal Principal principal, @ModelAttribute("cart") Cart cart) {
+        return "cart";
+
     }
-
-    @GetMapping("/auth/singup")
-    public String singUpCustomer() {
-        return "auth/singup";
-    }
-
-    @PostMapping("/auth/singup")
-    public String postCustomer(Model model, SingUpDto singUpDto) {
-        model.addAttribute("customer", restClient.singUpCustomer(singUpDto));
-        return "customer";
-    }
-
-
-    @GetMapping("/account")
-    public String getAccount(Model model) {
-        List<String> customers = restClient.getAccount();
-        log.info("1 --> " + customers);
-        model.addAttribute("customers", customers);
-        return "account";
-    }
-
 
     @GetMapping("/catalog")
     public String catalog(Model model) {
         model.addAttribute("category", new Category());
+        return "catalog";
+    }
+
+    @PostMapping("/catalog")
+    public String getCatalog(@ModelAttribute("category") Category category, Model model) {
+        ListItemDto listItemDto = this.restClient.findItem(category);
+        model.addAttribute("items", listItemDto.getItemList());
         return "catalog";
     }
 
@@ -88,12 +74,16 @@ public class FrontController {
         return "item";
     }
 
-
-    @PostMapping("/catalog")
-    public String getCatalog(@ModelAttribute("category") Category category, Model model, Principal principal) {
-        ListItemDto listItemDto = this.restClient.findItem(category);
-        model.addAttribute("items", listItemDto.getItemList());
-        return "catalog";
+    @GetMapping
+    public String index(Model model,
+                        Principal principal,
+                        @AuthenticationPrincipal Principal principal2,
+                        Authentication authentication) {
+        System.out.println("index  principal  -->  " + principal);
+        System.out.println("index  principal2  -->  " + principal2);
+        System.out.println("index  authentication  -->  " + authentication);
+        System.out.println("index  httpSession  -->  " + httpSession.getId());
+        return "index";
     }
 
 }
