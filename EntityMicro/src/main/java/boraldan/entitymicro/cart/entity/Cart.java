@@ -20,7 +20,7 @@ import java.util.UUID;
 public class Cart {
 
     @Transient
-    private String name;
+    private String ownerName;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -74,7 +74,7 @@ public class Cart {
     @Override
     public String toString() {
         return "Cart{" +
-                ", name='" + name + '\'' +
+                ", name='" + ownerName + '\'' +
                 ", id=" + id +
                 '}';
     }

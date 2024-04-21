@@ -40,8 +40,6 @@ public class OAuth2HttpInterceptor implements ClientHttpRequestInterceptor {
             request.getHeaders().setBearerAuth(authorizedClient.getAccessToken().getTokenValue());
         }
 
-        System.out.println("1  my_intercept--> "  + request.getHeaders());
-
         return execution.execute(request, body);
     }
 }

@@ -44,7 +44,6 @@ public class RedisService {
 
     public void deleteCart(String cartKey) {
         redisTemplate.delete(cartKey);
-        System.out.println("Объект с ключом " + cartKey + " успешно удален из Redis.");
     }
 
     public void redisClean() {

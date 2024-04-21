@@ -42,6 +42,7 @@ public class CartController {
     @PostMapping("/savesession")
     public ResponseEntity<Void> saveCart(@RequestBody Cart cart) {
         Cart saveCart = cartService.save(cart);
+        System.out.println(saveCart);
         return new ResponseEntity<>(saveCart == null ? HttpStatus.BAD_REQUEST : HttpStatus.OK);
     }
 
