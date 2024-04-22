@@ -1,7 +1,7 @@
-package boraldan.front.config_oauth2;
+package boraldan.front.config;
 
-import boraldan.front.config_oauth2.interceptor.MainRedisHttpInterceptor;
-import boraldan.front.config_oauth2.interceptor.OAuth2HttpInterceptor;
+import boraldan.front.rest_client.interceptor.MainRedisHttpInterceptor;
+import boraldan.front.rest_client.interceptor.OAuth2HttpInterceptor;
 import boraldan.front.rest_client.AccountRestClient;
 import boraldan.front.rest_client.AuthorizeRestClient;
 import boraldan.front.rest_client.CartRestClient;
@@ -23,21 +23,21 @@ public class RestClientBean {
             @Value("${microshop.service.shop.uri:http://localhost:8765}") String gatewayBaseUri,
             ClientRegistrationRepository clientRegistrationRepository,
             OAuth2AuthorizedClientRepository authorizedClientRepository,
-            @Value("${microshop.service.shop.registration-id:keycloak}") String registrationId) {
+            @Value("${microshop.service.shop.registration-id:keycloak}") String registrationId,
+            HttpSession httpSession) {
         return new AccountRestClient(RestClient.builder()
                 .baseUrl(gatewayBaseUri)
                 .requestInterceptor(
                         new OAuth2HttpInterceptor(
                                 new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository,
-                                        authorizedClientRepository), registrationId))
+                                        authorizedClientRepository), registrationId, httpSession))
                 .build());
     }
 
     @Bean
     public AuthorizeRestClient authorizeRestClient(
             @Value("${microshop.service.shop.uri:http://localhost:8765}") String gatewayBaseUri,
-            HttpSession httpSession
-            ) {
+            HttpSession httpSession) {
         return new AuthorizeRestClient(RestClient.builder()
                 .baseUrl(gatewayBaseUri)
                 .requestInterceptor(new MainRedisHttpInterceptor(httpSession))

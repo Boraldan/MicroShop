@@ -16,12 +16,11 @@ import boraldan.entitymicro.storage.dto.StorageBuilder;
 import boraldan.entitymicro.storage.entity.Storage;
 import boraldan.entitymicro.storage.entity.transport.bike.BikeStorage;
 import boraldan.entitymicro.storage.entity.transport.car.CarStorage;
-import boraldan.entitymicro.test.Fly;
 import boraldan.entitymicro.test.Lot;
 import boraldan.shop.controller.feign.BankFeign;
 import boraldan.shop.controller.feign.StorageFeign;
 import boraldan.shop.mq.bank.MqShopService;
-import boraldan.shop.repository.FlyRepo;
+import boraldan.shop.redis.RedisService;
 import boraldan.shop.service.i_service.CategoryService;
 import boraldan.shop.service.provider.ItemServiceClassProvider;
 import boraldan.shop.toolbox.builder.PriceBuilder;
@@ -29,8 +28,6 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,12 +46,11 @@ public class ShopController {
     public static int counter;
     private final CategoryService categoryService;
     private final ItemServiceClassProvider itemService;
-    private final FlyRepo flyRepo;
     private final ModelMapper modelMapper;
     private final StorageFeign storageFeign;
     private final BankFeign bankFeign;
     private final MqShopService mqShopService;
-    private final RedisTemplate<String, Object> redis;
+    private final RedisService redisService;
 
     @PostMapping("/category")
     public ResponseEntity<?> category2(@RequestBody Category category,
@@ -63,7 +59,7 @@ public class ShopController {
 
         System.out.println("category    1 -->  " + category);
         System.out.println("principal   2 -->  " + principal);
-        System.out.println("redisKey    3 -->  " + redisKey);
+        System.out.println("cart    3 -->  " + redisService.getCart(redisKey));
 
         List<Item> itemList;
         if (category.getCategoryName().equals(CategoryName.ITEM)) {
@@ -148,41 +144,6 @@ public class ShopController {
     }
 
 
-    @GetMapping("/session")
-    public ResponseEntity<String> getSessionId(@RequestHeader HttpHeaders headers) {
-
-//        session.setAttribute(session.getId(), "Добавили в Redis");
-//        session.setAttribute("s1", "Добавили в сессию атрибут s1");
-
-//        redisService.getListOps().leftPush("s2", "Redis будешь работать?");
-//        String getRedis = (String) redisTemplate.opsForList().rightPop("s1");
-//        System.out.println("redis --> " + redisTemplate.opsForList().rightPop("s1"));
-//        System.out.println("redis --> " + redisTemplate.opsForList().rightPop("s2"));
-
-        if (headers.containsKey("IdSession")) {
-            String idSession = headers.getFirst("IdSession");
-
-            System.out.println(redis.opsForValue().get(idSession));
-        }
-
-
-//        String getSessionId="";
-//
-//        // Получаем все ключи
-//        Set<String> keys = redis.keys("*");
-//
-//        // Выводим все ключи
-//        System.out.println("All keys in Redis:");
-//        for (String key : keys) {
-//            System.out.println(key);
-//            System.out.println(redis.opsForValue().get(key));
-//            getSessionId = key;
-//        }
-
-        return new ResponseEntity<>("1", HttpStatus.OK);
-    }
-
-
     @GetMapping("/card")
     public ResponseEntity<String> getByCard() {
         mqShopService.sendMessage(11111L);
@@ -209,12 +170,6 @@ public class ShopController {
         return new ResponseEntity<>(lot, HttpStatus.OK);
     }
 
-    @GetMapping("/fly")
-    public ResponseEntity<Fly> getFly() {
-        Fly fly = flyRepo.findById(1L).get();
-        log.info("Запрос Fly --> " + fly);
-        return new ResponseEntity<>(fly, HttpStatus.OK);
-    }
 
 
     //region методы ModelMapper

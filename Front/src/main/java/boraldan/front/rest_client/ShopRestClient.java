@@ -1,8 +1,5 @@
 package boraldan.front.rest_client;
 
-import boraldan.entitymicro.account.dto.PersonDTO;
-import boraldan.entitymicro.account.dto.SingUpDto;
-import boraldan.entitymicro.account.entity.person.Customer;
 import boraldan.entitymicro.shop.dto.ListItemDto;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.item.Item;

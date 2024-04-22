@@ -1,5 +1,6 @@
-package boraldan.front.config_oauth2.interceptor;
+package boraldan.front.rest_client.interceptor;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpHeaders;
@@ -28,6 +29,7 @@ public class OAuth2HttpInterceptor implements ClientHttpRequestInterceptor {
     private SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
     private final OAuth2AuthorizedClientManager authorizedClientManager;
     private final String registrationId;
+    private final HttpSession httpSession;
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
@@ -38,6 +40,11 @@ public class OAuth2HttpInterceptor implements ClientHttpRequestInterceptor {
                     .principal(this.securityContextHolderStrategy.getContext().getAuthentication())
                     .build());
             request.getHeaders().setBearerAuth(authorizedClient.getAccessToken().getTokenValue());
+        }
+
+        if (!request.getHeaders().containsKey("REDIS")) {
+            String REDIS_KEY = (String) httpSession.getAttribute("REDIS_KEY");
+            request.getHeaders().set("REDIS", REDIS_KEY);
         }
 
         return execution.execute(request, body);

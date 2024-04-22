@@ -26,28 +26,6 @@ public class ShopFrontController {
     private final ShopRestClient restClient;
     private final HttpSession httpSession;
 
-//    private final OAuth2AuthorizedClientManager authorizedClientManager;
-
-//    public FrontController(ClientRegistrationRepository clientRegistrationRepository,
-//                           OAuth2AuthorizedClientRepository authorizedClientRepository) {
-//        this.authorizedClientManager = new DefaultOAuth2AuthorizedClientManager(
-//                clientRegistrationRepository, authorizedClientRepository);
-//        this.restClient = RestClient.builder()
-//                .baseUrl("http://localhost:8765/")
-////                .requestInterceptor((request, body, execution) -> {
-////                    if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-////                        var token = this.authorizedClientManager.authorize(
-////                                        OAuth2AuthorizeRequest.withClientRegistrationId("authorization-grant-type")
-////                                                .principal(SecurityContextHolder.getContext().getAuthentication())
-////                                                .build())
-////                                .getAccessToken().getTokenValue();
-////                        request.getHeaders().setBearerAuth(token);
-////                    }
-////                    return execution.execute(request, body);
-////                })
-//                .build();
-//    }
-
 
     @GetMapping("/carttest")
     public String test(Model model, @AuthenticationPrincipal Principal principal, @ModelAttribute("cart") Cart cart) {

@@ -14,6 +14,7 @@ public class AccountRestClient {
 
     private final RestClient restClient;
 
+
     public Customer getCustomerByUsername(String username) {
         return this.restClient.post()
                 .uri("/account/getbyusername")

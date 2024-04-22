@@ -1,4 +1,4 @@
-package boraldan.front.config_oauth2;
+package boraldan.front.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +26,7 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(customizer -> customizer
 //                        .requestMatchers("/auth/singup").permitAll()
-                        .requestMatchers("/account", "/account/**").authenticated()
+                        .requestMatchers("/account/**").authenticated()
 //                        .anyRequest().authenticated()
 //                        .anyRequest().hasRole("CUSTOMER")
                         .anyRequest().permitAll()
