@@ -79,7 +79,7 @@ public class Car extends Item {
                 ", storageClazz=" + storageClazz +
                 ", id=" + id +
                 ", category=" + category +
-                ", storageId=" + storageId +
+//                ", storageId=" + storageId +
                 ", storage=" + storage +
                 '}';
     }

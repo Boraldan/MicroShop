@@ -29,11 +29,12 @@ import java.util.Map;
 @RestController
 public class KeyCloakController {
 
-    public static final String ID_COLUMN = "id"; // имя столбца id
     private static final int CONFLICT = 409; // если пользователь уже существует в KC и пытаемся создать такого же
-    private static final String USER_ROLE_NAME = "ROLE_CUSTOMER"; // название роли из KC
     private final KeycloakService keycloakService;
     private final ModelMapper modelMapper;
+
+//    public static final String ID_COLUMN = "id"; // имя столбца id
+//    private static final String USER_ROLE_NAME = "ROLE_CUSTOMER"; // название роли из KC
 
     //    @PostMapping("/add")
 //    public ResponseEntity<?> add(@RequestBody UserDTO userDTO) {

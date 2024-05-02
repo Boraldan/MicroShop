@@ -35,6 +35,10 @@
             <td th:text="${item.title}">title</td>
             <td th:text="${item.price.getBasePrice()}">price</td>
             <td th:text="${item.category.categoryName}">CategoryName</td>
+            <td>
+                <a th:href="@{/shop/item(itemId=${item.id})}">Show item</a>
+            </td>
+
         </tr>
         </tbody>
     </table>

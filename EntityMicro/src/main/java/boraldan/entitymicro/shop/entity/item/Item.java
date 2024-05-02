@@ -58,8 +58,9 @@ public class Item {
     @OneToOne(mappedBy = "item", cascade = CascadeType.ALL) // из библиотеке JPA
     protected Price price;
 
+//    @JsonIgnore
     @Column(name = "storage_id")
-    protected UUID storageId;
+    private UUID storageId;
 
     @Transient
     protected Storage storage;

@@ -71,16 +71,20 @@ public class ShopController {
     }
 
 
-    @GetMapping("/item")
-    public ResponseEntity<Item> item() {
+    @PostMapping("/item")
+    public ResponseEntity<?> item(@RequestBody Long itemId) {
 //        Item  itemTest = new Car();
 //        itemTest.getThisItem().getFactory();
 //        System.out.println( itemTest.getPrice().getBasePrice());
 
-        Item item = itemService.getService(Item.class).getById(1L);
-        System.out.println(item.getPrice());
+        Item item = itemService.getService(Item.class).getById(itemId);
+//        System.out.println(item.getPrice());
         item.setStorage(storageFeign.getQuantity(new StorageBuilder().setId(item.getStorageId()).setStorageClazz(item.getStorageClazz()).build()).getBody());
-        return new ResponseEntity<>(item, HttpStatus.OK);
+
+        Car car  = convertToNeedItem(item, item.getItemClazz());
+        System.out.println(car);
+
+        return new ResponseEntity<>(car, HttpStatus.OK);
     }
 
     @GetMapping("/addcar")

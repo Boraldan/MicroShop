@@ -12,5 +12,14 @@
     <p>Username: <span th:text="${customer.username}"></span></p>
     <p>Email: <span th:text="${customer.email}"></span></p>
 </div>
+
+<h2>Cart Information</h2>
+<div>
+    <p>ID: <span th:text="${cart.id}"></span></p>
+    <p>name: <span th:text="${cart.getOwnerName}"></span></p>
+    <!--  <p>Sub Total: <span th:text="${cart.subTotal}"></span></p>-->
+    <!--  <p>Total: <span th:text="${cart.total}"></span></p>-->
+    <!--  <p>Created At: <span th:text="${cart.creatAt}"></span></p>-->
+</div>
 </body>
 </html>

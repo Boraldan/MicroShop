@@ -28,7 +28,7 @@ public class GlobalController {
         if (principal != null) {
             cart = redisService.getCart(principal.getName().toLowerCase());
             if (cart == null) {
-                Customer customer = accountRestClient.getCustomerByUsername(principal.getName());
+                Customer customer = accountRestClient.getCustomerAccount();
                 cart = cartRestClient.getCart(customer.getCartId());
                 cart.setOwnerName(principal.getName());
                 concatCart(cart);

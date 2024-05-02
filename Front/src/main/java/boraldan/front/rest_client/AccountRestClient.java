@@ -4,7 +4,6 @@ import boraldan.entitymicro.account.dto.PersonDTO;
 import boraldan.entitymicro.account.entity.person.Customer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
@@ -14,15 +13,23 @@ public class AccountRestClient {
 
     private final RestClient restClient;
 
-
-    public Customer getCustomerByUsername(String username) {
-        return this.restClient.post()
-                .uri("/account/getbyusername")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(username)
+    public Customer getCustomerAccount() {
+        return this.restClient.get()
+                .uri("/account/customer")
                 .retrieve()
                 .body(Customer.class);
     }
+
+
+//
+//    public Customer getCustomerByUsername(String username) {
+//        return this.restClient.post()
+//                .uri("/account/getbyusername")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .body(username)
+//                .retrieve()
+//                .body(Customer.class);
+//    }
 
     public PersonDTO addAccount() {
         return this.restClient.get()

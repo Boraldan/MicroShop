@@ -11,27 +11,13 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.stream.Stream;
 
-//import static org.springframework.security.authorization.AuthorityAuthorizationManager.hasAuthority;
-//import static org.springframework.security.authorization.AuthorityAuthorizationManager.hasRole;
-//import static org.springframework.security.authorization.AuthorizationManagers.allOf;
-
 @Configuration
 public class SecurityConfig {
 
-    // для отправки пользователей на страницу входа, если их токен доступа недействителен или отсутствует
-//    @Bean
-//    public BasicAuthenticationEntryPoint basicAuthenticationEntryPoint() {
-//        return new BasicAuthenticationEntryPoint();
-//    }
-
-    //  для ресурса -------------  работает всё ----------------------
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(configurer -> configurer
                                 .requestMatchers("/authorize/singup").permitAll()
-                                .requestMatchers("/h2", "/h2/**").permitAll()
-                                .requestMatchers("/**").hasRole("CUSTOMER")
-//                                .anyRequest().permitAll()
                                 .anyRequest().authenticated()
 //                                .anyRequest().hasRole("CUSTOMER")
 //                        .anyRequest().access(allOf(hasRole("CUSTOMER"), hasAuthority("SCOPE_view_catalog")))
@@ -59,7 +45,6 @@ public class SecurityConfig {
 
 
     //   для ресурса, заточенная под scope авторизацию     -------------------------
-
 //    @Bean
 //    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 //        return http

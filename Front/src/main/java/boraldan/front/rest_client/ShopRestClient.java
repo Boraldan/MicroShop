@@ -3,6 +3,7 @@ package boraldan.front.rest_client;
 import boraldan.entitymicro.shop.dto.ListItemDto;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.item.Item;
+import boraldan.entitymicro.shop.entity.item.transport.car.Car;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -25,8 +26,9 @@ public class ShopRestClient {
     }
 
 
-    public ListItemDto findItem(Category category) {
-        return this.restClient.post()
+    public ListItemDto findByCategory(Category category) {
+        return this.restClient
+                .post()
                 .uri("/shop/category")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(category)
@@ -34,6 +36,21 @@ public class ShopRestClient {
                 .body(ListItemDto.class);
     }
 
+    public Car getItem(Long itemId){
+        return this.restClient
+                .post()
+                .uri("/shop/item")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(itemId)
+                .retrieve()
+                .body(Car.class);
+    }
+
+
+
+
+
+    // технический метод по добавлению товара Car
     public Item addCar() {
         return this.restClient
                 .get()
