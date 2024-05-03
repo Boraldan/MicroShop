@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 //@JsonInclude(JsonInclude.Include.NON_ABSTRACT)
 //@JsonInclude(JsonInclude.Include.ALWAYS)
 
@@ -37,8 +39,8 @@ import lombok.Setter;
 public class Item {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    protected UUID id;
 
     @Column(name = "title")
     private String title;

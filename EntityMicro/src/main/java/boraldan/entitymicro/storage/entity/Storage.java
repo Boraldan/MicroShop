@@ -21,7 +21,7 @@ public class Storage {
 
 
     @Column(name = "item_id")
-    protected Long itemId;
+    protected UUID itemId;
 
     @Column(name = "quantity")
     protected long quantity;

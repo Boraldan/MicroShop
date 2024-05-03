@@ -11,4 +11,5 @@ import java.util.List;
 public interface ItemRepo extends ItemUnifiedRepo<Item> {
 
     List<Item> findByCategory_CategoryName(CategoryName categoryName);
+
 }

@@ -19,6 +19,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -38,7 +39,7 @@ public class ItemUnifiedServiceV1<T extends Item> implements ItemUnifiedService<
     }
 
     @Override
-    public T getById(Long id) {
+    public T getById(UUID id) {
         return ItemUnifiedService.super.getById(id);
     }
 
@@ -48,7 +49,7 @@ public class ItemUnifiedServiceV1<T extends Item> implements ItemUnifiedService<
         List<T> list = ItemUnifiedService.super.getAll();
         if (list.isEmpty()) return list;
 
-        List<Long> itemIdList = list.stream().map(T::getId).toList();
+        List<UUID> itemIdList = list.stream().map(T::getId).toList();
         ListStorageDto listStorageDto = storageFeign.getByList(new ListStorageDtoBuilder()
                 .setStorageClazz(storageClazz).setItemIdList(itemIdList).build()).getBody();
 
@@ -65,6 +66,12 @@ public class ItemUnifiedServiceV1<T extends Item> implements ItemUnifiedService<
 
     @Override
     @Transactional
+    public void deleteById(UUID id) {
+        ItemUnifiedService.super.deleteById(id);
+    }
+
+    @Override
+    @Transactional
     public <E extends Item> void delete(E item) {
         ItemUnifiedService.super.delete(item);
     }
@@ -76,7 +83,7 @@ public class ItemUnifiedServiceV1<T extends Item> implements ItemUnifiedService<
 
 
     private List<T> addStorageToListT(List<T> itemList, ListStorageDto listStorageDto) {
-        Map<Long, Storage> storageMap = new HashMap<>();
+        Map<UUID, Storage> storageMap = new HashMap<>();
         for (Storage storage : listStorageDto.getStorageList()) {
             storageMap.put(storage.getItemId(), storage);
         }

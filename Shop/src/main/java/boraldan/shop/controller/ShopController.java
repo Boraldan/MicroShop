@@ -37,6 +37,7 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Log4j2
 @RestController
@@ -69,15 +70,10 @@ public class ShopController {
         return new ResponseEntity<>(new ListItemDtoBuilder().setItemList(itemList).build(), HttpStatus.OK);
     }
 
-
     @PostMapping("/item")
-    public ResponseEntity<?> item(@RequestBody Long itemId) {
-
+    public ResponseEntity<?> item(@RequestBody UUID itemId) {
         Item item = itemService.getService(Item.class).getById(itemId);
-
         item.setStorage(storageFeign.getQuantity(new StorageBuilder().setItemId(item.getId()).setStorageClazz(item.getStorageClazz()).build()).getBody());
-
-
         return ResponseEntity.ok(convertToNeedItem(item, item.getItemClazz()));
     }
 
@@ -132,16 +128,13 @@ public class ShopController {
         return new ResponseEntity<>(item2, HttpStatus.OK);
     }
 
-
-    @GetMapping("/dellcar")
-    public ResponseEntity<?> dellCar() {
-        Item item = itemService.getService(Car.class).getById(1L);
-        Car car = convertToNeedItem(item, item.getItemClazz());
-        itemService.getService(Item.class).delete(car);
-
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/item/delete{itemId}")
+    public ResponseEntity<Void> deleteItem(@PathVariable("itemId") UUID itemId) {
+        System.out.println(itemId);
+        // TODO: 03.05.2024 добавить в сервис метод удаления из Storage
+        itemService.getService(Item.class).deleteById(itemId);
+        return ResponseEntity.noContent().build();
     }
-
 
     @GetMapping("/card")
     public ResponseEntity<String> getByCard() {
@@ -168,7 +161,6 @@ public class ShopController {
         return new ResponseEntity<>(lot, HttpStatus.OK);
     }
 
-
     //region методы ModelMapper
     // метод конвертации из Item в любой клас наследника
     public <T extends Item> T convertToNeedItem(Item item, Class<?> clazz) {
@@ -176,10 +168,9 @@ public class ShopController {
         return modelMapper.map(item, targetType);
     }
 
-
     // добавляем Storage в Item
     private ListItemDto mapToItemList(List<Item> itemList, ListStorageDto listStorageDto) {
-        Map<Long, Storage> storageMap = new HashMap<>();
+        Map<UUID, Storage> storageMap = new HashMap<>();
         for (Storage storage : listStorageDto.getStorageList()) {
             storageMap.put(storage.getItemId(), storage);
         }
@@ -199,7 +190,6 @@ public class ShopController {
 //            .addMapping(src -> src.getPrice().getCustomPrice(), CarDTO::setPrice);
 
     //endregion
-
 
 }
 

@@ -12,6 +12,7 @@ import org.springframework.web.client.RestClient;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 public class ShopRestClient {
@@ -34,17 +35,7 @@ public class ShopRestClient {
                 .body(ListItemDto.class);
     }
 
-//    public Item getItem(Long itemId){
-//        return this.restClient
-//                .post()
-//                .uri("/shop/item")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .body(itemId)
-//                .retrieve()
-//                .body(Item.class);
-//    }
-
-    public <T extends Item> T getItem(Long itemId, Class<T> itemType) {
+    public <T extends Item> T getItem(UUID itemId, Class<T> itemType) {
         return this.restClient
                 .post()
                 .uri("/shop/item")
@@ -54,8 +45,17 @@ public class ShopRestClient {
                 .body(itemType);
     }
 
-
-
+    public void deleteItem(UUID itemId) {
+        try {
+            this.restClient
+                    .delete()
+                    .uri("/shop/item/delete{itemId}", itemId)
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (HttpClientErrorException.NotFound exception) {
+            throw new NoSuchElementException(exception);
+        }
+    }
 
     // технический метод по добавлению товара Car
     public Item addCar() {
@@ -118,15 +118,5 @@ public class ShopRestClient {
 //        }
 //    }
 
-    public void deleteProduct(int productId) {
-        try {
-            this.restClient
-                    .delete()
-                    .uri("/catalogue-api/products/{productId}", productId)
-                    .retrieve()
-                    .toBodilessEntity();
-        } catch (HttpClientErrorException.NotFound exception) {
-            throw new NoSuchElementException(exception);
-        }
-    }
+
 }

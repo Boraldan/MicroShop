@@ -15,26 +15,22 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Log4j2
 @Controller
 
 public class ShopFrontController {
-
     private final ShopRestClient restClient;
     private final HttpSession httpSession;
     private final ModelMapper modelMapper;
-
 
     @Autowired
     public ShopFrontController(ShopRestClient restClient, HttpSession httpSession, ModelMapper modelMapper) {
@@ -55,7 +51,7 @@ public class ShopFrontController {
     }
 
     @PostMapping("/catalog")
-    public String getCatalog(@ModelAttribute("category") Category category, Model model) {
+    public String getCatalog(Model model, @ModelAttribute("category") Category category) {
         ListItemDto listItemDto = this.restClient.findByCategory(category);
         model.addAttribute("items", listItemDto.getItemList());
         return "catalog";
@@ -63,7 +59,7 @@ public class ShopFrontController {
 
     @GetMapping("/shop/item")
     public String getItem(Model model,
-                          @RequestParam(value = "itemId", required = false) Long itemId,
+                          @RequestParam(value = "itemId", required = false) UUID itemId,
                           @RequestParam(value = "itemClassName", required = false) String itemClassName) {
         Class<? extends Item> clazz = null;
         try {
@@ -78,23 +74,12 @@ public class ShopFrontController {
         return "item";
     }
 
-//    @ResponseBody
-//    @GetMapping("/shop/item")
-//    public ResponseEntity<?> getItem(@RequestParam(value = "itemId", required = false) Long itemId,
-//                                     @RequestParam(value = "itemClassName", required = false) String itemClassName) {
-//        Class<? extends Item> clazz = null;
-//        try {
-//              clazz = (Class<? extends Item>) Class.forName(itemClassName);
-////  вариант с созданием объекта из полученного класса и извлечения из него всей информации
-////            Class<?> clazz = Class.forName(itemClassName);
-////            Object instance = clazz.getDeclaredConstructor().newInstance();
-////            item = convertToNeedItem(instance, clazz);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        Item item = restClient.getItem(itemId, clazz);
-//        return ResponseEntity.ok(item);
-//    }
+    @PostMapping("/shop/item/delete{itemId}")
+    public String deleteItem(@PathVariable("itemId") UUID itemId) {
+        System.out.println(itemId);
+        restClient.deleteItem(itemId);
+        return "redirect:/catalog";
+    }
 
     // технический метод по добавлению товара Car
     @GetMapping("/shop/addcar")
@@ -135,5 +120,23 @@ public class ShopFrontController {
         return modelMapper.map(item, targetType);
     }
 
+// region -->  рабочие методы другой реализации
+
+//    @ResponseBody
+//    @GetMapping("/shop/item")
+//    public ResponseEntity<?> getItem(@RequestParam(value = "itemId", required = false) UUID itemId,
+//                                     @RequestParam(value = "itemClassName", required = false) String itemClassName) {
+//        Item item = new Item();
+//        try {
+//            Class<?> clazz = Class.forName(itemClassName);
+//            Object instance = clazz.getDeclaredConstructor().newInstance();
+//            item = convertToNeedItem(instance, clazz);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return ResponseEntity.ok(restClient.getItem(itemId, item.getItemClazz()));
+//    }
+
+// endregion
 
 }

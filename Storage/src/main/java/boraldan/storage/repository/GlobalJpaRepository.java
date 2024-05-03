@@ -10,8 +10,8 @@ import java.util.UUID;
 @NoRepositoryBean
 public interface GlobalJpaRepository<T> extends JpaRepository<T, UUID> {
 
-    Optional<T> findByItemId(Long itemId);
+    Optional<T> findByItemId(UUID itemId);
 
     // здесь ключевое слово In указывает на то, что метод ищет объекты, где itemId содержится в списке itemIdList.
-    List<T> findAllByItemIdIn(List<Long> itemIdList);
+    List<T> findAllByItemIdIn(List<UUID> itemIdList);
 }

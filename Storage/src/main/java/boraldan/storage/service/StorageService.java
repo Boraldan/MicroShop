@@ -17,12 +17,12 @@ public interface StorageService<T extends Storage, R extends GlobalJpaRepository
         return getStorageRepo().findById(id).orElse(null);
     }
 
-    default T getByItemId(Long itemId) {
+    default T getByItemId(UUID itemId) {
         return getStorageRepo().findByItemId(itemId).orElse(null);
     }
 
     default ListStorageDto getByList(ListStorageDto listStorageDto) {
-        List<Long> itemIdList = listStorageDto.getItemIdList().stream().filter(Objects::nonNull).toList();
+        List<UUID> itemIdList = listStorageDto.getItemIdList().stream().filter(Objects::nonNull).toList();
         List<T> storageList = getStorageRepo().findAllByItemIdIn(itemIdList);
         return new ListStorageDtoBuilder().setStorageList(storageList).build();
     }

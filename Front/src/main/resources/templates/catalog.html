@@ -27,6 +27,8 @@
             <th>title</th>
             <th>price</th>
             <th>Category</th>
+            <th>Item</th>
+            <th>Delete</th>
         </tr>
         </thead>
         <tbody>
@@ -35,14 +37,19 @@
             <td th:text="${item.title}">title</td>
             <td th:text="${item.price.getBasePrice()}">price</td>
             <td th:text="${item.category.categoryName}">CategoryName</td>
-<!--                        <td>-->
-<!--                            <a th:href="@{/shop/item(itemId=${item.id}, itemClassName=${item.itemClazz.getName()})}">Show item</a>-->
-<!--                        </td>-->
+            <!--                        <td>-->
+            <!--                            <a th:href="@{/shop/item(itemId=${item.id}, itemClassName=${item.itemClazz.getName()})}">Show item</a>-->
+            <!--                        </td>-->
             <td>
-                <form th:action="@{/shop/item}"  th:method="GET">
+                <form th:action="@{/shop/item}" th:method="GET">
                     <input type="hidden" name="itemId" th:value="${item.id}"/>
                     <input type="hidden" name="itemClassName" th:value="${item.itemClazz.getName()}"/>
                     <input type="submit" value="Show item"/>
+                </form>
+            </td>
+            <td>
+                <form th:action="@{/shop/item/delete{itemId}(itemId=${item.id})}" th:method="POST">
+                    <input type="submit" value="Delete"/>
                 </form>
             </td>
         </tr>

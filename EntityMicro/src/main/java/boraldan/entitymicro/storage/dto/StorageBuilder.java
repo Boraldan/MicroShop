@@ -17,7 +17,7 @@ public class StorageBuilder {
         return this;
     }
 
-    public StorageBuilder setItemId(Long itemId) {
+    public StorageBuilder setItemId(UUID itemId) {
         this.storage.setItemId(itemId);
         return this;
     }

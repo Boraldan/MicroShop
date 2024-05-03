@@ -5,12 +5,13 @@ import boraldan.entitymicro.storage.entity.Storage;
 import lombok.Data;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class ListStorageDto {
     private Class<?> storageClazz;
     private CategoryName categoryName;
     private List<Storage> storageList;
-    private List<Long> itemIdList;
+    private List<UUID> itemIdList;
 
 }

@@ -29,7 +29,7 @@ public class UniversalStorageService<T extends Storage> implements StorageServic
     }
 
     @Override
-    public T getByItemId(Long itemId) {
+    public T getByItemId(UUID itemId) {
         return StorageService.super.getByItemId(itemId);
     }
 

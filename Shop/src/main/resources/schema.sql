@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS  t_category
 );
 CREATE TABLE IF NOT EXISTS t_item
 (
-    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id  UUID  PRIMARY KEY,
     title      VARCHAR(255),
     category_id  BIGINT REFERENCES t_category (id)
 --     storage_id UUID
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS t_item
 
 CREATE TABLE IF NOT EXISTS car
 (
-    id        BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id UUID PRIMARY KEY,
     name      VARCHAR(255),
     factory   VARCHAR(255),
     year_prod INTEGER,
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS car
 );
 CREATE TABLE IF NOT EXISTS bike
 (
-    id        BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id UUID PRIMARY KEY,
     name      VARCHAR(255),
     factory   VARCHAR(255),
     wheels    INTEGER,
@@ -36,14 +36,14 @@ CREATE TABLE IF NOT EXISTS bike
 );
 
 CREATE TABLE bike_wheel (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id UUID PRIMARY KEY,
     name VARCHAR,
     diameter DOUBLE,
     season VARCHAR
 );
 
 CREATE TABLE car_wheel (
-   id BIGINT PRIMARY KEY AUTO_INCREMENT,
+   id UUID PRIMARY KEY,
    name VARCHAR,
    diameter DOUBLE,
    season VARCHAR
@@ -55,7 +55,7 @@ CREATE TABLE price (
                            base_price DECIMAL(19, 2),
                            coefficient DOUBLE,
                            custom_price DECIMAL(19, 2),
-                           item_id BIGINT REFERENCES t_item(id)
+                           item_id UUID REFERENCES t_item(id)
 );
 
 
@@ -64,7 +64,7 @@ CREATE TABLE car_price (
                            base_price DECIMAL(19, 2),
                            coefficient DOUBLE,
                            custom_price DECIMAL(19, 2),
-                           item_id BIGINT REFERENCES t_item(id)
+                           item_id UUID REFERENCES t_item(id)
 );
 
 
@@ -73,7 +73,7 @@ CREATE TABLE bike_price (
                            base_price DECIMAL(19, 2),
                            coefficient DOUBLE,
                            custom_price DECIMAL(19, 2),
-                           item_id BIGINT REFERENCES t_item(id)
+                           item_id UUID REFERENCES t_item(id)
 );
 
 CREATE TABLE car_wheel_price (
@@ -81,7 +81,7 @@ CREATE TABLE car_wheel_price (
                            base_price DECIMAL(19, 2),
                            coefficient DOUBLE,
                            custom_price DECIMAL(19, 2),
-                           item_id BIGINT REFERENCES t_item(id)
+                           item_id UUID REFERENCES t_item(id)
 );
 
 
@@ -90,7 +90,7 @@ CREATE TABLE bike_wheel_price (
                             base_price DECIMAL(19, 2),
                             coefficient DOUBLE,
                             custom_price DECIMAL(19, 2),
-                            item_id BIGINT REFERENCES t_item(id)
+                            item_id UUID REFERENCES t_item(id)
 );
 
 

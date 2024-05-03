@@ -4,6 +4,7 @@ import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.storage.entity.Storage;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ListStorageDtoBuilder {
 
@@ -28,7 +29,7 @@ public class ListStorageDtoBuilder {
         return this;
     }
 
-    public ListStorageDtoBuilder setItemIdList(List<Long> itemIdList) {
+    public ListStorageDtoBuilder setItemIdList(List<UUID> itemIdList) {
         this.listStorageDto.setItemIdList(itemIdList);
         return this;
     }
