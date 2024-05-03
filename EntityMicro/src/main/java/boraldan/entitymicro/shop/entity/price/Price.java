@@ -58,4 +58,12 @@ public class Price  {
 //    public Price clone() throws CloneNotSupportedException {
 //        return (Price) super.clone();
 //    }
+
+
+    @Override
+    public String toString() {
+        return "Price{" +
+                "customPrice=" + customPrice +
+                '}';
+    }
 }

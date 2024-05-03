@@ -4,33 +4,14 @@
     <meta charset="UTF-8">
     <title>Item Details</title>
 </head>
-<!--<body>-->
-<!--<h1>Item Details</h1>-->
-<!--<ul>-->
-<!--    <li>ID: <span th:text="${item.id}"></span></li>-->
-<!--    <li>Title: <span th:text="${item.title}"></span></li>-->
-<!--    <li>Category: <span th:text="${item.category.categoryName}"></span></li>-->
-<!--    <li>Price: <span th:text="${item.price.getBasePrice()}"></span></li>-->
-<!--    <li>Storage ID: <span th:text="${item.storageId}"></span></li>-->
-<!--</ul>-->
-<!--</body>-->
-
 <body>
 <h1>Item Details</h1>
 <div th:if="${item}">
-<!--    <form>-->
-        <div th:each="fieldName : ${fieldNames}">
-            <p th:text="${fieldName}"></p>
-<!--            <label th:text="${fieldName}"></label>-->
-<!--            <label>-->
-<!--&lt;!&ndash;                <input type="text" th:field="*{${fieldName}}" />&ndash;&gt;-->
-<!--                <input type="text" th:field="*{__${fieldName}__}" />-->
-<!--            </label>-->
-        </div>
-    <p th:text="${item.getPrice().getBasePrice()}"></p>
-    <p th:text="${item.getStorage().getQuantity()}"></p>
-<!--        <button type="submit">Submit</button>-->
-<!--    </form>-->
+    <div th:each="fieldName : ${fieldNames}">
+        <p th:text="${fieldName}"></p>
+    </div>
+    <h3 th:text="${'Price:' +  item.getPrice().getBasePrice()}"></h3>
+    <h3 th:text="${'Storage: ' + item.getStorage().getQuantity()}"></h3>
 </div>
 </body>
 </html>

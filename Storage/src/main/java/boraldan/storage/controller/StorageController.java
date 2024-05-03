@@ -42,7 +42,7 @@ public class StorageController {
         //TODO добавить валидацию storageDto
         return new ResponseEntity<>(storageServiceClass
                 .getService(storage.getStorageClazz() == null ? Storage.class : storage.getStorageClazz())
-                .getById(storage.getId()), HttpStatus.OK);
+                .getByItemId(storage.getItemId()), HttpStatus.OK);
     }
 
     @PostMapping("/list")
@@ -64,7 +64,6 @@ public class StorageController {
     @PutMapping("/save")
     public ResponseEntity<Storage> saveItem(@RequestBody Storage storage) {
         //TODO добавить валидацию storageDto
-        System.out.println(storage.getStorageClazz());
         return new ResponseEntity<>(storageServiceClass .getService(storage.getStorageClazz()).save(storage), HttpStatus.OK);
     }
 

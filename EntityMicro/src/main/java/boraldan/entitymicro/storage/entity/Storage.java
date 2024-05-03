@@ -19,6 +19,10 @@ public class Storage {
     @GeneratedValue(strategy = GenerationType.UUID)
     protected UUID id;
 
+
+    @Column(name = "item_id")
+    protected Long itemId;
+
     @Column(name = "quantity")
     protected long quantity;
 
@@ -38,4 +42,12 @@ public class Storage {
 //        return clazz.cast(this);
 //    }
 
+
+    @Override
+    public String toString() {
+        return "Storage{" +
+                "quantity=" + quantity +
+                ", reserve=" + reserve +
+                '}';
+    }
 }

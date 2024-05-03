@@ -17,6 +17,11 @@ public class StorageBuilder {
         return this;
     }
 
+    public StorageBuilder setItemId(Long itemId) {
+        this.storage.setItemId(itemId);
+        return this;
+    }
+
     public StorageBuilder setStorageClazz(Class<?> storageClazz) {
         this.storage.setStorageClazz(storageClazz);
         return this;

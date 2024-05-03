@@ -32,9 +32,9 @@ public class CategoryServiceV1 implements CategoryService {
     public List<Item> getListByCategoryName(CategoryName categoryName) {
         Category category = categoryRepo.findByCategoryName(categoryName).orElse(null);
         if (category != null && !category.getItems().isEmpty()) {
-            List<UUID> uuidList = category.getItems().stream().map(Item::getStorageId).toList();
+            List<Long> itemIdList = category.getItems().stream().map(Item::getId).toList();
             ListStorageDto listStorageDto = storageFeign.getListByCategory(new ListStorageDtoBuilder()
-                    .setStorageCategory(categoryName).setUuidList(uuidList).build()).getBody();
+                    .setStorageCategory(categoryName).setItemIdList(itemIdList).build()).getBody();
 
             if (listStorageDto == null) return category.getItems();
 
@@ -44,12 +44,12 @@ public class CategoryServiceV1 implements CategoryService {
     }
 
     private List<Item> addStorageToListT(List<Item> itemList, ListStorageDto listStorageDto) {
-        Map<UUID, Storage> storageMap = new HashMap<>();
+        Map<Long, Storage> storageMap = new HashMap<>();
         for (Storage storage : listStorageDto.getStorageList()) {
-            storageMap.put(storage.getId(), storage);
+            storageMap.put(storage.getItemId(), storage);
         }
         return itemList.stream().map(el -> {
-            el.setStorage(storageMap.get(el.getStorageId()));
+            el.setStorage(storageMap.get(el.getId()));
             return el;
         }).toList();
     }

@@ -35,10 +35,16 @@
             <td th:text="${item.title}">title</td>
             <td th:text="${item.price.getBasePrice()}">price</td>
             <td th:text="${item.category.categoryName}">CategoryName</td>
+<!--                        <td>-->
+<!--                            <a th:href="@{/shop/item(itemId=${item.id}, itemClassName=${item.itemClazz.getName()})}">Show item</a>-->
+<!--                        </td>-->
             <td>
-                <a th:href="@{/shop/item(itemId=${item.id})}">Show item</a>
+                <form th:action="@{/shop/item}"  th:method="GET">
+                    <input type="hidden" name="itemId" th:value="${item.id}"/>
+                    <input type="hidden" name="itemClassName" th:value="${item.itemClazz.getName()}"/>
+                    <input type="submit" value="Show item"/>
+                </form>
             </td>
-
         </tr>
         </tbody>
     </table>

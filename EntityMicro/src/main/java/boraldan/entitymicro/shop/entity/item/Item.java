@@ -9,8 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 //@JsonInclude(JsonInclude.Include.NON_ABSTRACT)
 //@JsonInclude(JsonInclude.Include.ALWAYS)
 
@@ -59,14 +57,14 @@ public class Item {
     protected Price price;
 
 //    @JsonIgnore
-    @Column(name = "storage_id")
-    private UUID storageId;
+//    @Column(name = "storage_id")
+//    private UUID storageId;
 
     @Transient
     protected Storage storage;
 
     @Transient
-    protected Class<?> itemClazz;
+    protected Class<? extends Item> itemClazz;
 
     @Transient
     protected Class<?> storageClazz;
@@ -87,7 +85,7 @@ public class Item {
                 ", title='" + title + '\'' +
                 ", category=" + category +
                 ", price=" + price +
-                ", storageId=" + storageId +
+//                ", storageId=" + storageId +
                 ", storage=" + storage +
                 ", itemClazz=" + itemClazz +
                 ", storageClazz=" + storageClazz +

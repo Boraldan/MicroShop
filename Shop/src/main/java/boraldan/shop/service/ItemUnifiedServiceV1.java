@@ -19,7 +19,6 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -49,9 +48,9 @@ public class ItemUnifiedServiceV1<T extends Item> implements ItemUnifiedService<
         List<T> list = ItemUnifiedService.super.getAll();
         if (list.isEmpty()) return list;
 
-        List<UUID> uuidList = list.stream().map(T::getStorageId).toList();
+        List<Long> itemIdList = list.stream().map(T::getId).toList();
         ListStorageDto listStorageDto = storageFeign.getByList(new ListStorageDtoBuilder()
-                .setStorageClazz(storageClazz).setUuidList(uuidList).build()).getBody();
+                .setStorageClazz(storageClazz).setItemIdList(itemIdList).build()).getBody();
 
         if (listStorageDto == null) return list;
         return addStorageToListT(list, listStorageDto);
@@ -77,13 +76,13 @@ public class ItemUnifiedServiceV1<T extends Item> implements ItemUnifiedService<
 
 
     private List<T> addStorageToListT(List<T> itemList, ListStorageDto listStorageDto) {
-        Map<UUID, Storage> storageMap = new HashMap<>();
+        Map<Long, Storage> storageMap = new HashMap<>();
         for (Storage storage : listStorageDto.getStorageList()) {
-            storageMap.put(storage.getId(), storage);
+            storageMap.put(storage.getItemId(), storage);
         }
-        return itemList.stream().map(el -> {
-            el.setStorage(storageMap.get(el.getStorageId()));
-            return el;
+        return itemList.stream().map(item -> {
+            item.setStorage(storageMap.get(item.getId()));
+            return item;
         }).toList();
     }
 

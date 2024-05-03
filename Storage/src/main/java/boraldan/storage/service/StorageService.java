@@ -17,9 +17,13 @@ public interface StorageService<T extends Storage, R extends GlobalJpaRepository
         return getStorageRepo().findById(id).orElse(null);
     }
 
-    default ListStorageDto getByList(ListStorageDto listStorageDto){
-        List<UUID> uuidList =listStorageDto.getUuidList().stream().filter(Objects::nonNull).toList();
-        List<T> storageList =  getStorageRepo().findAllById(uuidList);
+    default T getByItemId(Long itemId) {
+        return getStorageRepo().findByItemId(itemId).orElse(null);
+    }
+
+    default ListStorageDto getByList(ListStorageDto listStorageDto) {
+        List<Long> itemIdList = listStorageDto.getItemIdList().stream().filter(Objects::nonNull).toList();
+        List<T> storageList = getStorageRepo().findAllByItemIdIn(itemIdList);
         return new ListStorageDtoBuilder().setStorageList(storageList).build();
     }
 
@@ -32,7 +36,6 @@ public interface StorageService<T extends Storage, R extends GlobalJpaRepository
     }
 
     T convertToStorageItem(Storage storage, Class<?> clazz);
-
 
 
 //

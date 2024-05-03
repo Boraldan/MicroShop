@@ -5,7 +5,6 @@ import boraldan.entitymicro.cart.entity.Cart;
 import boraldan.entitymicro.shop.dto.ListItemDto;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.item.Item;
-import boraldan.entitymicro.shop.entity.item.transport.car.Car;
 import boraldan.front.rest_client.ShopRestClient;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import jakarta.servlet.http.HttpSession;
@@ -42,13 +41,6 @@ public class ShopFrontController {
         this.restClient = restClient;
         this.httpSession = httpSession;
         this.modelMapper = modelMapper;
-//        this.modelMapper.addMappings(new PropertyMap<Item, Item>() {
-//            @Override
-//            protected void configure() {
-////                map().setStorageId(source.getStorage() != null ? source.getStorage().getId() : null);
-//                skip(destination.getStorageId());
-//            }
-//        });
     }
 
     @GetMapping("/carttest")
@@ -69,64 +61,40 @@ public class ShopFrontController {
         return "catalog";
     }
 
-
     @GetMapping("/shop/item")
-    public String getItem(Model model, @RequestParam(value = "itemId", required = false) Long itemId) {
-
-        Car item = restClient.getItem(itemId);
+    public String getItem(Model model,
+                          @RequestParam(value = "itemId", required = false) Long itemId,
+                          @RequestParam(value = "itemClassName", required = false) String itemClassName) {
+        Class<? extends Item> clazz = null;
+        try {
+            clazz = (Class<? extends Item>) Class.forName(itemClassName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Item item = restClient.getItem(itemId, clazz);
         model.addAttribute("item", item);
-
-        List<String> fieldNames = getFieldNames(item.getItemClazz(), item);
+        List<String> fieldNames = getFieldNames(item, clazz);
         model.addAttribute("fieldNames", fieldNames);
-
-        System.out.println(fieldNames);
-
-
         return "item";
     }
 
 //    @ResponseBody
 //    @GetMapping("/shop/item")
-//    public Item getItem(Model model, @RequestParam(value = "itemId", required = false) Long itemId) {
-//
-//        Item item = restClient.getItem(itemId);
-////        List<String> fieldNames = getFieldNames(item.getItemClazz(), item);
-////        System.out.println(fieldNames);
-//
-//        System.out.println(item);
-//
-//        return item;
+//    public ResponseEntity<?> getItem(@RequestParam(value = "itemId", required = false) Long itemId,
+//                                     @RequestParam(value = "itemClassName", required = false) String itemClassName) {
+//        Class<? extends Item> clazz = null;
+//        try {
+//              clazz = (Class<? extends Item>) Class.forName(itemClassName);
+////  вариант с созданием объекта из полученного класса и извлечения из него всей информации
+////            Class<?> clazz = Class.forName(itemClassName);
+////            Object instance = clazz.getDeclaredConstructor().newInstance();
+////            item = convertToNeedItem(instance, clazz);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        Item item = restClient.getItem(itemId, clazz);
+//        return ResponseEntity.ok(item);
 //    }
-
-
-    private List<String> getFieldNames(Class<?> clazz, Car obj) {
-        List<String> fieldNames = new ArrayList<>();
-        Field[] fields = clazz.getDeclaredFields();
-        try {
-            for (Field field : fields) {
-                field.setAccessible(true); // Разрешаем доступ к закрытым полям
-                Object value = field.get(obj); // Получаем значение поля для конкретного объекта
-                fieldNames.add(field.getName() + ": " + value);
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return fieldNames;
-    }
-
-    private <T extends Item> T convertToNeedItem(Item item, Class<?> clazz) {
-        Type targetType = TypeFactory.rawClass(clazz);
-//        modelMapper.getConfiguration().setSkipNullEnabled(true);
-//        PropertyMap<Item, T> propertyMap = new PropertyMap<Item, T>() {
-//            protected void configure() {
-//                map().setStorageId(source.getStorage() != null ? source.getStorage().getId() : null);
-//                map().setStorage(source.getStorage());
-//            }
-//        };
-//        modelMapper.addMappings(propertyMap);
-        return modelMapper.map(item, targetType);
-    }
-
 
     // технический метод по добавлению товара Car
     @GetMapping("/shop/addcar")
@@ -146,5 +114,26 @@ public class ShopFrontController {
         System.out.println("index  httpSession  -->  " + httpSession.getId());
         return "index";
     }
+
+    private <T extends Item> List<String> getFieldNames(T obj, Class<?> clazz) {
+        List<String> fieldNames = new ArrayList<>();
+        Field[] fields = clazz.getDeclaredFields();
+        try {
+            for (Field field : fields) {
+                field.setAccessible(true);
+                Object value = field.get(obj);
+                fieldNames.add(field.getName() + ": " + value);
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return fieldNames;
+    }
+
+    private <T extends Item> T convertToNeedItem(Object item, Class<?> clazz) {
+        Type targetType = TypeFactory.rawClass(clazz);
+        return modelMapper.map(item, targetType);
+    }
+
 
 }

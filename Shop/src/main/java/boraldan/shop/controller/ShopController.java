@@ -37,7 +37,6 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Log4j2
 @RestController
@@ -73,18 +72,13 @@ public class ShopController {
 
     @PostMapping("/item")
     public ResponseEntity<?> item(@RequestBody Long itemId) {
-//        Item  itemTest = new Car();
-//        itemTest.getThisItem().getFactory();
-//        System.out.println( itemTest.getPrice().getBasePrice());
 
         Item item = itemService.getService(Item.class).getById(itemId);
-//        System.out.println(item.getPrice());
-        item.setStorage(storageFeign.getQuantity(new StorageBuilder().setId(item.getStorageId()).setStorageClazz(item.getStorageClazz()).build()).getBody());
 
-        Car car  = convertToNeedItem(item, item.getItemClazz());
-        System.out.println(car);
+        item.setStorage(storageFeign.getQuantity(new StorageBuilder().setItemId(item.getId()).setStorageClazz(item.getStorageClazz()).build()).getBody());
 
-        return new ResponseEntity<>(car, HttpStatus.OK);
+
+        return ResponseEntity.ok(convertToNeedItem(item, item.getItemClazz()));
     }
 
     @GetMapping("/addcar")
@@ -99,16 +93,16 @@ public class ShopController {
 //        CarPrice carPrice = new PriceBuilder(CarPrice.class).setBasePrice(2000).setCoefficient(1.5).builder();
         car.setPrice(new PriceBuilder(car.getPriceClazz()).setBasePrice(2000).setCoefficient(1.5).builder());
 
+        Item item = itemService.getService(car.getItemClazz()).save(car);
+
         Storage storage = new CarStorage();
+        storage.setItemId(item.getId());
         storage.setQuantity(3);
         storage.setReserve(3);
         storage = storageFeign.saveItem(storage).getBody();
-        car.setStorageId(storage != null ? storage.getId() : null);
+        item.setStorage(storage);
 
-
-//        Car item = convertToNeedItem(itemService.getService(car.getItemClazz()).save(car), car.getItemClazz());
-        Item item = itemService.getService(car.getItemClazz()).save(car);
-
+//        Car item2 = convertToNeedItem(itemService.getService(car.getItemClazz()).save(car), car.getItemClazz());
 
         System.out.println("Запрос Car1 --> 1 " + item);
         return new ResponseEntity<>(item, HttpStatus.OK);
@@ -126,13 +120,14 @@ public class ShopController {
 //        BikePrice bikePrice = new PriceBuilder(bike.getPriceClazz()).setBasePrice(1000).setCoefficient(1.2).builder();
         bike.setPrice(new PriceBuilder(bike.getPriceClazz()).setBasePrice(1000).setCoefficient(1.2).builder());
 
+        Item item2 = itemService.getService(bike.getItemClazz()).save(bike);
         Storage storage = new BikeStorage();
+        storage.setItemId(item2.getId());
         storage.setQuantity(5);
         storage.setReserve(5);
         storage = storageFeign.saveItem(storage).getBody();
-        bike.setStorageId(storage != null ? storage.getId() : null);
+        bike.setStorage(storage);
 
-        Item item2 = itemService.getService(bike.getItemClazz()).save(bike);
         System.out.println("Запрос bike --> 1 " + item2);
         return new ResponseEntity<>(item2, HttpStatus.OK);
     }
@@ -160,7 +155,6 @@ public class ShopController {
         return new ResponseEntity<>(new ListItemDtoBuilder().setItemList(itemList).build(), HttpStatus.OK);
     }
 
-
     @GetMapping("/accounts")
     public List<BankAccount> getAllAccounts() {
         return bankFeign.getAllAccounts();
@@ -175,7 +169,6 @@ public class ShopController {
     }
 
 
-
     //region методы ModelMapper
     // метод конвертации из Item в любой клас наследника
     public <T extends Item> T convertToNeedItem(Item item, Class<?> clazz) {
@@ -186,13 +179,13 @@ public class ShopController {
 
     // добавляем Storage в Item
     private ListItemDto mapToItemList(List<Item> itemList, ListStorageDto listStorageDto) {
-        Map<UUID, Storage> storageMap = new HashMap<>();
+        Map<Long, Storage> storageMap = new HashMap<>();
         for (Storage storage : listStorageDto.getStorageList()) {
-            storageMap.put(storage.getId(), storage);
+            storageMap.put(storage.getItemId(), storage);
         }
-        List<Item> newItemList = itemList.stream().map(el -> {
-            el.setStorage(storageMap.get(el.getStorageId()));
-            return el;
+        List<Item> newItemList = itemList.stream().map(i -> {
+            i.setStorage(storageMap.get(i.getId()));
+            return i;
         }).toList();
         return new ListItemDtoBuilder().setItemList(newItemList).build();
     }

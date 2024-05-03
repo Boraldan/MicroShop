@@ -3,7 +3,6 @@ package boraldan.front.rest_client;
 import boraldan.entitymicro.shop.dto.ListItemDto;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.item.Item;
-import boraldan.entitymicro.shop.entity.item.transport.car.Car;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -25,7 +24,6 @@ public class ShopRestClient {
         };
     }
 
-
     public ListItemDto findByCategory(Category category) {
         return this.restClient
                 .post()
@@ -36,16 +34,25 @@ public class ShopRestClient {
                 .body(ListItemDto.class);
     }
 
-    public Car getItem(Long itemId){
+//    public Item getItem(Long itemId){
+//        return this.restClient
+//                .post()
+//                .uri("/shop/item")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .body(itemId)
+//                .retrieve()
+//                .body(Item.class);
+//    }
+
+    public <T extends Item> T getItem(Long itemId, Class<T> itemType) {
         return this.restClient
                 .post()
                 .uri("/shop/item")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(itemId)
                 .retrieve()
-                .body(Car.class);
+                .body(itemType);
     }
-
 
 
 

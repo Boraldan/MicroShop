@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS t_item
 (
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
     title      VARCHAR(255),
-    category_id  BIGINT REFERENCES t_category (id),
-    storage_id UUID
+    category_id  BIGINT REFERENCES t_category (id)
+--     storage_id UUID
 );
 
 CREATE TABLE IF NOT EXISTS car
