@@ -1,6 +1,7 @@
 package boraldan.front.rest_client;
 
 import boraldan.entitymicro.shop.dto.ListItemDto;
+import boraldan.entitymicro.shop.dto.SpecificationDto;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.item.Item;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,17 @@ public class ShopRestClient {
                 .retrieve()
                 .body(ListItemDto.class);
     }
+
+    public ListItemDto getAllBySpecification(SpecificationDto spec) {
+        return this.restClient
+                .post()
+                .uri("/shop/items/spec")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(spec)
+                .retrieve()
+                .body(ListItemDto.class);
+    }
+
 
     public <T extends Item> T getItem(UUID itemId, Class<T> itemType) {
         return this.restClient

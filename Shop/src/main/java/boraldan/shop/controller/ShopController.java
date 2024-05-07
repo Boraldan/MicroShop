@@ -4,6 +4,7 @@ package boraldan.shop.controller;
 import boraldan.entitymicro.bank.entity.BankAccount;
 import boraldan.entitymicro.shop.dto.ListItemDto;
 import boraldan.entitymicro.shop.dto.ListItemDtoBuilder;
+import boraldan.entitymicro.shop.dto.SpecificationDto;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.shop.entity.item.Item;
@@ -34,10 +35,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Log4j2
 @RestController
@@ -53,9 +51,9 @@ public class ShopController {
     private final RedisService redisService;
 
     @PostMapping("/category")
-    public ResponseEntity<?> category2(@RequestBody Category category,
-                                       Principal principal,
-                                       @RequestHeader("REDIS") String redisKey) {
+    public ResponseEntity<?> getAllByCategory(@RequestBody Category category,
+                                              Principal principal,
+                                              @RequestHeader("REDIS") String redisKey) {
 
         System.out.println("category    1 -->  " + category);
         System.out.println("principal   2 -->  " + principal);
@@ -67,8 +65,38 @@ public class ShopController {
         } else {
             itemList = categoryService.getListByCategoryName(category.getCategoryName());
         }
-        return new ResponseEntity<>(new ListItemDtoBuilder().setItemList(itemList).build(), HttpStatus.OK);
+        return ResponseEntity.ok(new ListItemDtoBuilder().setItemList(itemList).build());
     }
+
+    @GetMapping("/items")
+    public ResponseEntity<ListItemDto> getAll() {
+        List<Item> itemList = itemService.getService(Item.class).getAll();
+        return ResponseEntity.ok(new ListItemDtoBuilder().setItemList(itemList).build());
+    }
+
+    @PostMapping("/items/spec")
+    public ResponseEntity<ListItemDto> getAllBySpecification(@RequestBody SpecificationDto spec) {
+        // TODO: 06.05.2024 добавить валидацию SpecificationDto
+        System.out.println("1 -->  " +  spec);
+        Optional<Item> itemOptional;
+        if (spec.getCategoryName().equals(CategoryName.ITEM)) {
+            itemOptional = itemService.getService(Item.class).findFirst();
+        } else {
+            itemOptional = itemService.getService(Item.class).findFirstByCategoryName(spec.getCategoryName());
+        }
+
+        if (itemOptional.isPresent()) System.out.println("2 -->  " +  itemOptional.get());
+
+        if (itemOptional.isPresent()) {
+            List<Item> itemList = itemService.getService(itemOptional.get().getItemClazz())
+                    .getAllBySpecification(spec.getMinScore(), spec.getMaxScore(), spec.getPartName(), spec.getPage())
+                    .getContent();
+            System.out.println("3 -->  " +  itemList);
+            return ResponseEntity.ok(new ListItemDtoBuilder().setItemList(itemList).build());
+        }
+        return ResponseEntity.ok(new ListItemDtoBuilder().setItemList(Collections.emptyList()).build());
+    }
+
 
     @PostMapping("/item")
     public ResponseEntity<?> item(@RequestBody UUID itemId) {
@@ -140,12 +168,6 @@ public class ShopController {
     public ResponseEntity<String> getByCard() {
         mqShopService.sendMessage(11111L);
         return new ResponseEntity<>("Send. Waiting...", HttpStatus.OK);
-    }
-
-    @GetMapping("/items")
-    public ResponseEntity<ListItemDto> items() {
-        List<Item> itemList = itemService.getService(Item.class).getAll();
-        return new ResponseEntity<>(new ListItemDtoBuilder().setItemList(itemList).build(), HttpStatus.OK);
     }
 
     @GetMapping("/accounts")

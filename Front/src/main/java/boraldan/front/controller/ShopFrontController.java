@@ -3,14 +3,17 @@ package boraldan.front.controller;
 
 import boraldan.entitymicro.cart.entity.Cart;
 import boraldan.entitymicro.shop.dto.ListItemDto;
+import boraldan.entitymicro.shop.dto.SpecificationDto;
+import boraldan.entitymicro.shop.dto.SpecificationDtoBuilder;
 import boraldan.entitymicro.shop.entity.category.Category;
+import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.front.rest_client.ShopRestClient;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -26,18 +29,12 @@ import java.util.UUID;
 
 @Log4j2
 @Controller
-
+@RequiredArgsConstructor
 public class ShopFrontController {
+
     private final ShopRestClient restClient;
     private final HttpSession httpSession;
     private final ModelMapper modelMapper;
-
-    @Autowired
-    public ShopFrontController(ShopRestClient restClient, HttpSession httpSession, ModelMapper modelMapper) {
-        this.restClient = restClient;
-        this.httpSession = httpSession;
-        this.modelMapper = modelMapper;
-    }
 
     @GetMapping("/carttest")
     public String test(Model model, @AuthenticationPrincipal Principal principal, @ModelAttribute("cart") Cart cart) {
@@ -57,6 +54,32 @@ public class ShopFrontController {
         return "catalog";
     }
 
+    @GetMapping("/shop/items/spec")
+    public String getAllBySpecification(Model model,
+                                        @RequestParam(name = "p", defaultValue = "1") Integer page,
+                                        @RequestParam(name = "min_price", required = false) Long minPrice,
+                                        @RequestParam(name = "max_price", required = false) Long maxPrice,
+                                        @RequestParam(name = "name_part", required = false) String namePart,
+                                        @RequestParam(name = "category_name", required = false) CategoryName categoryName
+    ) {
+        if (page < 1) page = 1;
+        if (categoryName == null) categoryName = CategoryName.ITEM;
+
+        SpecificationDto spec = new SpecificationDtoBuilder()
+                .setPage(page)
+                .setMinScore(minPrice)
+                .setMaxScore(maxPrice)
+                .setPartName(namePart)
+                .setCategoryName(categoryName)
+                .build();
+
+        ListItemDto listItemDto = this.restClient.getAllBySpecification(spec);
+        model.addAttribute("items", listItemDto.getItemList());
+
+        return "catalog_spec";
+
+    }
+
     @GetMapping("/shop/item")
     public String getItem(Model model,
                           @RequestParam(value = "itemId", required = false) UUID itemId,
@@ -73,6 +96,13 @@ public class ShopFrontController {
         model.addAttribute("fieldNames", fieldNames);
         return "item";
     }
+
+//    @PostMapping("/shop/item/delete{itemId}")
+//    public String deleteItem(@PathVariable("itemId") UUID itemId) {
+//        System.out.println(itemId);
+//        restClient.deleteItem(itemId);
+//        return "redirect:/catalog";
+//    }
 
     @PostMapping("/shop/item/delete{itemId}")
     public String deleteItem(@PathVariable("itemId") UUID itemId) {

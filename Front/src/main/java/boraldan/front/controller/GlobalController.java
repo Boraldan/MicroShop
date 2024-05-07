@@ -54,4 +54,15 @@ public class GlobalController {
         }
     }
 
+
+//    @ExceptionHandler(HttpClientErrorException.NotFound.class)
+//    public ResponseEntity<String> handleNotFound(HttpClientErrorException ex) {
+//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ресурс не найден");
+//    }
+
+
+
+
+
+
 }

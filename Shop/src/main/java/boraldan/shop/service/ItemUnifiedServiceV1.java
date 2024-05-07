@@ -11,11 +11,13 @@ import boraldan.shop.service.i_service.ItemUnifiedService;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +57,11 @@ public class ItemUnifiedServiceV1<T extends Item> implements ItemUnifiedService<
 
         if (listStorageDto == null) return list;
         return addStorageToListT(list, listStorageDto);
+    }
+
+    @Override
+    public Page<T> getAllBySpecification(BigDecimal minScore, BigDecimal maxScore, String partName, Integer page) {
+        return ItemUnifiedService.super.getAllBySpecification(minScore, maxScore, partName, page);
     }
 
     @Override

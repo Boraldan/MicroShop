@@ -5,16 +5,34 @@
     <title>Category</title>
 </head>
 <body>
-<form action="#" th:action="@{/catalog}" th:object="${category}" th:method="POST">
+<form action="/shop/items/spec" method="get">
     <div>
-        <label for="categoryName">Category Name:</label>
-        <select id="categoryName" name="categoryName">
-            <option th:each="name : ${T(boraldan.entitymicro.shop.entity.category.CategoryName).values()}"
-                    th:value="${name}" th:text="${name}"></option>
-        </select>
+        <label for="page">Page:</label>
+        <input type="number" id="page" name="p" value="1">
     </div>
     <div>
-        <button type="submit">Get Category Item</button>
+        <label for="min_price">Minimum Price:</label>
+        <input type="number" id="min_price" name="min_price">
+    </div>
+    <div>
+        <label for="max_price">Maximum Price:</label>
+        <input type="number" id="max_price" name="max_price">
+    </div>
+    <div>
+        <label for="name_part">Name Part:</label>
+        <input type="text" id="name_part" name="name_part">
+    </div>
+    <div>
+        <label for="category_name">Category Name:</label>
+        <select id="category_name" name="category_name">
+            <option value="">-- Select Category --</option>
+            <option th:each="category : ${T(boraldan.entitymicro.shop.entity.category.CategoryName).values()}"
+                    th:value="${category}" th:text="${category}"></option>
+        </select>
+    </div>
+
+    <div>
+        <button type="submit">Search</button>
     </div>
 </form>
 
