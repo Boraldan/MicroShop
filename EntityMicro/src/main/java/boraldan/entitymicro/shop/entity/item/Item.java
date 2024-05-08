@@ -58,10 +58,6 @@ public class Item {
     @OneToOne(mappedBy = "item", cascade = CascadeType.ALL) // из библиотеке JPA
     protected Price price;
 
-//    @JsonIgnore
-//    @Column(name = "storage_id")
-//    private UUID storageId;
-
     @Transient
     protected Storage storage;
 
@@ -69,10 +65,10 @@ public class Item {
     protected Class<? extends Item> itemClazz;
 
     @Transient
-    protected Class<?> storageClazz;
+    protected Class<? extends Storage> storageClazz;
 
     @Transient
-    protected Class<?> priceClazz;
+    protected Class<? extends Price> priceClazz;
 
 
     public <T extends Item> T getThisItem(Class<T> clazz) {
@@ -94,4 +90,5 @@ public class Item {
                 ", priceClazz=" + priceClazz +
                 '}';
     }
+
 }

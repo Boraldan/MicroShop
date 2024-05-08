@@ -7,18 +7,19 @@ import boraldan.storage.repository.GlobalJpaRepository;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface StorageService<T extends Storage, R extends GlobalJpaRepository<T>> {
 
     R getStorageRepo();
 
-    default T getById(UUID id) {
-        return getStorageRepo().findById(id).orElse(null);
+    default Optional<T> getById(UUID id) {
+        return getStorageRepo().findById(id);
     }
 
-    default T getByItemId(UUID itemId) {
-        return getStorageRepo().findByItemId(itemId).orElse(null);
+    default Optional<T> getByItemId(UUID itemId) {
+        return getStorageRepo().findByItemId(itemId);
     }
 
     default ListStorageDto getByList(ListStorageDto listStorageDto) {

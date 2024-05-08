@@ -4,6 +4,8 @@ import boraldan.entitymicro.shop.dto.ListItemDto;
 import boraldan.entitymicro.shop.dto.SpecificationDto;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.item.Item;
+import boraldan.entitymicro.shop.entity.item.transport.bike.Bike;
+import boraldan.entitymicro.shop.entity.item.transport.car.Car;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -70,12 +72,20 @@ public class ShopRestClient {
     }
 
     // технический метод по добавлению товара Car
-    public Item addCar() {
+    public Car addCar() {
         return this.restClient
                 .get()
                 .uri("/shop/addcar")
                 .retrieve()
-                .body(Item.class);
+                .body(Car.class);
+    }
+
+    public Bike addBike() {
+        return this.restClient
+                .get()
+                .uri("/shop/addbike")
+                .retrieve()
+                .body(Bike.class);
     }
 
     public List<Item> findAllProducts(String filter) {

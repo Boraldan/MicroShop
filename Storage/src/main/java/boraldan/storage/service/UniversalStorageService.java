@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Type;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -24,12 +25,12 @@ public class UniversalStorageService<T extends Storage> implements StorageServic
     }
 
     @Override
-    public T getById(UUID id) {
+    public Optional<T> getById(UUID id) {
         return StorageService.super.getById(id);
     }
 
     @Override
-    public T getByItemId(UUID itemId) {
+    public Optional<T> getByItemId(UUID itemId) {
         return StorageService.super.getByItemId(itemId);
     }
 

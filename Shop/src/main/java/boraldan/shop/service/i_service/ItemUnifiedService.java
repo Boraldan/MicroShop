@@ -3,7 +3,7 @@ package boraldan.shop.service.i_service;
 import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.shop.repository.ItemUnifiedRepo;
-import boraldan.shop.repository.specifications.ProductSpecifications;
+import boraldan.shop.repository.specifications.ItemSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -17,15 +17,15 @@ public interface ItemUnifiedService<T extends Item, R extends ItemUnifiedRepo<T>
 
     R getItemRepo();
 
-    default Optional<T> findFirst(){
+    default Optional<T> findFirst() {
         return getItemRepo().findFirstByOrderByIdAsc();
     }
 
-    default T getById(UUID id) {
-        return getItemRepo().findById(id).orElse(null);
+    default Optional<T> getById(UUID id) {
+        return getItemRepo().findById(id);
     }
 
-    default Optional<T> findFirstByCategoryName(CategoryName categoryName){
+    default Optional<T> findFirstByCategoryName(CategoryName categoryName) {
         return getItemRepo().findFirstByCategoryCategoryName(categoryName);
     }
 
@@ -36,13 +36,13 @@ public interface ItemUnifiedService<T extends Item, R extends ItemUnifiedRepo<T>
     default Page<T> getAllBySpecification(BigDecimal minScore, BigDecimal maxScore, String partName, Integer page) {
         Specification<T> spec = Specification.where(null);
         if (minScore != null) {
-            spec = spec.and(ProductSpecifications.scoreGreaterOrEqualsThan(minScore));
+            spec = spec.and(ItemSpecification.scoreGreaterOrEqualsThan(minScore));
         }
         if (maxScore != null) {
-            spec = spec.and(ProductSpecifications.scoreLessThanOrEqualsThan(maxScore));
+            spec = spec.and(ItemSpecification.scoreLessThanOrEqualsThan(maxScore));
         }
         if (partName != null) {
-            spec = spec.and(ProductSpecifications.nameLike(partName));
+            spec = spec.and(ItemSpecification.nameLike(partName));
         }
 //        if (nameCategory != null) {
 //            Integer idCategory = categoryService.getIdCategoryByName(nameCategory);

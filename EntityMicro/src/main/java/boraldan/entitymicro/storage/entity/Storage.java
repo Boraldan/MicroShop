@@ -30,7 +30,7 @@ public class Storage {
     protected long reserve;
 
     @Transient
-    protected Class<?> storageClazz;
+    protected Class<? extends Storage> storageClazz;
 
     public Storage() {
         this.storageClazz = this.getClass();

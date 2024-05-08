@@ -8,6 +8,8 @@ import boraldan.entitymicro.shop.dto.SpecificationDtoBuilder;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.shop.entity.item.Item;
+import boraldan.entitymicro.shop.entity.item.transport.bike.Bike;
+import boraldan.entitymicro.shop.entity.item.transport.car.Car;
 import boraldan.front.rest_client.ShopRestClient;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import jakarta.servlet.http.HttpSession;
@@ -97,13 +99,6 @@ public class ShopFrontController {
         return "item";
     }
 
-//    @PostMapping("/shop/item/delete{itemId}")
-//    public String deleteItem(@PathVariable("itemId") UUID itemId) {
-//        System.out.println(itemId);
-//        restClient.deleteItem(itemId);
-//        return "redirect:/catalog";
-//    }
-
     @PostMapping("/shop/item/delete{itemId}")
     public String deleteItem(@PathVariable("itemId") UUID itemId) {
         System.out.println(itemId);
@@ -114,7 +109,19 @@ public class ShopFrontController {
     // технический метод по добавлению товара Car
     @GetMapping("/shop/addcar")
     public String addCar(Model model) {
-        model.addAttribute("item", restClient.addCar());
+        Car car = restClient.addCar();
+        model.addAttribute("item", car);
+        List<String> fieldNames = getFieldNames(car, car.getItemClazz());
+        model.addAttribute("fieldNames", fieldNames);
+        return "item";
+    }
+
+    @GetMapping("/shop/addbike")
+    public String addBike(Model model) {
+        Bike bike = restClient.addBike();
+        model.addAttribute("item", bike);
+        List<String> fieldNames = getFieldNames(bike, bike.getItemClazz());
+        model.addAttribute("fieldNames", fieldNames);
         return "item";
     }
 

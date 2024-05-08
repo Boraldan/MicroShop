@@ -14,6 +14,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
@@ -26,7 +28,7 @@ public class BikeWheel extends Item {
     private String name;
 
     @Column(name = "diameter")
-    private double diameter;
+    private Double diameter;
 
     @Column(name = "season")
     private String season;
@@ -42,6 +44,15 @@ public class BikeWheel extends Item {
         this.category = new Category();
         category.setCategoryName(CategoryName.BIKE_WHEEL);
         this.priceClazz = BikeWheelPrice.class;
+    }
+
+    public void initItemTitle() {
+        String itemTitle = "%s %s %s".formatted(
+                Objects.requireNonNullElse(name, ""),
+                Objects.requireNonNullElse(diameter, ""),
+                Objects.requireNonNullElse(season, "")
+        );
+        super.setTitle(itemTitle);
     }
 
    // Устанавливаем двухсторонию связь между BikeWheelPrice и Item для сохранения в db

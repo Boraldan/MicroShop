@@ -13,6 +13,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Objects;
+
 //@JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
@@ -38,15 +40,6 @@ public class Car extends Item {
     @Column(name = "year_prod")
     private Integer year;
 
-    public Car() {
-        this.itemClazz = Car.class;
-        this.priceClazz = CarPrice.class;
-        this.storageClazz = CarStorage.class;
-        this.price = new CarPrice();
-        this.category = new Category();
-        category.setCategoryName(CategoryName.CAR);
-    }
-
     @Column(name = "types", columnDefinition = "VARCHAR")
     @Enumerated(EnumType.STRING)
     private Types types;
@@ -60,8 +53,27 @@ public class Car extends Item {
 //    @Column(name = "image")
 //    private List<String> images;
 
-    // Устанавливаем двухстороннюю связь между CarPrice и Item для сохранения в db
+    public Car() {
+        this.itemClazz = Car.class;
+        this.priceClazz = CarPrice.class;
+        this.storageClazz = CarStorage.class;
+        this.price = new CarPrice();
+        this.category = new Category();
+        category.setCategoryName(CategoryName.CAR);
+    }
 
+    public void initItemTitle(){
+        String itemTitle = "%s %s %s %s %s".formatted(
+                Objects.requireNonNullElse(name, ""),
+                Objects.requireNonNullElse(factory, ""),
+                Objects.requireNonNullElse(year, ""),
+                Objects.requireNonNullElse(types, ""),
+                Objects.requireNonNullElse(fuel, "")
+        );
+        super.setTitle(itemTitle);
+    }
+
+    // Устанавливаем двухстороннюю связь между CarPrice и Item для сохранения в db
     public void setPrice(CarPrice price) {
         this.price = price;
         price.setItem(this);
@@ -79,8 +91,10 @@ public class Car extends Item {
                 ", storageClazz=" + storageClazz +
                 ", id=" + id +
                 ", category=" + category +
-//                ", storageId=" + storageId +
                 ", storage=" + storage +
                 '}';
     }
+
+
+
 }

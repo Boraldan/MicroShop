@@ -10,9 +10,9 @@ import java.math.BigDecimal;
 public class PriceBuilder {
 
     private final Price price;
-    private final Class<?> clazz;
+    private final Class<? extends Price> clazz;
 
-    public PriceBuilder(Class<?> clazz) {
+    public PriceBuilder(Class<? extends Price> clazz) {
         this.price = new Price();
         this.clazz = clazz;
     }
@@ -33,7 +33,7 @@ public class PriceBuilder {
         return convertTo(price, clazz);
     }
 
-    private <T extends Price> T convertTo(Price price, Class<?> clazz) {
+    private <T extends Price> T convertTo(Price price, Class<? extends Price> clazz) {
         Type targetType = TypeFactory.rawClass(clazz);
         return new ModelMapper().map(price, targetType);
     }

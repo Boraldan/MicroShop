@@ -8,7 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 
-public class ProductSpecifications {
+public class ItemSpecification {
     public static <T extends Item> Specification<T> scoreGreaterOrEqualsThan(BigDecimal price) {
 //      Использование root.join:
 //    Преимущества: Объединение сущностей может помочь оптимизировать выполнение запроса, особенно если у вас есть

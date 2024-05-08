@@ -27,28 +27,30 @@
             <th>title</th>
             <th>price</th>
             <th>Category</th>
-            <th>Item</th>
+            <th>Storage</th>
+            <th>Show Item</th>
             <th>Delete</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="item : ${items}">
-            <td th:text="${item.id}">ID</td>
-            <td th:text="${item.title}">title</td>
-            <td th:text="${item.price.getBasePrice()}">price</td>
-            <td th:text="${item.category.categoryName}">CategoryName</td>
+            <td th:text="${item.getId()}">ID</td>
+            <td th:text="${item.getTitle()}">title</td>
+            <td th:text="${item.getPrice().getCustomPrice()}">price</td>
+            <td th:text="${item.getCategory().getCategoryName()}">CategoryName</td>
             <!--                        <td>-->
             <!--                            <a th:href="@{/shop/item(itemId=${item.id}, itemClassName=${item.itemClazz.getName()})}">Show item</a>-->
             <!--                        </td>-->
+            <td th:text="${item.getStorage().getQuantity()}">Storage</td>
             <td>
                 <form th:action="@{/shop/item}" th:method="GET">
-                    <input type="hidden" name="itemId" th:value="${item.id}"/>
-                    <input type="hidden" name="itemClassName" th:value="${item.itemClazz.getName()}"/>
+                    <input type="hidden" name="itemId" th:value="${item.getId()}"/>
+                    <input type="hidden" name="itemClassName" th:value="${item.getItemClazz().getName()}"/>
                     <input type="submit" value="Show item"/>
                 </form>
             </td>
             <td>
-                <form th:action="@{/shop/item/delete{itemId}(itemId=${item.id})}" th:method="POST">
+                <form th:action="@{/shop/item/delete{itemId}(itemId=${item.getId()})}" th:method="POST">
                     <input type="submit" value="Delete"/>
                 </form>
             </td>

@@ -22,7 +22,7 @@ public class StorageBuilder {
         return this;
     }
 
-    public StorageBuilder setStorageClazz(Class<?> storageClazz) {
+    public StorageBuilder setStorageClazz(Class<? extends Storage> storageClazz) {
         this.storage.setStorageClazz(storageClazz);
         return this;
     }

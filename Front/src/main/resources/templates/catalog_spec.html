@@ -45,6 +45,7 @@
             <th>title</th>
             <th>price</th>
             <th>Category</th>
+            <th>Storage</th>
             <th>Item</th>
             <th>Delete</th>
         </tr>
@@ -52,12 +53,13 @@
         <tbody>
         <tr th:each="item : ${items}">
             <td th:text="${item.id}">ID</td>
-            <td th:text="${item.title}">title</td>
+            <td th:text="${item.getTitle}">title</td>
             <td th:text="${item.price.getBasePrice()}">price</td>
             <td th:text="${item.category.categoryName}">CategoryName</td>
             <!--                        <td>-->
             <!--                            <a th:href="@{/shop/item(itemId=${item.id}, itemClassName=${item.itemClazz.getName()})}">Show item</a>-->
             <!--                        </td>-->
+            <td th:text="${item.getStorage().getQuantity()}">Storage</td>
             <td>
                 <form th:action="@{/shop/item}" th:method="GET">
                     <input type="hidden" name="itemId" th:value="${item.id}"/>

@@ -7,6 +7,7 @@
 <body>
 <h1>Item Details</h1>
 <div th:if="${item}">
+    <h3 th:text="${'Title:' + item.getTitle()}"></h3>
     <div th:each="fieldName : ${fieldNames}">
         <p th:text="${fieldName}"></p>
     </div>

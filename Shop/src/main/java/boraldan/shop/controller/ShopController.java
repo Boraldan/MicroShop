@@ -10,10 +10,13 @@ import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.shop.entity.item.transport.Fuel;
 import boraldan.entitymicro.shop.entity.item.transport.bike.Bike;
+import boraldan.entitymicro.shop.entity.item.transport.bike.BikeBuilder;
 import boraldan.entitymicro.shop.entity.item.transport.car.Car;
+import boraldan.entitymicro.shop.entity.item.transport.car.CarBuilder;
 import boraldan.entitymicro.shop.entity.item.transport.car.Types;
+import boraldan.entitymicro.shop.entity.price.item_price.BikePrice;
+import boraldan.entitymicro.shop.entity.price.item_price.CarPrice;
 import boraldan.entitymicro.storage.dto.ListStorageDto;
-import boraldan.entitymicro.storage.dto.StorageBuilder;
 import boraldan.entitymicro.storage.entity.Storage;
 import boraldan.entitymicro.storage.entity.transport.bike.BikeStorage;
 import boraldan.entitymicro.storage.entity.transport.car.CarStorage;
@@ -77,45 +80,44 @@ public class ShopController {
     @PostMapping("/items/spec")
     public ResponseEntity<ListItemDto> getAllBySpecification(@RequestBody SpecificationDto spec) {
         // TODO: 06.05.2024 добавить валидацию SpecificationDto
-        System.out.println("1 -->  " +  spec);
-        Optional<Item> itemOptional;
+        Class<? extends Item> clazz;
         if (spec.getCategoryName().equals(CategoryName.ITEM)) {
-            itemOptional = itemService.getService(Item.class).findFirst();
+            clazz = Item.class;
         } else {
-            itemOptional = itemService.getService(Item.class).findFirstByCategoryName(spec.getCategoryName());
+            Optional<Item> itemOptional = itemService.getService(Item.class).findFirstByCategoryName(spec.getCategoryName());
+            if (itemOptional.isPresent()) {
+                clazz = itemOptional.get().getItemClazz();
+            } else {
+                return ResponseEntity.ok(new ListItemDtoBuilder().setItemList(Collections.emptyList()).build());
+            }
         }
+        List<Item> itemList = itemService.getService(clazz)
+                .getAllBySpecification(spec.getMinScore(), spec.getMaxScore(), spec.getPartName(), spec.getPage())
+                .getContent();
 
-        if (itemOptional.isPresent()) System.out.println("2 -->  " +  itemOptional.get());
-
-        if (itemOptional.isPresent()) {
-            List<Item> itemList = itemService.getService(itemOptional.get().getItemClazz())
-                    .getAllBySpecification(spec.getMinScore(), spec.getMaxScore(), spec.getPartName(), spec.getPage())
-                    .getContent();
-            System.out.println("3 -->  " +  itemList);
-            return ResponseEntity.ok(new ListItemDtoBuilder().setItemList(itemList).build());
-        }
-        return ResponseEntity.ok(new ListItemDtoBuilder().setItemList(Collections.emptyList()).build());
+        return ResponseEntity.ok(new ListItemDtoBuilder().setItemList(itemList).build());
     }
-
 
     @PostMapping("/item")
     public ResponseEntity<?> item(@RequestBody UUID itemId) {
-        Item item = itemService.getService(Item.class).getById(itemId);
-        item.setStorage(storageFeign.getQuantity(new StorageBuilder().setItemId(item.getId()).setStorageClazz(item.getStorageClazz()).build()).getBody());
-        return ResponseEntity.ok(convertToNeedItem(item, item.getItemClazz()));
+        Optional<Item> item = itemService.getService(Item.class).getById(itemId);
+        return item.<ResponseEntity<?>>map(value -> ResponseEntity.ok(convertToNeedItem(value, value.getItemClazz())))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     @GetMapping("/addcar")
     public ResponseEntity<?> addItem() {
-        Car car = new Car();
-        car.setName("Vesta_%s".formatted(++counter));
-        car.setFactory("Lada_%s".formatted(++counter));
-        car.setYear(2010);
-        car.setTypes(Types.SEDAN);
-        car.setFuel(Fuel.GASOLINE);
+        Car car = CarBuilder.create()
+                .setName("Vesta_%s".formatted(++counter))
+                .setFactory("Vesta_%s".formatted(++counter))
+                .setYear(2010)
+                .setTypes(Types.SEDAN)
+                .setFuel(Fuel.GASOLINE)
+                .setPrice(new PriceBuilder(CarPrice.class).setBasePrice(2000).setCoefficient(1.5).builder())
+                .build();
 
 //        CarPrice carPrice = new PriceBuilder(CarPrice.class).setBasePrice(2000).setCoefficient(1.5).builder();
-        car.setPrice(new PriceBuilder(car.getPriceClazz()).setBasePrice(2000).setCoefficient(1.5).builder());
+//        car.setPrice(new PriceBuilder(car.getPriceClazz()).setBasePrice(2000).setCoefficient(1.5).builder());
 
         Item item = itemService.getService(car.getItemClazz()).save(car);
 
@@ -134,15 +136,17 @@ public class ShopController {
 
     @GetMapping("/addbike")
     public ResponseEntity<?> addBike() {
+        Bike bike = BikeBuilder.create()
+                .setName("bike_%s".formatted(++counter))
+                .setFactory("bike_%s".formatted(++counter))
+                .setYear(2010)
+                .setFuel(Fuel.ELECTRIC)
+                .setPrice(new PriceBuilder(BikePrice.class).setBasePrice(1000).setCoefficient(1.2).builder())
+                .build();
 
-        Bike bike = new Bike();
-        bike.setName("bike_%s".formatted(++counter));
-        bike.setFactory("bike_%s".formatted(++counter));
-        bike.setYear(2010);
-        bike.setFuel(Fuel.GASOLINE);
 
 //        BikePrice bikePrice = new PriceBuilder(bike.getPriceClazz()).setBasePrice(1000).setCoefficient(1.2).builder();
-        bike.setPrice(new PriceBuilder(bike.getPriceClazz()).setBasePrice(1000).setCoefficient(1.2).builder());
+//        bike.setPrice(new PriceBuilder(bike.getPriceClazz()).setBasePrice(1000).setCoefficient(1.2).builder());
 
         Item item2 = itemService.getService(bike.getItemClazz()).save(bike);
         Storage storage = new BikeStorage();

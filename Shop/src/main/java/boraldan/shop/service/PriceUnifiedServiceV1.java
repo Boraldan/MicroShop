@@ -5,6 +5,7 @@ import boraldan.shop.service.i_service.PriceUnifiedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -18,7 +19,7 @@ public class PriceUnifiedServiceV1<T>  implements PriceUnifiedService<T, PriceUn
     }
 
     @Override
-    public T getById(UUID id) {
+    public Optional<T> getById(UUID id) {
         return PriceUnifiedService.super.getById(id);
     }
 
