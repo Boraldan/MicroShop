@@ -1,7 +1,9 @@
-package boraldan.entitymicro.shop.entity.item.transport.car;
+package boraldan.entitymicro.toolbox.builder;
 
 
 import boraldan.entitymicro.shop.entity.item.transport.Fuel;
+import boraldan.entitymicro.shop.entity.item.transport.car.Car;
+import boraldan.entitymicro.shop.entity.item.transport.car.Types;
 import boraldan.entitymicro.shop.entity.price.item_price.CarPrice;
 import boraldan.entitymicro.storage.entity.Storage;
 

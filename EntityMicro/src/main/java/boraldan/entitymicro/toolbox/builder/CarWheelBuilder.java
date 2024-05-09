@@ -1,5 +1,6 @@
-package boraldan.entitymicro.shop.entity.item.transport.car_relate;
+package boraldan.entitymicro.toolbox.builder;
 
+import boraldan.entitymicro.shop.entity.item.transport.car_relate.CarWheel;
 import boraldan.entitymicro.shop.entity.price.item_price.CarWheelPrice;
 import boraldan.entitymicro.storage.entity.Storage;
 

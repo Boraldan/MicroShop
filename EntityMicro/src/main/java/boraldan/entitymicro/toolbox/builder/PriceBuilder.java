@@ -1,4 +1,4 @@
-package boraldan.shop.toolbox.builder;
+package boraldan.entitymicro.toolbox.builder;
 
 import boraldan.entitymicro.shop.entity.price.Price;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -12,9 +12,13 @@ public class PriceBuilder {
     private final Price price;
     private final Class<? extends Price> clazz;
 
-    public PriceBuilder(Class<? extends Price> clazz) {
+    private PriceBuilder(Class<? extends Price> clazz) {
         this.price = new Price();
         this.clazz = clazz;
+    }
+
+    public static PriceBuilder creat(Class<? extends Price> clazz) {
+        return new PriceBuilder(clazz);
     }
 
     public PriceBuilder setBasePrice(double basePrice) {
@@ -27,8 +31,8 @@ public class PriceBuilder {
         return this;
     }
 
-//    @SneakyThrows
-    public <T extends Price> T builder() {
+    //    @SneakyThrows
+    public <T extends Price> T build() {
 //        return convertTo(price.clone(), clazz);
         return convertTo(price, clazz);
     }

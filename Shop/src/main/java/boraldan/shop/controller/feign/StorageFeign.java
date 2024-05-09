@@ -13,12 +13,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.UUID;
+
 @Primary
 @FeignClient(name = "storage", fallback = StorageFeignFallback.class)
 public interface StorageFeign {
 
+//    @PostMapping("/quantity")
+//    ResponseEntity<Storage> getQuantity(@RequestBody Storage storage);
+
     @PostMapping("/quantity")
-    ResponseEntity<Storage> getQuantity(@RequestBody Storage storage);
+    ResponseEntity<Storage> getQuantity(@RequestBody UUID itemId);
 
     @PostMapping("/list")
     ResponseEntity<ListStorageDto> getByList(@RequestBody ListStorageDto listStorageDto);
@@ -27,10 +32,10 @@ public interface StorageFeign {
     ResponseEntity<ListStorageDto> getListByCategory(@RequestBody ListStorageDto listStorageDto);
 
     @PutMapping("/save")
-    ResponseEntity<Storage> saveItem(@RequestBody Storage storage);
+    ResponseEntity<Storage> saveStorage(@RequestBody Storage storage);
 
     @DeleteMapping("/dell")
-    ResponseEntity<Void> dellItem(@RequestBody Storage storage);
+    ResponseEntity<Void> deleteByItem(@RequestBody UUID itemId);
 
 }
 
@@ -41,8 +46,9 @@ public interface StorageFeign {
 class StorageFeignFallback implements StorageFeign {
 
     // можно вернуть, что нам надо для дальнейшей обработки
+
     @Override
-    public ResponseEntity<Storage> getQuantity(Storage storage) {
+    public ResponseEntity<Storage> getQuantity(UUID itemId) {
         return new ResponseEntity<>(new Storage(), HttpStatus.BAD_REQUEST);
     }
 
@@ -57,12 +63,12 @@ class StorageFeignFallback implements StorageFeign {
     }
 
     @Override
-    public ResponseEntity<Storage> saveItem(@RequestBody Storage storage) {
+    public ResponseEntity<Storage> saveStorage(@RequestBody Storage storage) {
         return new ResponseEntity<>(new Storage(), HttpStatus.BAD_REQUEST);
     }
 
     @Override
-    public ResponseEntity<Void> dellItem(Storage storage) {
+    public ResponseEntity<Void> deleteByItem(UUID itemId) {
         return ResponseEntity.badRequest().build();
     }
 }

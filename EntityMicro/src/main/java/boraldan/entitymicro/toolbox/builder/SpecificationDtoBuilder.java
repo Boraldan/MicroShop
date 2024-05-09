@@ -1,5 +1,6 @@
-package boraldan.entitymicro.shop.dto;
+package boraldan.entitymicro.toolbox.builder;
 
+import boraldan.entitymicro.shop.dto.SpecificationDto;
 import boraldan.entitymicro.shop.entity.category.CategoryName;
 
 import java.math.BigDecimal;
@@ -8,9 +9,14 @@ public class SpecificationDtoBuilder {
 
     private final SpecificationDto spec;
 
-    public SpecificationDtoBuilder() {
+    private SpecificationDtoBuilder() {
         this.spec = new SpecificationDto();
     }
+
+    public static SpecificationDtoBuilder creat(){
+        return new SpecificationDtoBuilder();
+    }
+
 
     public SpecificationDtoBuilder setMinScore(Long minScore) {
         if (minScore == null) return this;

@@ -1,6 +1,7 @@
-package boraldan.entitymicro.storage.dto;
+package boraldan.entitymicro.toolbox.builder;
 
 import boraldan.entitymicro.shop.entity.category.CategoryName;
+import boraldan.entitymicro.storage.dto.ListStorageDto;
 import boraldan.entitymicro.storage.entity.Storage;
 
 import java.util.List;
@@ -10,11 +11,15 @@ public class ListStorageDtoBuilder {
 
     private final ListStorageDto listStorageDto;
 
-    public ListStorageDtoBuilder() {
+    private ListStorageDtoBuilder() {
         this.listStorageDto = new ListStorageDto();
     }
 
-    public ListStorageDtoBuilder setStorageClazz(Class<?> storageClazz) {
+    public static ListStorageDtoBuilder creat(){
+        return new ListStorageDtoBuilder();
+    }
+
+    public ListStorageDtoBuilder setStorageClazz(Class<? extends Storage> storageClazz) {
         this.listStorageDto.setStorageClazz(storageClazz);
         return this;
     }

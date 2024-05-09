@@ -1,5 +1,6 @@
-package boraldan.entitymicro.shop.entity.item.transport.bike_relate;
+package boraldan.entitymicro.toolbox.builder;
 
+import boraldan.entitymicro.shop.entity.item.transport.bike_relate.BikeWheel;
 import boraldan.entitymicro.shop.entity.price.item_price.BikeWheelPrice;
 import boraldan.entitymicro.storage.entity.Storage;
 

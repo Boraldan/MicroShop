@@ -3,16 +3,13 @@ package boraldan.shop.controller;
 
 import boraldan.entitymicro.bank.entity.BankAccount;
 import boraldan.entitymicro.shop.dto.ListItemDto;
-import boraldan.entitymicro.shop.dto.ListItemDtoBuilder;
 import boraldan.entitymicro.shop.dto.SpecificationDto;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.shop.entity.item.transport.Fuel;
 import boraldan.entitymicro.shop.entity.item.transport.bike.Bike;
-import boraldan.entitymicro.shop.entity.item.transport.bike.BikeBuilder;
 import boraldan.entitymicro.shop.entity.item.transport.car.Car;
-import boraldan.entitymicro.shop.entity.item.transport.car.CarBuilder;
 import boraldan.entitymicro.shop.entity.item.transport.car.Types;
 import boraldan.entitymicro.shop.entity.price.item_price.BikePrice;
 import boraldan.entitymicro.shop.entity.price.item_price.CarPrice;
@@ -21,13 +18,13 @@ import boraldan.entitymicro.storage.entity.Storage;
 import boraldan.entitymicro.storage.entity.transport.bike.BikeStorage;
 import boraldan.entitymicro.storage.entity.transport.car.CarStorage;
 import boraldan.entitymicro.test.Lot;
+import boraldan.entitymicro.toolbox.builder.*;
 import boraldan.shop.controller.feign.BankFeign;
 import boraldan.shop.controller.feign.StorageFeign;
 import boraldan.shop.mq.bank.MqShopService;
 import boraldan.shop.redis.RedisService;
 import boraldan.shop.service.i_service.CategoryService;
 import boraldan.shop.service.provider.ItemServiceClassProvider;
-import boraldan.shop.toolbox.builder.PriceBuilder;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -113,24 +110,18 @@ public class ShopController {
                 .setYear(2010)
                 .setTypes(Types.SEDAN)
                 .setFuel(Fuel.GASOLINE)
-                .setPrice(new PriceBuilder(CarPrice.class).setBasePrice(2000).setCoefficient(1.5).builder())
+                .setPrice(PriceBuilder.creat(CarPrice.class).setBasePrice(2000).setCoefficient(1.5).build())
                 .build();
-
-//        CarPrice carPrice = new PriceBuilder(CarPrice.class).setBasePrice(2000).setCoefficient(1.5).builder();
-//        car.setPrice(new PriceBuilder(car.getPriceClazz()).setBasePrice(2000).setCoefficient(1.5).builder());
 
         Item item = itemService.getService(car.getItemClazz()).save(car);
 
-        Storage storage = new CarStorage();
-        storage.setItemId(item.getId());
-        storage.setQuantity(3);
-        storage.setReserve(3);
-        storage = storageFeign.saveItem(storage).getBody();
-        item.setStorage(storage);
+        item.setStorage(storageFeign.saveStorage(StorageBuilder.creat(CarStorage.class)
+                        .setItemId(item.getId())
+                        .setQuantity(3)
+                        .setReserve(3)
+                        .build())
+                .getBody());
 
-//        Car item2 = convertToNeedItem(itemService.getService(car.getItemClazz()).save(car), car.getItemClazz());
-
-        System.out.println("Запрос Car1 --> 1 " + item);
         return new ResponseEntity<>(item, HttpStatus.OK);
     }
 
@@ -139,25 +130,22 @@ public class ShopController {
         Bike bike = BikeBuilder.create()
                 .setName("bike_%s".formatted(++counter))
                 .setFactory("bike_%s".formatted(++counter))
+                .setWheels(2)
                 .setYear(2010)
                 .setFuel(Fuel.ELECTRIC)
-                .setPrice(new PriceBuilder(BikePrice.class).setBasePrice(1000).setCoefficient(1.2).builder())
+                .setPrice(PriceBuilder.creat(BikePrice.class).setBasePrice(1000).setCoefficient(1.2).build())
                 .build();
 
+        Item itemBike = itemService.getService(bike.getItemClazz()).save(bike);
 
-//        BikePrice bikePrice = new PriceBuilder(bike.getPriceClazz()).setBasePrice(1000).setCoefficient(1.2).builder();
-//        bike.setPrice(new PriceBuilder(bike.getPriceClazz()).setBasePrice(1000).setCoefficient(1.2).builder());
+        itemBike.setStorage(storageFeign.saveStorage(StorageBuilder.creat(BikeStorage.class)
+                        .setItemId(itemBike.getId())
+                        .setQuantity(5)
+                        .setReserve(5)
+                        .build())
+                .getBody());
 
-        Item item2 = itemService.getService(bike.getItemClazz()).save(bike);
-        Storage storage = new BikeStorage();
-        storage.setItemId(item2.getId());
-        storage.setQuantity(5);
-        storage.setReserve(5);
-        storage = storageFeign.saveItem(storage).getBody();
-        bike.setStorage(storage);
-
-        System.out.println("Запрос bike --> 1 " + item2);
-        return new ResponseEntity<>(item2, HttpStatus.OK);
+        return new ResponseEntity<>(itemBike, HttpStatus.OK);
     }
 
     @DeleteMapping("/item/delete{itemId}")

@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Data
 public class ListStorageDto {
-    private Class<?> storageClazz;
+    private Class<? extends Storage> storageClazz;
     private CategoryName categoryName;
     private List<Storage> storageList;
     private List<UUID> itemIdList;

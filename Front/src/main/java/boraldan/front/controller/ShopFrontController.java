@@ -4,7 +4,7 @@ package boraldan.front.controller;
 import boraldan.entitymicro.cart.entity.Cart;
 import boraldan.entitymicro.shop.dto.ListItemDto;
 import boraldan.entitymicro.shop.dto.SpecificationDto;
-import boraldan.entitymicro.shop.dto.SpecificationDtoBuilder;
+import boraldan.entitymicro.toolbox.builder.SpecificationDtoBuilder;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.shop.entity.item.Item;
@@ -67,7 +67,7 @@ public class ShopFrontController {
         if (page < 1) page = 1;
         if (categoryName == null) categoryName = CategoryName.ITEM;
 
-        SpecificationDto spec = new SpecificationDtoBuilder()
+        SpecificationDto spec = SpecificationDtoBuilder.creat()
                 .setPage(page)
                 .setMinScore(minPrice)
                 .setMaxScore(maxPrice)

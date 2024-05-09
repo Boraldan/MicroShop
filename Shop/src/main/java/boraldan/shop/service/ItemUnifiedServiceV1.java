@@ -2,9 +2,8 @@ package boraldan.shop.service;
 
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.storage.dto.ListStorageDto;
-import boraldan.entitymicro.storage.dto.ListStorageDtoBuilder;
-import boraldan.entitymicro.storage.dto.StorageBuilder;
 import boraldan.entitymicro.storage.entity.Storage;
+import boraldan.entitymicro.toolbox.builder.ListStorageDtoBuilder;
 import boraldan.shop.controller.feign.StorageFeign;
 import boraldan.shop.repository.ItemUnifiedRepo;
 import boraldan.shop.service.i_service.CategoryService;
@@ -31,57 +30,50 @@ public class ItemUnifiedServiceV1<T extends Item> implements ItemUnifiedService<
     private final CategoryService categoryService;
     private final StorageFeign storageFeign;
     private T t;
-    private Class<?> storageClazz;
+    private Class<? extends Storage> storageClazz;
 
     @Override
     public ItemUnifiedRepo<T> getItemRepo() {
         return itemRepo;
     }
 
+//    @Override
+//    public Optional<T> getById(UUID id) {
+//        Optional<T> item = ItemUnifiedService.super.getById(id);
+//        item.ifPresent(value -> value.setStorage(storageFeign.getQuantity(StorageBuilder.creat(Storage.class).setItemId(value.getId())
+//                .setStorageClazz(value.getStorageClazz()).build()).getBody()));
+//        return item;
+//    }
+
     @Override
-    public Optional<T> getById(UUID id) {
-        Optional<T> item = ItemUnifiedService.super.getById(id);
-        item.ifPresent(value -> value.setStorage(storageFeign.getQuantity(new StorageBuilder().setItemId(value.getId())
-                .setStorageClazz(value.getStorageClazz()).build()).getBody()));
+    public Optional<T> getById(UUID itemId) {
+        Optional<T> item = ItemUnifiedService.super.getById(itemId);
+        item.ifPresent(value -> value.setStorage(storageFeign.getQuantity(itemId).getBody()));
         return item;
     }
+
 
     @Override
     public List<T> getAll() {
         initT();
         List<T> originalList = ItemUnifiedService.super.getAll();
         if (originalList.isEmpty()) return originalList;
-
-        List<UUID> itemIdList = originalList.stream().map(T::getId).toList();
-        ListStorageDto listStorageDto = storageFeign.getByList(new ListStorageDtoBuilder()
-                .setStorageClazz(storageClazz).setItemIdList(itemIdList).build()).getBody();
-
+        ListStorageDto listStorageDto = this.getListStorageDto(originalList);
         if (listStorageDto == null) return originalList;
         return addStorageToListT(originalList, listStorageDto);
     }
 
     @Override
     public Page<T> getAllBySpecification(BigDecimal minScore, BigDecimal maxScore, String partName, Integer page) {
-//        return ItemUnifiedService.super.getAllBySpecification(minScore, maxScore, partName, page);
-
         Page<T> originalPage = ItemUnifiedService.super.getAllBySpecification(minScore, maxScore, partName, page);
-
         initT();
         List<T> originalList = originalPage.getContent();
-
         if (originalList.isEmpty()) return originalPage;
-
-        List<UUID> itemIdList = originalList.stream().map(T::getId).toList();
-        ListStorageDto listStorageDto = storageFeign.getByList(new ListStorageDtoBuilder()
-                .setStorageClazz(storageClazz).setItemIdList(itemIdList).build()).getBody();
-
+        ListStorageDto listStorageDto = this.getListStorageDto(originalList);
         if (listStorageDto == null) return originalPage;
-
         originalList = addStorageToListT(originalList, listStorageDto);
-
         return new PageImpl<>(originalList, originalPage.getPageable(), originalPage.getTotalElements());
     }
-
 
     @Override
     @Transactional
@@ -92,19 +84,29 @@ public class ItemUnifiedServiceV1<T extends Item> implements ItemUnifiedService<
 
     @Override
     @Transactional
-    public void deleteById(UUID id) {
-        ItemUnifiedService.super.deleteById(id);
+    public void deleteById(UUID itemId) {
+        ItemUnifiedService.super.deleteById(itemId);
+        storageFeign.deleteByItem(itemId);
     }
 
-    @Override
-    @Transactional
-    public <E extends Item> void delete(E item) {
-        ItemUnifiedService.super.delete(item);
-    }
+//    @Override
+//    @Transactional
+//    public <E extends Item> void delete(E item) {
+//        ItemUnifiedService.super.delete(item);
+//    }
 
     public <E extends Item> T convertToT(E item, Class<?> clazz) {
         Type targetType = TypeFactory.rawClass(clazz);
         return new ModelMapper().map(item, targetType);
+    }
+
+    private ListStorageDto getListStorageDto(List<T> originalList) {
+        List<UUID> itemIdList = originalList.stream().map(T::getId).toList();
+        return storageFeign.getByList(ListStorageDtoBuilder.creat()
+                        .setStorageClazz(storageClazz)
+                        .setItemIdList(itemIdList)
+                        .build())
+                .getBody();
     }
 
     private List<T> addStorageToListT(List<T> itemList, ListStorageDto listStorageDto) {

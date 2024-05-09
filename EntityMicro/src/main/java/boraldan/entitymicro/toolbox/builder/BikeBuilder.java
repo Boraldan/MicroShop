@@ -1,10 +1,12 @@
-package boraldan.entitymicro.shop.entity.item.transport.bike;
+package boraldan.entitymicro.toolbox.builder;
 
 import boraldan.entitymicro.shop.entity.item.transport.Fuel;
+import boraldan.entitymicro.shop.entity.item.transport.bike.Bike;
 import boraldan.entitymicro.shop.entity.price.item_price.BikePrice;
 import boraldan.entitymicro.storage.entity.Storage;
+import lombok.Getter;
 
-
+@Getter
 public class BikeBuilder {
 
     private final Bike bike;

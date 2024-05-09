@@ -19,7 +19,6 @@ public class Storage {
     @GeneratedValue(strategy = GenerationType.UUID)
     protected UUID id;
 
-
     @Column(name = "item_id")
     protected UUID itemId;
 
@@ -36,18 +35,14 @@ public class Storage {
         this.storageClazz = this.getClass();
     }
 
-
-    //
-//    public <T extends Storage> T getThisStorage(Class<T> clazz) {
-//        return clazz.cast(this);
-//    }
-
-
     @Override
     public String toString() {
         return "Storage{" +
-                "quantity=" + quantity +
+                "id=" + id +
+                ", itemId=" + itemId +
+                ", quantity=" + quantity +
                 ", reserve=" + reserve +
+                ", storageClazz=" + storageClazz +
                 '}';
     }
 }

@@ -1,5 +1,6 @@
-package boraldan.entitymicro.shop.dto;
+package boraldan.entitymicro.toolbox.builder;
 
+import boraldan.entitymicro.shop.dto.ListItemDto;
 import boraldan.entitymicro.shop.entity.item.Item;
 
 import java.util.List;

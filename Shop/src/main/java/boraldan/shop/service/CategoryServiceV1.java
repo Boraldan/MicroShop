@@ -4,7 +4,7 @@ import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.storage.dto.ListStorageDto;
-import boraldan.entitymicro.storage.dto.ListStorageDtoBuilder;
+import boraldan.entitymicro.toolbox.builder.ListStorageDtoBuilder;
 import boraldan.entitymicro.storage.entity.Storage;
 import boraldan.shop.controller.feign.StorageFeign;
 import boraldan.shop.repository.CategoryRepo;
@@ -33,11 +33,12 @@ public class CategoryServiceV1 implements CategoryService {
         Category category = categoryRepo.findByCategoryName(categoryName).orElse(null);
         if (category != null && !category.getItems().isEmpty()) {
             List<UUID> itemIdList = category.getItems().stream().map(Item::getId).toList();
-            ListStorageDto listStorageDto = storageFeign.getListByCategory(new ListStorageDtoBuilder()
-                    .setStorageCategory(categoryName).setItemIdList(itemIdList).build()).getBody();
-
+            ListStorageDto listStorageDto = storageFeign.getListByCategory(ListStorageDtoBuilder.creat()
+                            .setStorageCategory(categoryName)
+                            .setItemIdList(itemIdList)
+                            .build())
+                    .getBody();
             if (listStorageDto == null) return category.getItems();
-
             return addStorageToListT(category.getItems(), listStorageDto);
         }
         return new ArrayList<>();

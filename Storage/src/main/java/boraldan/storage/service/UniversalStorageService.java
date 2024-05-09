@@ -14,6 +14,7 @@ import java.util.UUID;
 
 
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UniversalStorageService<T extends Storage> implements StorageService<T, GlobalJpaRepository<T>> {
 
     private final GlobalJpaRepository<T> storageRepo;
@@ -25,8 +26,8 @@ public class UniversalStorageService<T extends Storage> implements StorageServic
     }
 
     @Override
-    public Optional<T> getById(UUID id) {
-        return StorageService.super.getById(id);
+    public Optional<T> getById(UUID storageId) {
+        return StorageService.super.getById(storageId);
     }
 
     @Override
@@ -46,12 +47,12 @@ public class UniversalStorageService<T extends Storage> implements StorageServic
     }
 
     @Override
-    public void delete(Storage storage) {
-        StorageService.super.delete(storage);
+    @Transactional
+    public void deleteByItemId(UUID itemId) {
+        StorageService.super.deleteByItemId(itemId);
     }
 
-
-    public T convertToStorageItem(Storage storage, Class<?> clazz) {
+    public T convertToStorageItem(Storage storage, Class<? extends Storage> clazz) {
         Type targetType = TypeFactory.rawClass(clazz);
         return modelMapper.map(storage, targetType);
     }

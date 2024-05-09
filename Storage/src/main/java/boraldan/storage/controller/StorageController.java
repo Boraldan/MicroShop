@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @Log4j2
 @RequiredArgsConstructor
 @RestController
@@ -38,11 +40,11 @@ public class StorageController {
 //    }
 
     @PostMapping("/quantity")
-    public ResponseEntity<Storage> getQuantity(@RequestBody Storage storage) {
+    public ResponseEntity<Storage> getQuantity(@RequestBody UUID itemId) {
         //TODO добавить валидацию storageDto
         return new ResponseEntity<>(storageServiceClass
-                .getService(storage.getStorageClazz() == null ? Storage.class : storage.getStorageClazz())
-                .getByItemId(storage.getItemId()).orElse(null), HttpStatus.OK);
+                .getService( Storage.class )
+                .getByItemId(itemId).orElse(null), HttpStatus.OK);
     }
 
     @PostMapping("/list")
@@ -64,13 +66,14 @@ public class StorageController {
     @PutMapping("/save")
     public ResponseEntity<Storage> saveItem(@RequestBody Storage storage) {
         //TODO добавить валидацию storageDto
+        System.out.println(storage.getClass().getSimpleName());
         return new ResponseEntity<>(storageServiceClass.getService(storage.getStorageClazz()).save(storage), HttpStatus.OK);
     }
 
     @DeleteMapping("/dell")
-    public ResponseEntity<Void> dellItem(@RequestBody Storage storage) {
+    public ResponseEntity<Void> dellItem(@RequestBody UUID itemId) {
         //TODO добавить валидацию storageDto
-        storageServiceClass.getService(storage.getStorageClazz() == null ? Storage.class : storage.getStorageClazz()).delete(storage);
+        storageServiceClass.getService(Storage.class).deleteByItemId(itemId);
         return ResponseEntity.ok().build();
     }
 
