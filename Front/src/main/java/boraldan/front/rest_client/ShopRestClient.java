@@ -1,11 +1,11 @@
 package boraldan.front.rest_client;
 
-import boraldan.entitymicro.shop.dto.ListItemDto;
 import boraldan.entitymicro.shop.dto.SpecificationDto;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.shop.entity.item.transport.bike.Bike;
 import boraldan.entitymicro.shop.entity.item.transport.car.Car;
+import boraldan.front.config.RestResponsePage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -20,34 +20,36 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ShopRestClient {
 
-    private static final ParameterizedTypeReference<List<Item>> PRODUCTS_TYPE_REFERENCE;
     private final RestClient restClient;
+    private static final ParameterizedTypeReference<List<Item>> LIST_PARAMETERIZED;
+    private static final ParameterizedTypeReference<RestResponsePage<Item>> PAGE_PARAMETERIZED;
 
     static {
-        PRODUCTS_TYPE_REFERENCE = new ParameterizedTypeReference<>() {
+        LIST_PARAMETERIZED = new ParameterizedTypeReference<>() {
+        };
+        PAGE_PARAMETERIZED = new ParameterizedTypeReference<>() {
         };
     }
 
-    public ListItemDto findByCategory(Category category) {
+    public List<Item> findByCategory(Category category) {
         return this.restClient
                 .post()
                 .uri("/shop/category")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(category)
                 .retrieve()
-                .body(ListItemDto.class);
+                .body(LIST_PARAMETERIZED);
     }
 
-    public ListItemDto getAllBySpecification(SpecificationDto spec) {
+    public RestResponsePage<Item> getAllBySpecification(SpecificationDto spec) {
         return this.restClient
                 .post()
                 .uri("/shop/items/spec")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(spec)
                 .retrieve()
-                .body(ListItemDto.class);
+                .body(PAGE_PARAMETERIZED);
     }
-
 
     public <T extends Item> T getItem(UUID itemId, Class<T> itemType) {
         return this.restClient
@@ -93,7 +95,7 @@ public class ShopRestClient {
                 .get()
                 .uri("/catalogue-api/products?filter={filter}", filter)
                 .retrieve()
-                .body(PRODUCTS_TYPE_REFERENCE);
+                .body(LIST_PARAMETERIZED);
     }
 
 

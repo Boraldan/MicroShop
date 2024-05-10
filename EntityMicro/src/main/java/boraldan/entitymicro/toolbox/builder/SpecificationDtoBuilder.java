@@ -13,20 +13,30 @@ public class SpecificationDtoBuilder {
         this.spec = new SpecificationDto();
     }
 
-    public static SpecificationDtoBuilder creat(){
+    public static SpecificationDtoBuilder creat() {
         return new SpecificationDtoBuilder();
     }
 
-
-    public SpecificationDtoBuilder setMinScore(Long minScore) {
-        if (minScore == null) return this;
-        this.spec.setMinScore(BigDecimal.valueOf(minScore));
+    public SpecificationDtoBuilder setPage(Integer page) {
+        this.spec.setPage(page);
         return this;
     }
 
-    public SpecificationDtoBuilder setMaxScore(Long maxScore) {
-        if (maxScore == null) return this;
-        this.spec.setMaxScore(BigDecimal.valueOf(maxScore));
+    public SpecificationDtoBuilder setPageSize(Integer pageSize) {
+        if (pageSize == null) pageSize = 10;
+        this.spec.setPageSize(pageSize);
+        return this;
+    }
+
+    public SpecificationDtoBuilder setMinScore(Long minPrice) {
+        if (minPrice == null) return this;
+        this.spec.setMinPrice(BigDecimal.valueOf(minPrice));
+        return this;
+    }
+
+    public SpecificationDtoBuilder setMaxScore(Long maxPrice) {
+        if (maxPrice == null) return this;
+        this.spec.setMaxPrice(BigDecimal.valueOf(maxPrice));
         return this;
     }
 
@@ -34,11 +44,6 @@ public class SpecificationDtoBuilder {
         if (partName == null) return this;
         if (partName.isBlank()) return this;
         this.spec.setPartName(partName.strip());
-        return this;
-    }
-
-    public SpecificationDtoBuilder setPage(Integer page) {
-        this.spec.setPage(page);
         return this;
     }
 

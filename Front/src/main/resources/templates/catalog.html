@@ -36,7 +36,7 @@
         <tr th:each="item : ${items}">
             <td th:text="${item.getId()}">ID</td>
             <td th:text="${item.getTitle()}">title</td>
-            <td th:text="${item.getPrice().getCustomPrice()}">price</td>
+            <td th:text="${item.price.getCustomPrice()}">price</td>
             <td th:text="${item.getCategory().getCategoryName()}">CategoryName</td>
             <!--                        <td>-->
             <!--                            <a th:href="@{/shop/item(itemId=${item.id}, itemClassName=${item.itemClazz.getName()})}">Show item</a>-->

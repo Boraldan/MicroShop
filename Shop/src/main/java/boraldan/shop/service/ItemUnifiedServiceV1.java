@@ -64,8 +64,8 @@ public class ItemUnifiedServiceV1<T extends Item> implements ItemUnifiedService<
     }
 
     @Override
-    public Page<T> getAllBySpecification(BigDecimal minScore, BigDecimal maxScore, String partName, Integer page) {
-        Page<T> originalPage = ItemUnifiedService.super.getAllBySpecification(minScore, maxScore, partName, page);
+    public Page<T> getAllBySpecification(BigDecimal minScore, BigDecimal maxScore, String partName, Integer page, Integer pageSize) {
+        Page<T> originalPage = ItemUnifiedService.super.getAllBySpecification(minScore, maxScore, partName, page, pageSize);
         initT();
         List<T> originalList = originalPage.getContent();
         if (originalList.isEmpty()) return originalPage;

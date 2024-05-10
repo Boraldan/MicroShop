@@ -8,10 +8,11 @@ import java.math.BigDecimal;
 @Data
 public class SpecificationDto {
 
-    private BigDecimal minScore;
-    private BigDecimal maxScore;
-    private String partName;
     private Integer page;
+    private Integer pageSize;
+    private BigDecimal minPrice;
+    private BigDecimal maxPrice;
+    private String partName;
     private CategoryName categoryName;
 
 }

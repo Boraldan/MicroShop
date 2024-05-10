@@ -33,7 +33,7 @@ public interface ItemUnifiedService<T extends Item, R extends ItemUnifiedRepo<T>
         return getItemRepo().findAll();
     }
 
-    default Page<T> getAllBySpecification(BigDecimal minScore, BigDecimal maxScore, String partName, Integer page) {
+    default Page<T> getAllBySpecification(BigDecimal minScore, BigDecimal maxScore, String partName, Integer page, Integer pageSize) {
         Specification<T> spec = Specification.where(null);
         if (minScore != null) {
             spec = spec.and(ItemSpecification.scoreGreaterOrEqualsThan(minScore));
@@ -44,11 +44,7 @@ public interface ItemUnifiedService<T extends Item, R extends ItemUnifiedRepo<T>
         if (partName != null) {
             spec = spec.and(ItemSpecification.nameLike(partName));
         }
-//        if (nameCategory != null) {
-//            Integer idCategory = categoryService.getIdCategoryByName(nameCategory);
-//            spec = spec.and(ProductSpecifications.categoryLike(idCategory));
-//        }
-        return getItemRepo().findAll(spec, PageRequest.of(page - 1, 10));
+        return getItemRepo().findAll(spec, PageRequest.of(page - 1, pageSize));
     }
 
 

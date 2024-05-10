@@ -2,20 +2,20 @@ package boraldan.front.controller;
 
 
 import boraldan.entitymicro.cart.entity.Cart;
-import boraldan.entitymicro.shop.dto.ListItemDto;
 import boraldan.entitymicro.shop.dto.SpecificationDto;
-import boraldan.entitymicro.toolbox.builder.SpecificationDtoBuilder;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.shop.entity.item.transport.bike.Bike;
 import boraldan.entitymicro.shop.entity.item.transport.car.Car;
+import boraldan.entitymicro.toolbox.builder.SpecificationDtoBuilder;
 import boraldan.front.rest_client.ShopRestClient;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -51,35 +51,38 @@ public class ShopFrontController {
 
     @PostMapping("/catalog")
     public String getCatalog(Model model, @ModelAttribute("category") Category category) {
-        ListItemDto listItemDto = this.restClient.findByCategory(category);
-        model.addAttribute("items", listItemDto.getItemList());
+        List<Item> itemList = this.restClient.findByCategory(category);
+        model.addAttribute("items", itemList);
         return "catalog";
     }
 
     @GetMapping("/shop/items/spec")
     public String getAllBySpecification(Model model,
-                                        @RequestParam(name = "p", defaultValue = "1") Integer page,
+                                        @RequestParam(name = "page", defaultValue = "1") Integer page,
+                                        @RequestParam(name = "page_size", defaultValue = "10") Integer pageSize,
                                         @RequestParam(name = "min_price", required = false) Long minPrice,
                                         @RequestParam(name = "max_price", required = false) Long maxPrice,
                                         @RequestParam(name = "name_part", required = false) String namePart,
-                                        @RequestParam(name = "category_name", required = false) CategoryName categoryName
-    ) {
+                                        @RequestParam(name = "category_name", required = false) CategoryName categoryName) {
         if (page < 1) page = 1;
         if (categoryName == null) categoryName = CategoryName.ITEM;
 
         SpecificationDto spec = SpecificationDtoBuilder.creat()
                 .setPage(page)
+                .setPageSize(pageSize)
                 .setMinScore(minPrice)
                 .setMaxScore(maxPrice)
                 .setPartName(namePart)
                 .setCategoryName(categoryName)
                 .build();
 
-        ListItemDto listItemDto = this.restClient.getAllBySpecification(spec);
-        model.addAttribute("items", listItemDto.getItemList());
+        Page<Item> itemsPage = this.restClient.getAllBySpecification(spec);
+        model.addAttribute("items", itemsPage.getContent());
+        model.addAttribute("totalPages", itemsPage.getTotalPages());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", pageSize);
 
         return "catalog_spec";
-
     }
 
     @GetMapping("/shop/item")

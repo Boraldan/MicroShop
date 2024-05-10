@@ -29,6 +29,9 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,9 +54,9 @@ public class ShopController {
     private final RedisService redisService;
 
     @PostMapping("/category")
-    public ResponseEntity<?> getAllByCategory(@RequestBody Category category,
-                                              Principal principal,
-                                              @RequestHeader("REDIS") String redisKey) {
+    public ResponseEntity<List<Item>> getAllByCategory(@RequestBody Category category,
+                                                       Principal principal,
+                                                       @RequestHeader("REDIS") String redisKey) {
 
         System.out.println("category    1 -->  " + category);
         System.out.println("principal   2 -->  " + principal);
@@ -65,17 +68,17 @@ public class ShopController {
         } else {
             itemList = categoryService.getListByCategoryName(category.getCategoryName());
         }
-        return ResponseEntity.ok(new ListItemDtoBuilder().setItemList(itemList).build());
+        return ResponseEntity.ok(itemList);
     }
 
     @GetMapping("/items")
-    public ResponseEntity<ListItemDto> getAll() {
+    public ResponseEntity<List<Item>> getAll() {
         List<Item> itemList = itemService.getService(Item.class).getAll();
-        return ResponseEntity.ok(new ListItemDtoBuilder().setItemList(itemList).build());
+        return ResponseEntity.ok(itemList);
     }
 
     @PostMapping("/items/spec")
-    public ResponseEntity<ListItemDto> getAllBySpecification(@RequestBody SpecificationDto spec) {
+    public ResponseEntity<Page<Item>> getAllBySpecification(@RequestBody SpecificationDto spec) {
         // TODO: 06.05.2024 добавить валидацию SpecificationDto
         Class<? extends Item> clazz;
         if (spec.getCategoryName().equals(CategoryName.ITEM)) {
@@ -85,14 +88,12 @@ public class ShopController {
             if (itemOptional.isPresent()) {
                 clazz = itemOptional.get().getItemClazz();
             } else {
-                return ResponseEntity.ok(new ListItemDtoBuilder().setItemList(Collections.emptyList()).build());
+                return ResponseEntity.ok(new PageImpl<>(Collections.emptyList(),
+                        PageRequest.of(spec.getPage(), spec.getPageSize()), 0));
             }
         }
-        List<Item> itemList = itemService.getService(clazz)
-                .getAllBySpecification(spec.getMinScore(), spec.getMaxScore(), spec.getPartName(), spec.getPage())
-                .getContent();
-
-        return ResponseEntity.ok(new ListItemDtoBuilder().setItemList(itemList).build());
+        return ResponseEntity.ok(itemService.getService(clazz).getAllBySpecification(spec.getMinPrice(),
+                spec.getMaxPrice(), spec.getPartName(), spec.getPage(), spec.getPageSize()));
     }
 
     @PostMapping("/item")
