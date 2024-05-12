@@ -4,6 +4,7 @@ import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.storage.dto.ListStorageDto;
 import boraldan.entitymicro.storage.entity.Storage;
 import boraldan.entitymicro.toolbox.builder.ListStorageDtoBuilder;
+import boraldan.entitymicro.toolbox.builder.specification.SpecItem;
 import boraldan.shop.controller.feign.StorageFeign;
 import boraldan.shop.repository.ItemUnifiedRepo;
 import boraldan.shop.service.i_service.CategoryService;
@@ -13,12 +14,12 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
 import java.util.*;
 
 @Transactional(readOnly = true)
@@ -64,8 +65,8 @@ public class ItemUnifiedServiceV1<T extends Item> implements ItemUnifiedService<
     }
 
     @Override
-    public Page<T> getAllBySpecification(BigDecimal minScore, BigDecimal maxScore, String partName, Integer page, Integer pageSize) {
-        Page<T> originalPage = ItemUnifiedService.super.getAllBySpecification(minScore, maxScore, partName, page, pageSize);
+    public Page<T> getAllBySpecification(SpecItem specItem, Pageable pageable) {
+        Page<T> originalPage = ItemUnifiedService.super.getAllBySpecification(specItem, pageable);
         initT();
         List<T> originalList = originalPage.getContent();
         if (originalList.isEmpty()) return originalPage;

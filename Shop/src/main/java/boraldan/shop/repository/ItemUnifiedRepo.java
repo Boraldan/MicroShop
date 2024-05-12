@@ -14,7 +14,6 @@ public interface ItemUnifiedRepo<T extends Item> extends JpaRepository<T, UUID>,
 
     Optional<T> findFirstByCategoryCategoryName(CategoryName categoryName);
 
-//    Optional<T> findFirst();
     Optional<T> findFirstByOrderByIdAsc();
 
 

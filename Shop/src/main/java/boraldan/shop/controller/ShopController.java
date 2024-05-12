@@ -19,6 +19,7 @@ import boraldan.entitymicro.storage.entity.transport.bike.BikeStorage;
 import boraldan.entitymicro.storage.entity.transport.car.CarStorage;
 import boraldan.entitymicro.test.Lot;
 import boraldan.entitymicro.toolbox.builder.*;
+import boraldan.entitymicro.toolbox.builder.specification.SpecItem;
 import boraldan.shop.controller.feign.BankFeign;
 import boraldan.shop.controller.feign.StorageFeign;
 import boraldan.shop.mq.bank.MqShopService;
@@ -29,9 +30,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -92,8 +91,8 @@ public class ShopController {
                         PageRequest.of(spec.getPage(), spec.getPageSize()), 0));
             }
         }
-        return ResponseEntity.ok(itemService.getService(clazz).getAllBySpecification(spec.getMinPrice(),
-                spec.getMaxPrice(), spec.getPartName(), spec.getPage(), spec.getPageSize()));
+        return ResponseEntity.ok(itemService.getService(clazz).
+                getAllBySpecification(convertToSpecItem(spec), convertToPageRequest(spec)));
     }
 
     @PostMapping("/item")
@@ -196,9 +195,17 @@ public class ShopController {
         return new ListItemDtoBuilder().setItemList(newItemList).build();
     }
 
-//    private CarDto convertToCarDTO(Car car) {
-//        return modelMapper.map(car, CarDto.class);
-//    }
+    private SpecItem convertToSpecItem(SpecificationDto specDto) {
+        return modelMapper.map(specDto, SpecItem.class);
+    }
+
+    private Pageable convertToPageRequest(SpecificationDto specDto) {
+        //    Sort.Direction direction = sortDirection == null || sortDirection.trim().length() == 0 || sortDirection.trim().equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        if (specDto.getSortByPrice() != null) {
+            return PageRequest.of(specDto.getPage(), specDto.getPageSize(), Sort.by(specDto.getSortByPrice()));
+        }
+        return PageRequest.of(specDto.getPage(), specDto.getPageSize());
+    }
 
 //    вариант добавить свой маппинг отдельных полей в классе
 //    modelMapper.createTypeMap(Car.class, CarDTO.class)

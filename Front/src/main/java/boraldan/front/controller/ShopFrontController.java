@@ -44,28 +44,26 @@ public class ShopFrontController {
     }
 
     @GetMapping("/catalog")
-    public String catalog(Model model) {
+    public String getCatalog(Model model) {
         model.addAttribute("category", new Category());
         return "catalog";
     }
 
     @PostMapping("/catalog")
-    public String getCatalog(Model model, @ModelAttribute("category") Category category) {
+    public String postCatalog(Model model, @ModelAttribute("category") Category category) {
         List<Item> itemList = this.restClient.findByCategory(category);
         model.addAttribute("items", itemList);
         return "catalog";
     }
 
     @GetMapping("/shop/items/spec")
-    public String getAllBySpecification(Model model,
-                                        @RequestParam(name = "page", defaultValue = "1") Integer page,
-                                        @RequestParam(name = "page_size", defaultValue = "10") Integer pageSize,
-                                        @RequestParam(name = "min_price", required = false) Long minPrice,
-                                        @RequestParam(name = "max_price", required = false) Long maxPrice,
-                                        @RequestParam(name = "name_part", required = false) String namePart,
-                                        @RequestParam(name = "category_name", required = false) CategoryName categoryName) {
-        if (page < 1) page = 1;
-        if (categoryName == null) categoryName = CategoryName.ITEM;
+    public String getPageBySpecification(Model model,
+                                         @RequestParam(name = "category_name", required = false) CategoryName categoryName,
+                                         @RequestParam(name = "name_part", required = false) String namePart,
+                                         @RequestParam(name = "min_price", required = false) Long minPrice,
+                                         @RequestParam(name = "max_price", required = false) Long maxPrice,
+                                         @RequestParam(name = "page", defaultValue = "1") Integer page,
+                                         @RequestParam(name = "page_size", defaultValue = "10") Integer pageSize) {
 
         SpecificationDto spec = SpecificationDtoBuilder.creat()
                 .setPage(page)
@@ -77,10 +75,8 @@ public class ShopFrontController {
                 .build();
 
         Page<Item> itemsPage = this.restClient.getAllBySpecification(spec);
-        model.addAttribute("items", itemsPage.getContent());
-        model.addAttribute("totalPages", itemsPage.getTotalPages());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("items", itemsPage);
+        model.addAttribute("spec", spec);
 
         return "catalog_spec";
     }

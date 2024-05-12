@@ -18,7 +18,8 @@ public class SpecificationDtoBuilder {
     }
 
     public SpecificationDtoBuilder setPage(Integer page) {
-        this.spec.setPage(page);
+        if (page < 1) page = 1;
+        this.spec.setPage(page - 1);
         return this;
     }
 
@@ -48,6 +49,7 @@ public class SpecificationDtoBuilder {
     }
 
     public SpecificationDtoBuilder setCategoryName(CategoryName categoryName) {
+        if (categoryName == null) categoryName = CategoryName.ITEM;
         this.spec.setCategoryName(categoryName);
         return this;
     }

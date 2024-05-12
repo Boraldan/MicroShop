@@ -1,0 +1,17 @@
+.pagination li {
+    display: inline;
+    margin-right: 5px;
+}
+.page-link {
+    color: #007bff;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid #dee2e6;
+    padding: 5px 10px;
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}

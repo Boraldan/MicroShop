@@ -3,6 +3,7 @@ package boraldan.shop.repository.specifications;
 
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.shop.entity.price.Price;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -31,7 +32,15 @@ public class ItemSpecification {
     }
 
     public static <T extends Item> Specification<T> nameLike(String namePart) {
-        return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.like(root.get("title"), String.format("%%%s%%", namePart));
+        // не игнорирует регистр при поиске
+        // return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.like(root.get("title"), String.format("%%%s%%", namePart));
+
+        // игнорирует регистр при поиске
+        return (root, query, criteriaBuilder) -> {
+            String formattedNamePart = String.format("%%%s%%", namePart.toLowerCase());
+            Expression<String> lowerTitle = criteriaBuilder.lower(root.get("title"));
+            return criteriaBuilder.like(lowerTitle, formattedNamePart);
+        };
     }
 
 }
