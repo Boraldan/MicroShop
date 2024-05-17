@@ -1,6 +1,6 @@
 package boraldan.front.session;
 
-import boraldan.entitymicro.cart.entity.Cart;
+import boraldan.entitymicro.cart.dto.CartDto;
 import boraldan.front.redis.RedisService;
 import boraldan.front.rest_client.CartRestClient;
 import jakarta.servlet.http.HttpSessionEvent;
@@ -17,21 +17,23 @@ public class MySessionListener implements HttpSessionListener {
 
     @Override
     public void sessionCreated(HttpSessionEvent event) {
-        event.getSession().setMaxInactiveInterval(100);
+        event.getSession().setMaxInactiveInterval(30);
         event.getSession().setAttribute(REDIS_KEY, event.getSession().getId());
-        Cart cart = new Cart();
-        cart.setOwnerName("anonymous");
-        redisService.setCart(event.getSession().getId(), cart);
+        CartDto cartDto = new CartDto();
+//        cartDto.setOwnerName("anonymous");
+        redisService.setCart(event.getSession().getId(), cartDto);
     }
 
     @Override
     public void sessionDestroyed(HttpSessionEvent event) {
         String usernameOrSessionId = (String) event.getSession().getAttribute(REDIS_KEY);
+        System.out.println("sessionDestroyed - usernameOrSessionId -- > " + usernameOrSessionId);
         if (event.getSession().getId().equals(usernameOrSessionId)) {
             redisService.deleteCart(event.getSession().getId());
         } else {
-            Cart cart = redisService.getOpsForValue().getAndDelete(usernameOrSessionId);
-            cartRestClient.saveCartSession(cart);
+            CartDto cartDto =  redisService.getOpsForValue().getAndDelete(usernameOrSessionId);
+            System.out.println("sessionDestroyed - " + cartDto);
+            cartRestClient.saveCart(cartDto);
         }
     }
 }

@@ -1,4 +1,4 @@
-package boraldan.entitymicro.toolbox.builder.specification;
+package boraldan.entitymicro.specification;
 
 import boraldan.entitymicro.shop.entity.category.CategoryName;
 import lombok.Data;

@@ -19,7 +19,7 @@ import boraldan.entitymicro.storage.entity.transport.bike.BikeStorage;
 import boraldan.entitymicro.storage.entity.transport.car.CarStorage;
 import boraldan.entitymicro.test.Lot;
 import boraldan.entitymicro.toolbox.builder.*;
-import boraldan.entitymicro.toolbox.builder.specification.SpecItem;
+import boraldan.entitymicro.specification.SpecItem;
 import boraldan.shop.controller.feign.BankFeign;
 import boraldan.shop.controller.feign.StorageFeign;
 import boraldan.shop.mq.bank.MqShopService;
@@ -52,6 +52,12 @@ public class ShopController {
     private final MqShopService mqShopService;
     private final RedisService redisService;
 
+
+    @PostMapping("/uuidlist")
+    public ResponseEntity<List<Item>> getByUuidList(@RequestBody List<UUID> uuidList) {
+        return ResponseEntity.ok(itemService.getService(Item.class).getByUuidList(uuidList));
+    }
+
     @PostMapping("/category")
     public ResponseEntity<List<Item>> getAllByCategory(@RequestBody Category category,
                                                        Principal principal,
@@ -76,6 +82,12 @@ public class ShopController {
         return ResponseEntity.ok(itemList);
     }
 
+    /**
+     * Вариант поиска используя interface Specification<T>
+     *
+     * @param spec Specification<T>
+     * @return Page<T>
+     */
     @PostMapping("/items/spec")
     public ResponseEntity<Page<Item>> getAllBySpecification(@RequestBody SpecificationDto spec) {
         // TODO: 06.05.2024 добавить валидацию SpecificationDto
@@ -93,6 +105,31 @@ public class ShopController {
         }
         return ResponseEntity.ok(itemService.getService(clazz).
                 getAllBySpecification(convertToSpecItem(spec), convertToPageRequest(spec)));
+    }
+
+    /**
+     * Вариант поиска @Query запроса по параметрам
+     *
+     * @param spec содержит параметры
+     * @return Page<T>
+     */
+    @PostMapping("/items/param")
+    public ResponseEntity<Page<Item>> getAllByParam(@RequestBody SpecificationDto spec) {
+        // TODO: 06.05.2024 добавить валидацию SpecificationDto
+        Class<? extends Item> clazz;
+        if (spec.getCategoryName().equals(CategoryName.ITEM)) {
+            clazz = Item.class;
+        } else {
+            Optional<Item> itemOptional = itemService.getService(Item.class).findFirstByCategoryName(spec.getCategoryName());
+            if (itemOptional.isPresent()) {
+                clazz = itemOptional.get().getItemClazz();
+            } else {
+                return ResponseEntity.ok(new PageImpl<>(Collections.emptyList(),
+                        PageRequest.of(spec.getPage(), spec.getPageSize()), 0));
+            }
+        }
+        return ResponseEntity.ok(itemService.getService(clazz).
+                getAllByParam(convertToSpecItem(spec), convertToPageRequest(spec)));
     }
 
     @PostMapping("/item")

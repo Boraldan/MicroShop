@@ -9,7 +9,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartsDTO {
+public class CartListDTO {
 
     List<Cart> carts;
 }

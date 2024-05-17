@@ -18,6 +18,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(configurer -> configurer
                                 .requestMatchers("/authorize/singup").permitAll()
+                                .requestMatchers("/coupon/get").permitAll()
                                 .anyRequest().authenticated()
 //                                .anyRequest().hasRole("CUSTOMER")
 //                        .anyRequest().access(allOf(hasRole("CUSTOMER"), hasAuthority("SCOPE_view_catalog")))

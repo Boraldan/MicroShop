@@ -21,7 +21,7 @@ public class AccountController {
 
     @GetMapping("/customer")
     public ResponseEntity<Customer> getCustomerAccount(Principal principal) {
-        Customer customer = customerService.findByUsername(principal.getName()).get();
+        Customer customer = customerService.findByUsername(principal.getName()).orElse(null);
         return ResponseEntity.ok(customer);
     }
 

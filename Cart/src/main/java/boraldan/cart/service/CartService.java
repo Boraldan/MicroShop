@@ -1,16 +1,24 @@
 package boraldan.cart.service;
 
 
+import boraldan.cart.controller.feign.AccountFeign;
+import boraldan.cart.controller.feign.ShopFeign;
 import boraldan.cart.repository.CartRepo;
+import boraldan.entitymicro.account.entity.person.Customer;
+import boraldan.entitymicro.cart.dto.CartDto;
+import boraldan.entitymicro.cart.dto.CartUnitDto;
 import boraldan.entitymicro.cart.entity.Cart;
+import boraldan.entitymicro.cart.entity.CartUnit;
+import boraldan.entitymicro.shop.entity.item.Item;
+import boraldan.entitymicro.toolbox.builder.CartBuilder;
+import boraldan.entitymicro.toolbox.builder.CartDtoBuilder;
+import boraldan.entitymicro.toolbox.builder.UnitCartDtoBuilder;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -18,6 +26,8 @@ import java.util.UUID;
 public class CartService {
 
     private final CartRepo cartRepo;
+    private final AccountFeign accountFeign;
+    private final ShopFeign shopFeign;
 
     public List<Cart> getAll() {
         return cartRepo.findAll();
@@ -28,96 +38,85 @@ public class CartService {
     }
 
     @Transactional
-    public Cart save(Cart cart) {
-        return cartRepo.save(cart);
+    public CartDto getCartDtoByCustomer(Customer customer) {
+        Optional<Cart> cartOptional = cartRepo.findByCustomerId(customer.getId());
+        return cartOptional.map(cart -> {
+                    cartRepo.delete(cart);
+                    return convertToCartDto(cart, customer);
+                })
+                .orElse(CartDtoBuilder.creat().setCustomer(customer).build());
     }
 
     @Transactional
-    public Cart saveNew() {
-        Cart cart = new Cart();
-        cart.setCreatAt(LocalDateTime.now());
+    public Cart convertToCartAndSave(CartDto cartDto) {
+        List<CartUnit> cartUnitList = cartDto.getCartUnitDtoList().stream()
+                .map(cartUnitDto -> {
+                    CartUnit cartUnit = new CartUnit();
+                    cartUnit.setItemId(cartUnitDto.getItem().getId());
+                    cartUnit.setQuantity(cartUnitDto.getQuantity());
+                    return cartUnit;
+                }).toList();
+
+        Optional<Cart> cartOptional = cartRepo.findByCustomerId(cartDto.getCustomer().getId());
+        cartOptional.ifPresent(cartRepo::delete);
+
+        Cart cart = CartBuilder.creat()
+                .setCustomerId(cartDto.getCustomer().getId())
+                .setCouponName(cartDto.getCoupon() != null ? cartDto.getCoupon().getCouponName() : null)
+                .setCartUnitList(cartUnitList)
+                .build();
         return cartRepo.save(cart);
     }
 
-    @Transactional
-    public Cart update(Cart cart) {
-        return cartRepo.save(cart);
+    /**
+     * Из сохраненной Cart для Customer преобразуем в CartDto.
+     *
+     * @param cart
+     * @param customer
+     * @return
+     */
+    private CartDto convertToCartDto(Cart cart, Customer customer) {
+        return CartDtoBuilder.creat()
+                .setCustomer(customer)
+                .setCoupon(cart.getCouponName() != null ? accountFeign.getCoupon(cart.getCouponName()).getBody() : null)
+                .setCartUnitDtoList(getItemsFromShop(cart))
+                .build();
     }
 
-//    public List<Car> cloneCart() {
-//        Cart cart = (Cart) session.getAttribute("cart");
-//        List<Car> oldCarList = new ArrayList<>();
-//        for (Car car : cart.getCarList()) {
-//            try {
-//                oldCarList.add((Car) car.clone());
-//            } catch (CloneNotSupportedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return oldCarList;
-//    }
-//
-//    public void addItem(Car dbCar, int lot) throws CloneNotSupportedException {
-//        Cart cart = (Cart) session.getAttribute("cart");
-//        Car car = dbCar.clone();
-//        car.setVolume(lot);
-//        if (cart.getCarList().stream().noneMatch(x -> x.getId() == dbCar.getId())) {
-//            cart.getCarList().add(car);
-//            carService.minusVolumeDB(dbCar, car.getVolume());
-//        } else {
-//            for (Car el : cart.getCarList()) {
-//                if (el.getId() == car.getId()) {
-//                    el.setVolume(el.getVolume() + car.getVolume());
-//                    carService.minusVolumeDB(dbCar, car.getVolume());
-//                }
-//            }
-//        }
-//        session.setAttribute("cart", cart);
-//    }
-//
-//    public void dellItem(int idCar) {
-//        Cart cart = (Cart) session.getAttribute("cart");
-//        Car car = cart.getCarList().stream().filter(el -> el.getId() == idCar).findFirst().get();
-//        carService.addVolumeDB(car);
-//        cart.getCarList().remove(car);
-//        session.setAttribute("cart", cart);
-//    }
-//
-//    public boolean checkFalseLot(Cart cart, List<Car> oldCarList) {
-//        for (int i = 0; i < cart.getCarList().size(); i++) {
-//            if (cart.getCarList().get(i).getVolume() < 1) {
-//                cart.setCarList(oldCarList);
-//                return true;
-//            }
-//            if (cart.getCarList().get(i).getVolume() > oldCarList.get(i).getVolume()) {
-//                int lot = cart.getCarList().get(i).getVolume() - oldCarList.get(i).getVolume();
-//                if (carValidator.falsePlusLotInCart(cart.getCarList().get(i), lot)) {
-//                    cart.setCarList(oldCarList);
-//                    return true;
-//                }
-//            } else if (cart.getCarList().get(i).getVolume() < oldCarList.get(i).getVolume()) {
-//                int lot = cart.getCarList().get(i).getVolume() - oldCarList.get(i).getVolume();
-//                if (oldCarList.get(i).getVolume() < Math.abs(lot)) {
-//                    cart.setCarList(oldCarList);
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
-//
-//    public void updateLotCart(Cart cart, List<Car> oldCarList) {
-//        for (int i = 0; i < cart.getCarList().size(); i++) {
-//            if (cart.getCarList().get(i).getVolume() != oldCarList.get(i).getVolume()) {
-//                int lot = cart.getCarList().get(i).getVolume() - oldCarList.get(i).getVolume();
-//                Car car = carService.findById(cart.getCarList().get(i).getId()).orElse(null);
-//                if (car != null) {
-//                    car.setVolume(car.getVolume() - lot);
-//                    carService.save(car);
-//                }
-//            }
-//        }
-//    }
+    private List<CartUnitDto> getItemsFromShop(Cart cart) {
+        List<CartUnitDto> cartUnitDtoList = new ArrayList<>();
+        Hibernate.initialize(cart.getCartUnitList());
+        if (!cart.getCartUnitList().isEmpty()) {
+            List<UUID> listUuidItem = cart.getCartUnitList().stream().map(CartUnit::getItemId).toList();
+            List<Item> itemList = shopFeign.getByUuidList(listUuidItem).getBody();
+            if (itemList != null) {
+                cartUnitDtoList = uuidsToItems(cart, itemList);
+                return cartUnitDtoList;
+            }
+        }
+        return cartUnitDtoList;
+    }
 
-
+    /**
+     * Преобразуем  List<UUID> uuidItemList из Cart в  List<UnitCartDto> для CartDto.
+     *
+     * @param cart
+     * @param listItem
+     * @return List<UnitCartDto>
+     */
+    private List<CartUnitDto> uuidsToItems(Cart cart, List<Item> listItem) {
+        Map<UUID, Item> itemMap = new HashMap<>();
+        for (Item item : listItem) {
+            itemMap.put(item.getId(), item);
+        }
+        List<CartUnitDto> listCartUnitDto = new ArrayList<>();
+        for (CartUnit cartUnit : cart.getCartUnitList()) {
+            CartUnitDto cartUnitDto = UnitCartDtoBuilder.creat()
+                    .setItem(itemMap.get(cartUnit.getItemId()))
+                    .setQuantity(cartUnit.getQuantity())
+                    .build();
+            listCartUnitDto.add(cartUnitDto);
+        }
+        return listCartUnitDto;
+    }
 }

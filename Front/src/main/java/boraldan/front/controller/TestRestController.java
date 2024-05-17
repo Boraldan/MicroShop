@@ -1,6 +1,6 @@
 package boraldan.front.controller;
 
-import boraldan.entitymicro.cart.entity.Cart;
+import boraldan.entitymicro.cart.dto.CartDto;
 import boraldan.front.redis.RedisService;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
@@ -29,7 +29,7 @@ public class TestRestController {
 
     @GetMapping
     public Integer test(Model model, @AuthenticationPrincipal Principal principal) {
-        redisService.getOpsForValue().set(session.getId(), new Cart());
+        redisService.getOpsForValue().set(session.getId(), new CartDto());
 
 
 //        StringBuilder attributes = new StringBuilder();

@@ -51,6 +51,16 @@ public class ShopRestClient {
                 .body(PAGE_PARAMETERIZED);
     }
 
+    public RestResponsePage<Item> getAllByParam(SpecificationDto spec) {
+        return this.restClient
+                .post()
+                .uri("/shop/items/param")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(spec)
+                .retrieve()
+                .body(PAGE_PARAMETERIZED);
+    }
+
     public <T extends Item> T getItem(UUID itemId, Class<T> itemType) {
         return this.restClient
                 .post()

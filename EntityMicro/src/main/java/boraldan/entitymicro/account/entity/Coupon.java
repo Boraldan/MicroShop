@@ -2,6 +2,7 @@ package boraldan.entitymicro.account.entity;
 
 
 import boraldan.entitymicro.account.entity.order.Order;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jdk.jfr.Timestamp;
 import lombok.*;
@@ -32,6 +33,7 @@ public class Coupon {
     @Column(name = "valid")
     private boolean valid;
 
+    @JsonIgnore
     @Timestamp
     @Column(name = "creat_at")
     private LocalDateTime creatAt;

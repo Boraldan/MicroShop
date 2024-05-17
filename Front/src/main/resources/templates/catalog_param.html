@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <link th:href="@{/css/pagination.css}" rel="stylesheet" type="text/css"/>
-    <title>Category Specification</title>
+    <title>Category Params</title>
 </head>
 <body>
-<form th:action="@{/shop/items/spec}" th:method="GET">
+<form th:action="@{/shop/items/param}" th:method="GET">
     <div>
         <input type="hidden" id="page" name="page" value="1">
     </div>
@@ -86,7 +86,7 @@
     <ul class="pagination">
         <li th:each="pageNumber : ${#numbers.sequence(1, items.totalPages)}"
             th:class="${items.number + 1 == pageNumber ? 'page-item active' : 'page-item'}">
-            <a class="page-link" th:href="@{/shop/items/spec(
+            <a class="page-link" th:href="@{/shop/items/param(
                                     page=${pageNumber},
                                     page_size=${items.size},
                                     min_price=${spec.minPrice} ,

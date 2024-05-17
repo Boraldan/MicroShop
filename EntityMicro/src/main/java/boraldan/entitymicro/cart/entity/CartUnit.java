@@ -2,9 +2,11 @@ package boraldan.entitymicro.cart.entity;
 
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
@@ -12,8 +14,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "unit_cart")
-public class UnitCart {
+@Table(name = "cart_unit")
+public class CartUnit {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -23,15 +26,15 @@ public class UnitCart {
     private Cart cart;
 
     @Column(name = "item_id")
-    private Long itemId;
+    private UUID itemId;
 
     @Column(name = "quantity")
-    private int quantity;
+    private Integer quantity;
 
-    @Column(name = "price_item")
-    private BigDecimal priceItem ;
-
-    @Column(name = "price")
-    private BigDecimal price;
+//    @Column(name = "price_item")
+//    private BigDecimal priceItem ;
+//
+//    @Column(name = "price")
+//    private BigDecimal price;
 
 }

@@ -1,7 +1,7 @@
 package boraldan.front.redis;
 
-import boraldan.entitymicro.cart.entity.Cart;
-import boraldan.entitymicro.cart.entity.UnitCart;
+import boraldan.entitymicro.cart.dto.CartDto;
+import boraldan.entitymicro.cart.dto.CartUnitDto;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
@@ -17,28 +17,28 @@ import org.springframework.stereotype.Service;
 @Service
 public class RedisService {
 
-    private final RedisTemplate<String, Cart> redisTemplate;
-    private ValueOperations<String, Cart> opsForValue;
+    private final RedisTemplate<String, CartDto> redisTemplate;
+    private ValueOperations<String, CartDto> opsForValue;
 
     @PostConstruct
     private void init() {
         this.opsForValue = redisTemplate.opsForValue();
     }
 
-    public void setCart(String cartKey, Cart cart){
+    public void setCart(String cartKey, CartDto cart){
         opsForValue.set(cartKey, cart);
     }
 
-    public Cart getCart(String cartKey){
+    public CartDto getCart(String cartKey){
         return opsForValue.get(cartKey);
     }
 
-    public void addItemToCart(String cartKey, UnitCart unitCart) {
-        Cart cart = opsForValue.get(cartKey);
+    public void addItemToCart(String cartKey, CartUnitDto unitCart) {
+        CartDto cart = opsForValue.get(cartKey);
         if (cart == null) {
-            cart = new Cart();
+            cart = new CartDto();
         }
-        cart.getUnitCart().add(unitCart);
+        cart.getCartUnitDtoList().add(unitCart);
         opsForValue.set(cartKey, cart);
     }
 

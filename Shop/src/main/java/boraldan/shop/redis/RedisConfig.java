@@ -1,6 +1,6 @@
 package boraldan.shop.redis;
 
-import boraldan.entitymicro.cart.entity.Cart;
+import boraldan.entitymicro.cart.dto.CartDto;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -18,8 +18,8 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Cart> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, Cart> template = new RedisTemplate<>();
+    public RedisTemplate<String, CartDto> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, CartDto> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer());

@@ -4,7 +4,7 @@ import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.storage.dto.ListStorageDto;
 import boraldan.entitymicro.storage.entity.Storage;
 import boraldan.entitymicro.toolbox.builder.ListStorageDtoBuilder;
-import boraldan.entitymicro.toolbox.builder.specification.SpecItem;
+import boraldan.entitymicro.specification.SpecItem;
 import boraldan.shop.controller.feign.StorageFeign;
 import boraldan.shop.repository.ItemUnifiedRepo;
 import boraldan.shop.service.i_service.CategoryService;
@@ -74,6 +74,11 @@ public class ItemUnifiedServiceV1<T extends Item> implements ItemUnifiedService<
         if (listStorageDto == null) return originalPage;
         originalList = addStorageToListT(originalList, listStorageDto);
         return new PageImpl<>(originalList, originalPage.getPageable(), originalPage.getTotalElements());
+    }
+
+    @Override
+    public List<T> getByUuidList(List<UUID> uuidList) {
+        return ItemUnifiedService.super.getByUuidList(uuidList);
     }
 
     @Override

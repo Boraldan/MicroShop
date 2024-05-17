@@ -32,7 +32,7 @@ public class Person {
     protected String fio;
 
     @Column(name = "age")
-    protected int age;
+    protected Integer age;
 
     @Column(name = "phone")
     protected Long phone;

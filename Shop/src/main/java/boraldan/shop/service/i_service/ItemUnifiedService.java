@@ -2,7 +2,7 @@ package boraldan.shop.service.i_service;
 
 import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.shop.entity.item.Item;
-import boraldan.entitymicro.toolbox.builder.specification.SpecItem;
+import boraldan.entitymicro.specification.SpecItem;
 import boraldan.shop.repository.ItemUnifiedRepo;
 import boraldan.shop.repository.specifications.ItemSpecification;
 import org.springframework.data.domain.Page;
@@ -47,20 +47,13 @@ public interface ItemUnifiedService<T extends Item, R extends ItemUnifiedRepo<T>
         return getItemRepo().findAll(spec, pageable);
     }
 
+    default Page<T> getAllByParam(SpecItem specItem, Pageable pageable) {
+        return getItemRepo().findAllByParam(specItem.getPartName(), specItem.getMinPrice(), specItem.getMaxPrice(), pageable);
+    }
 
-//    default Page<T> getAllBySpecification(BigDecimal minScore, BigDecimal maxScore, String partName, Integer page, Integer pageSize) {
-//        Specification<T> spec = Specification.where(null);
-//        if (minScore != null) {
-//            spec = spec.and(ItemSpecification.scoreGreaterOrEqualsThan(minScore));
-//        }
-//        if (maxScore != null) {
-//            spec = spec.and(ItemSpecification.scoreLessThanOrEqualsThan(maxScore));
-//        }
-//        if (partName != null) {
-//            spec = spec.and(ItemSpecification.nameLike(partName));
-//        }
-//        return getItemRepo().findAll(spec, PageRequest.of(page - 1, pageSize));
-//    }
+    default List<T> getByUuidList(List<UUID> uuidList){
+        return getItemRepo().findAllById(uuidList);
+    }
 
     default <E extends Item> T save(E item) {
         return getItemRepo().save(convertToT(item, item.getItemClazz()));

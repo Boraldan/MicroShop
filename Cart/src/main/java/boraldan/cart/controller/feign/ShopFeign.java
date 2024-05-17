@@ -1,4 +1,4 @@
-package boraldan.account.controller.feign;
+package boraldan.cart.controller.feign;
 
 import boraldan.entitymicro.shop.entity.item.Item;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.UUID;
-
 @Primary
 @FeignClient(name = "shop", fallback = ShopFeignFallback.class)
 public interface ShopFeign {

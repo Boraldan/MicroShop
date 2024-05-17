@@ -44,7 +44,7 @@ public class CustomerServiceV1 implements CustomerService {
     @Transactional
     @Override
     public Customer saveNew(Customer customer) {
-        customer.setCartId(cartFeign.getNewCart().getBody().getId());
+//        customer.setCartId(cartFeign.getNewCart().getBody().getId());
         return customerRepo.save(customer);
     }
 

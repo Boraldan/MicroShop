@@ -1,7 +1,7 @@
 package boraldan.front.controller;
 
 import boraldan.entitymicro.account.entity.person.Customer;
-import boraldan.entitymicro.cart.entity.Cart;
+import boraldan.entitymicro.cart.dto.CartDto;
 import boraldan.front.redis.RedisService;
 import boraldan.front.rest_client.AccountRestClient;
 import boraldan.front.rest_client.CartRestClient;
@@ -23,32 +23,32 @@ public class GlobalController {
     private final HttpSession httpSession;
 
     @ModelAttribute("cart")
-    public Cart setCart(Principal principal) {
-        Cart cart;
+    public CartDto setCart(Principal principal) {
+        CartDto cartDto;
         if (principal != null) {
-            cart = redisService.getCart(principal.getName().toLowerCase());
-            if (cart == null) {
+            cartDto = redisService.getCart(principal.getName().toLowerCase());
+            if (cartDto == null) {
                 Customer customer = accountRestClient.getCustomerAccount();
-                cart = cartRestClient.getCart(customer.getCartId());
-                cart.setOwnerName(principal.getName());
-                concatCart(cart);
-                redisService.setCart(principal.getName().toLowerCase(), cart);
+                cartDto = cartRestClient.getCart(customer);
+                // TODO: 21.04.2024 проверить по позициям логику сложения Cart
+                concatCart(cartDto);
+                redisService.setCart(principal.getName().toLowerCase(), cartDto);
                 httpSession.setAttribute(REDIS_KEY, principal.getName().toLowerCase());
-                return cart;
+                return cartDto;
             }
-            return cart;
+            return cartDto;
         }
-        cart = redisService.getCart(httpSession.getId());
-        return cart;
+        cartDto = redisService.getCart(httpSession.getId());
+        return cartDto;
     }
 
-    private void concatCart(Cart newCart) {
+    private void concatCart(CartDto newCart) {
         String oldSessionId = (String) httpSession.getAttribute(REDIS_KEY);
-        Cart oldCart = redisService.getCart(oldSessionId);
+        CartDto oldCart = redisService.getCart(oldSessionId);
         if (oldCart != null) {
             // TODO: 21.04.2024 проверить по позициям логику сложения Cart
-            if (!oldCart.getUnitCart().isEmpty()) {
-                newCart.getUnitCart().addAll(oldCart.getUnitCart());
+            if (!oldCart.getCartUnitDtoList().isEmpty()) {
+                newCart.getCartUnitDtoList().addAll(oldCart.getCartUnitDtoList());
             }
             redisService.deleteCart(oldSessionId);
         }

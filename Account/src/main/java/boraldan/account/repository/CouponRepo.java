@@ -12,5 +12,5 @@ import java.util.UUID;
 @Repository
 public interface CouponRepo extends JpaRepository<Coupon, UUID> {
 
-    Optional<Coupon> findFirstByCouponNameAndValid (String name, boolean valid);
+    Optional<Coupon> findFirstByCouponNameAndValid(String name, boolean valid);
 }

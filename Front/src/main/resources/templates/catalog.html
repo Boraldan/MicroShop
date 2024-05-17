@@ -5,58 +5,122 @@
     <title>Category</title>
 </head>
 <body>
-<form action="#" th:action="@{/catalog}" th:object="${category}" th:method="POST">
-    <div>
-        <label for="categoryName">Category Name:</label>
-        <select id="categoryName" name="categoryName">
-            <option th:each="name : ${T(boraldan.entitymicro.shop.entity.category.CategoryName).values()}"
-                    th:value="${name}" th:text="${name}"></option>
-        </select>
-    </div>
-    <div>
-        <button type="submit">Get Category Item</button>
-    </div>
-</form>
 
-<h1>Items</h1>
-<div th:if="${items}">
-    <table border="1">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>title</th>
-            <th>price</th>
-            <th>Category</th>
-            <th>Storage</th>
-            <th>Show Item</th>
-            <th>Delete</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="item : ${items}">
-            <td th:text="${item.getId()}">ID</td>
-            <td th:text="${item.getTitle()}">title</td>
-            <td th:text="${item.price.getCustomPrice()}">price</td>
-            <td th:text="${item.getCategory().getCategoryName()}">CategoryName</td>
-            <!--                        <td>-->
-            <!--                            <a th:href="@{/shop/item(itemId=${item.id}, itemClassName=${item.itemClazz.getName()})}">Show item</a>-->
-            <!--                        </td>-->
-            <td th:text="${item.getStorage().getQuantity()}">Storage</td>
-            <td>
-                <form th:action="@{/shop/item}" th:method="GET">
-                    <input type="hidden" name="itemId" th:value="${item.getId()}"/>
-                    <input type="hidden" name="itemClassName" th:value="${item.getItemClazz().getName()}"/>
-                    <input type="submit" value="Show item"/>
-                </form>
-            </td>
-            <td>
-                <form th:action="@{/shop/item/delete{itemId}(itemId=${item.getId()})}" th:method="POST">
-                    <input type="submit" value="Delete"/>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<div><h2>Cart</h2>
+
+    <div th:if="${cart.customer}">
+        <p>ID customer: <span th:text="${cart.customer.id}"></span></p>
+        <p>Name: <span th:text="${cart.customer.username}"></span></p>
+    </div>
+    <div th:if="${cart.getCartUnitDtoList()}">
+        <table border="1">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>title</th>
+                <th>Quantity</th>
+                <th>price</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="unit : ${cart.getCartUnitDtoList()}">
+                <td th:text="${unit.item.getId()}">ID</td>
+                <td th:text="${unit.item.getTitle()}">title</td>
+                <td th:text="${unit.getQuantity()}">Storage</td>
+                <td th:text="${unit.item.price.getCustomPrice()}">price</td>
+                <!--                <td>-->
+                <!--                    <form th:action="@{/shop/item}" th:method="GET">-->
+                <!--                        <input type="hidden" name="itemId" th:value="${item.getId()}"/>-->
+                <!--                        <input type="hidden" name="itemClassName" th:value="${item.getItemClazz().getName()}"/>-->
+                <!--                        <input type="submit" value="Show item"/>-->
+                <!--                    </form>-->
+                <!--                </td>-->
+                <!--                <td>-->
+                <!--                    <form th:action="@{/shop/item/delete{itemId}(itemId=${item.getId()})}" th:method="POST">-->
+                <!--                        <input type="submit" value="Delete"/>-->
+                <!--                    </form>-->
+                <!--                </td>-->
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <h3>Volume Item: <span th:text="${cart.lotInCart()}"></span></h3>
+    <h3>SubTotal Price: <span th:text="${cart.totalPrice()}"></span></h3>
+    <br>
+    <hr>
+</div>
+
+<div>
+    <form action="#" th:action="@{/catalog}" th:object="${category}" th:method="POST">
+        <div>
+            <label for="categoryName">Category Name:</label>
+            <select id="categoryName" name="categoryName">
+                <option th:each="name : ${T(boraldan.entitymicro.shop.entity.category.CategoryName).values()}"
+                        th:value="${name}" th:text="${name}"></option>
+            </select>
+        </div>
+        <div>
+            <button type="submit">Get Category Item</button>
+        </div>
+    </form>
+</div>
+
+<div><h2>Items</h2>
+    <div th:if="${items}">
+        <table border="1">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>title</th>
+                <th>price</th>
+                <th>Category</th>
+                <th>Storage</th>
+                <th>Reserve</th>
+                <th>Show Item</th>
+                <th>Delete Item</th>
+                <th>Add to Cart</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${items}">
+                <td th:text="${item.getId()}">ID</td>
+                <td th:text="${item.getTitle()}">title</td>
+                <td th:text="${item.price.getCustomPrice()}">price</td>
+                <td th:text="${item.getCategory().getCategoryName()}">CategoryName</td>
+                <td th:text="${item.getStorage().getQuantity()}">Storage</td>
+                <td th:text="${item.getStorage().getReserve()}">Reserve</td>
+                <td>
+                    <form th:action="@{/shop/item}" th:method="GET">
+                        <input type="hidden" name="itemId" th:value="${item.getId()}"/>
+                        <input type="hidden" name="itemClassName" th:value="${item.getItemClazz().getName()}"/>
+                        <input type="submit" value="Show item"/>
+                    </form>
+                </td>
+                <td>
+                    <form th:action="@{/shop/item/delete{itemId}(itemId=${item.getId()})}" th:method="DELETE">
+                        <input type="submit" value="Delete"/>
+                    </form>
+
+                </td>
+                <td>
+                    <form th:action="@{/cart/item/add}" th:method="POST" th:object="${lotDto}">
+                        <input type="hidden" name="itemId" th:value="${item.id}"/>
+                        <input type="hidden" name="limitQuantity" th:value="${item.storage.quantity}"/>
+                        <div>
+                            <input type="text" th:field="*{quantity}" value="1"
+                                   min="0" th:max="${item.getStorage().getQuantity()}" step="1"/>
+                            <div style="color: red" th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}">
+                                quantity
+                            </div>
+                        </div>
+                        <input type="submit" value="Add item"/>
+                    </form>
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 </body>
 </html>

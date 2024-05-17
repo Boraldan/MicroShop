@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS t_person
 
 CREATE TABLE IF NOT EXISTS customer
 (
-    id      UUID PRIMARY KEY,
-    cart_id UUID
+    id      UUID PRIMARY KEY
+--     cart_id UUID
 );
 
 CREATE TABLE IF NOT EXISTS admin_shop

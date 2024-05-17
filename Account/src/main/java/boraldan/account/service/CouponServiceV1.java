@@ -19,4 +19,5 @@ public class CouponServiceV1 implements CouponService {
     public Optional<Coupon> findValidCoupon(String couponName){
        return couponRepo.findFirstByCouponNameAndValid(couponName, true);
     }
+
 }

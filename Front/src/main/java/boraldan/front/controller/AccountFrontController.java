@@ -2,7 +2,7 @@ package boraldan.front.controller;
 
 import boraldan.entitymicro.account.dto.PersonDTO;
 import boraldan.entitymicro.account.entity.person.Customer;
-import boraldan.entitymicro.cart.entity.Cart;
+import boraldan.entitymicro.cart.dto.CartDto;
 import boraldan.front.redis.RedisService;
 import boraldan.front.rest_client.AccountRestClient;
 import jakarta.servlet.http.HttpSession;
@@ -27,7 +27,7 @@ public class AccountFrontController {
     private final HttpSession httpSession;
 
     @ModelAttribute("cart")
-    public Cart setCart() {
+    public CartDto setCart() {
         String redisKey = (String) httpSession.getAttribute("REDIS_KEY");
         return redisService.getCart(redisKey);
     }
