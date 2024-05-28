@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CartController {
 
-    private final HttpSession session;
     private final CartService cartService;
 
     @GetMapping("/carts")
@@ -26,11 +25,6 @@ public class CartController {
     public ResponseEntity<CartDto> getCartByCustomer(@RequestBody Customer customer) {
         return ResponseEntity.ok(cartService.getCartDtoByCustomer(customer));
     }
-
-//    @GetMapping("/getnew")
-//    public ResponseEntity<Cart> getNewCart() {
-//        return new ResponseEntity<>(cartService.newCreatAndSave(), HttpStatus.OK);
-//    }
 
     @PatchMapping("/save")
     public ResponseEntity<Void> saveCartDto(@RequestBody CartDto cartDto) {

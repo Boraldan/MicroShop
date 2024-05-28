@@ -67,8 +67,6 @@ public class Bike extends Item {
         price.setItem(this);
     }
 
-    public String getDescription() {
-        return "Описание товара ....";
-    }
+
 
 }

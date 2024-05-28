@@ -71,9 +71,9 @@ public class Item {
     protected Class<? extends Price> priceClazz;
 
 
-    public <T extends Item> T getThisItem(Class<T> clazz) {
-        return clazz.cast(this);
-    }
+//    public <T extends Item> T thisItem(Class<T> clazz) {
+//        return clazz.cast(this);
+//    }
 
 
     @Override
@@ -83,7 +83,6 @@ public class Item {
                 ", title='" + title + '\'' +
                 ", category=" + category +
                 ", price=" + price +
-//                ", storageId=" + storageId +
                 ", storage=" + storage +
                 ", itemClazz=" + itemClazz +
                 ", storageClazz=" + storageClazz +

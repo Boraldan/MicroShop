@@ -21,8 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 
-@Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
+@Service
 public class CartService {
 
     private final CartRepo cartRepo;
@@ -56,10 +57,8 @@ public class CartService {
                     cartUnit.setQuantity(cartUnitDto.getQuantity());
                     return cartUnit;
                 }).toList();
-
         Optional<Cart> cartOptional = cartRepo.findByCustomerId(cartDto.getCustomer().getId());
         cartOptional.ifPresent(cartRepo::delete);
-
         Cart cart = CartBuilder.creat()
                 .setCustomerId(cartDto.getCustomer().getId())
                 .setCouponName(cartDto.getCoupon() != null ? cartDto.getCoupon().getCouponName() : null)
@@ -67,6 +66,7 @@ public class CartService {
                 .build();
         return cartRepo.save(cart);
     }
+
 
     /**
      * Из сохраненной Cart для Customer преобразуем в CartDto.
@@ -83,14 +83,20 @@ public class CartService {
                 .build();
     }
 
+    /**
+     * Из сохраненной Cart для Customer возвращаем  List<CartUnitDto>
+     *
+     * @param cart
+     * @return List<CartUnitDto>
+     */
     private List<CartUnitDto> getItemsFromShop(Cart cart) {
         List<CartUnitDto> cartUnitDtoList = new ArrayList<>();
         Hibernate.initialize(cart.getCartUnitList());
         if (!cart.getCartUnitList().isEmpty()) {
-            List<UUID> listUuidItem = cart.getCartUnitList().stream().map(CartUnit::getItemId).toList();
-            List<Item> itemList = shopFeign.getByUuidList(listUuidItem).getBody();
+            List<UUID> uuidList = cart.getCartUnitList().stream().map(CartUnit::getItemId).toList();
+            List<Item> itemList = shopFeign.getByUuidList(uuidList).getBody();
             if (itemList != null) {
-                cartUnitDtoList = uuidsToItems(cart, itemList);
+                cartUnitDtoList = uuidListToItemList(cart.getCartUnitList(), itemList);
                 return cartUnitDtoList;
             }
         }
@@ -98,19 +104,19 @@ public class CartService {
     }
 
     /**
-     * Преобразуем  List<UUID> uuidItemList из Cart в  List<UnitCartDto> для CartDto.
+     * Преобразуем  List<CartUnit> в  List<UnitCartDto> для CartDto.
      *
-     * @param cart
-     * @param listItem
-     * @return List<UnitCartDto>
+     * @param cartUnitList
+     * @param itemList
+     * @return List<CartUnitDto
      */
-    private List<CartUnitDto> uuidsToItems(Cart cart, List<Item> listItem) {
+    private List<CartUnitDto> uuidListToItemList(List<CartUnit> cartUnitList, List<Item> itemList) {
         Map<UUID, Item> itemMap = new HashMap<>();
-        for (Item item : listItem) {
+        for (Item item : itemList) {
             itemMap.put(item.getId(), item);
         }
         List<CartUnitDto> listCartUnitDto = new ArrayList<>();
-        for (CartUnit cartUnit : cart.getCartUnitList()) {
+        for (CartUnit cartUnit : cartUnitList) {
             CartUnitDto cartUnitDto = UnitCartDtoBuilder.creat()
                     .setItem(itemMap.get(cartUnit.getItemId()))
                     .setQuantity(cartUnit.getQuantity())

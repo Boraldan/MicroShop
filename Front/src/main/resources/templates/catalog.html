@@ -20,6 +20,7 @@
                 <th>title</th>
                 <th>Quantity</th>
                 <th>price</th>
+                <th>Delete Item</th>
             </tr>
             </thead>
             <tbody>
@@ -28,18 +29,12 @@
                 <td th:text="${unit.item.getTitle()}">title</td>
                 <td th:text="${unit.getQuantity()}">Storage</td>
                 <td th:text="${unit.item.price.getCustomPrice()}">price</td>
-                <!--                <td>-->
-                <!--                    <form th:action="@{/shop/item}" th:method="GET">-->
-                <!--                        <input type="hidden" name="itemId" th:value="${item.getId()}"/>-->
-                <!--                        <input type="hidden" name="itemClassName" th:value="${item.getItemClazz().getName()}"/>-->
-                <!--                        <input type="submit" value="Show item"/>-->
-                <!--                    </form>-->
-                <!--                </td>-->
-                <!--                <td>-->
-                <!--                    <form th:action="@{/shop/item/delete{itemId}(itemId=${item.getId()})}" th:method="POST">-->
-                <!--                        <input type="submit" value="Delete"/>-->
-                <!--                    </form>-->
-                <!--                </td>-->
+                <td>
+                    <form th:method="POST" th:action="@{/cart/item/del}" >
+                        <input type="hidden" name="itemId" th:value="${unit.item.getId()}"/>
+                        <input type="submit" value="Delete"/>
+                    </form>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -51,7 +46,7 @@
 </div>
 
 <div>
-    <form action="#" th:action="@{/catalog}" th:object="${category}" th:method="POST">
+    <form th:method="POST" th:action="@{/catalog}" th:object="${category}" >
         <div>
             <label for="categoryName">Category Name:</label>
             <select id="categoryName" name="categoryName">
@@ -78,7 +73,7 @@
                 <th>Reserve</th>
                 <th>Show Item</th>
                 <th>Delete Item</th>
-                <th>Add to Cart</th>
+<!--                <th>Add to Cart</th>-->
             </tr>
             </thead>
             <tbody>
@@ -97,25 +92,24 @@
                     </form>
                 </td>
                 <td>
-                    <form th:action="@{/shop/item/delete{itemId}(itemId=${item.getId()})}" th:method="DELETE">
+                    <form th:method="POST" th:action="@{/shop/item/delete{itemId}(itemId=${item.getId()})}" >
                         <input type="submit" value="Delete"/>
                     </form>
-
                 </td>
-                <td>
-                    <form th:action="@{/cart/item/add}" th:method="POST" th:object="${lotDto}">
-                        <input type="hidden" name="itemId" th:value="${item.id}"/>
-                        <input type="hidden" name="limitQuantity" th:value="${item.storage.quantity}"/>
-                        <div>
-                            <input type="text" th:field="*{quantity}" value="1"
-                                   min="0" th:max="${item.getStorage().getQuantity()}" step="1"/>
-                            <div style="color: red" th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}">
-                                quantity
-                            </div>
-                        </div>
-                        <input type="submit" value="Add item"/>
-                    </form>
-                </td>
+<!--                <td>-->
+<!--                    <form th:action="@{/cart/item/add}" th:method="POST" th:object="${lotDto}">-->
+<!--                        <input type="hidden" name="itemId" th:value="${item.id}"/>-->
+<!--                        <input type="hidden" name="limitQuantity" th:value="${item.storage.quantity}"/>-->
+<!--                        <div>-->
+<!--                            <input type="text" th:field="*{quantity}" value="1"-->
+<!--                                   min="0" th:max="${item.getStorage().getQuantity()}" step="1"/>-->
+<!--                            <div style="color: red" th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}">-->
+<!--                                quantity-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <input type="submit" value="Add item"/>-->
+<!--                    </form>-->
+<!--                </td>-->
 
             </tr>
             </tbody>

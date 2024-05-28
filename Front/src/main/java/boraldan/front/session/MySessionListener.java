@@ -17,7 +17,7 @@ public class MySessionListener implements HttpSessionListener {
 
     @Override
     public void sessionCreated(HttpSessionEvent event) {
-        event.getSession().setMaxInactiveInterval(30);
+        event.getSession().setMaxInactiveInterval(500);
         event.getSession().setAttribute(REDIS_KEY, event.getSession().getId());
         CartDto cartDto = new CartDto();
 //        cartDto.setOwnerName("anonymous");

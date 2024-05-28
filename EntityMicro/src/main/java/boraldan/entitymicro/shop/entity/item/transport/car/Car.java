@@ -79,10 +79,6 @@ public class Car extends Item {
         price.setItem(this);
     }
 
-    public String getDescription() {
-        return "Описание товара ....";
-    }
-
     @Override
     public String toString() {
         return "Car{" +

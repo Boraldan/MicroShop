@@ -16,12 +16,6 @@ public class CartDto {
     private Coupon coupon;
     private List<CartUnitDto> cartUnitDtoList;
 
-//    @Column(name = "sub_total")
-//    private BigDecimal subTotal;
-//
-//    @Column(name = "total")
-//    private BigDecimal total;
-
     public CartDto() {
         this.cartUnitDtoList = new ArrayList<>();
     }

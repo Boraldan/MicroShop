@@ -71,6 +71,7 @@ public class ShopRestClient {
                 .body(itemType);
     }
 
+
     public void deleteItem(UUID itemId) {
         try {
             this.restClient

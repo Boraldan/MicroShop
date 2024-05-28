@@ -61,8 +61,4 @@ public class BikeWheel extends Item {
         price.setItem(this);
     }
 
-    public String getDescription() {
-        return "Описание товара ....";
-    }
-
 }
