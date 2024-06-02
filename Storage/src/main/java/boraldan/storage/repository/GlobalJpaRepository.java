@@ -13,7 +13,7 @@ public interface GlobalJpaRepository<T> extends JpaRepository<T, UUID> {
     Optional<T> findByItemId(UUID itemId);
 
     // здесь ключевое слово In указывает на то, что метод ищет объекты, где itemId содержится в списке itemIdList.
-//    List<T> findAll(List<UUID> itemIdList);   вроде тоже самое
+    //  List<T> findAll(List<UUID> itemIdList); тоже самое
     List<T> findAllByItemIdIn(List<UUID> itemIdList);
 
     void deleteByItemId(UUID itemId);

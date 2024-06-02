@@ -2,6 +2,7 @@ package boraldan.front.controller;
 
 import boraldan.entitymicro.account.entity.person.Customer;
 import boraldan.entitymicro.cart.dto.CartDto;
+import boraldan.entitymicro.cart.dto.CartUnitDto;
 import boraldan.front.redis.RedisService;
 import boraldan.front.rest_client.AccountRestClient;
 import boraldan.front.rest_client.CartRestClient;
@@ -22,33 +23,39 @@ public class GlobalController {
     private final AccountRestClient accountRestClient;
     private final HttpSession httpSession;
 
-    @ModelAttribute("cart")
+    @ModelAttribute("cartDto")
     public CartDto setCart(Principal principal) {
         CartDto cartDto;
         if (principal != null) {
-            cartDto = redisService.getCart(principal.getName().toLowerCase());
+            cartDto = redisService.getCart(principal.getName().toLowerCase()); // корзина из redis
             if (cartDto == null) {
                 Customer customer = accountRestClient.getCustomerAccount();
-                cartDto = cartRestClient.getCart(customer);
-                // TODO: 21.04.2024 проверить по позициям логику сложения Cart
-                concatCart(cartDto);
-                redisService.setCart(principal.getName().toLowerCase(), cartDto);
-                httpSession.setAttribute(REDIS_KEY, principal.getName().toLowerCase());
-                return cartDto;
+                cartDto = cartRestClient.getCart(customer); // корзина из db
+                concatCart(cartDto, principal.getName().toLowerCase());
+            } else {
+                concatCart(cartDto, principal.getName().toLowerCase());
             }
+            redisService.setCart(principal.getName().toLowerCase(), cartDto);
+            httpSession.setAttribute(REDIS_KEY, principal.getName().toLowerCase());
             return cartDto;
         }
         cartDto = redisService.getCart(httpSession.getId());
         return cartDto;
     }
 
-    private void concatCart(CartDto newCart) {
+    private void concatCart(CartDto cartDto, String customerName) {
         String oldSessionId = (String) httpSession.getAttribute(REDIS_KEY);
-        CartDto oldCart = redisService.getCart(oldSessionId);
-        if (oldCart != null) {
-            // TODO: 21.04.2024 проверить по позициям логику сложения Cart
-            if (!oldCart.getCartUnitDtoList().isEmpty()) {
-                newCart.getCartUnitDtoList().addAll(oldCart.getCartUnitDtoList());
+        if (oldSessionId.equals(customerName)) return;
+        CartDto oldCartRedis = redisService.getCart(oldSessionId);
+        if (oldCartRedis != null) {
+            if (!oldCartRedis.getCartUnitDtoList().isEmpty()) {
+                for (CartUnitDto cartUnitDto : oldCartRedis.getCartUnitDtoList()) {
+                    cartDto.getCartUnitDtoList().stream()
+                            .filter(unit -> unit.getItem().getId().equals(cartUnitDto.getItem().getId()))
+                            .findFirst()
+                            .ifPresentOrElse(unit -> unit.setUnitQuantity(unit.getUnitQuantity() + cartUnitDto.getUnitQuantity()),
+                                    () -> cartDto.getCartUnitDtoList().add(cartUnitDto));
+                }
             }
             redisService.deleteCart(oldSessionId);
         }
@@ -59,10 +66,6 @@ public class GlobalController {
 //    public ResponseEntity<String> handleNotFound(HttpClientErrorException ex) {
 //        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ресурс не найден");
 //    }
-
-
-
-
 
 
 }

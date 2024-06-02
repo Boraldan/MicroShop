@@ -22,7 +22,7 @@ public class CartRestClient {
     }
 
     public ResponseEntity<Void> saveCart(CartDto cartDto) {
-        return this.restClient.patch()
+        return this.restClient.put()
                 .uri("/cart/save")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(cartDto)

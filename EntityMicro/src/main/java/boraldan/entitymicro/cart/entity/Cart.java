@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,11 +15,8 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @Entity
-@Table(name = "cart")
+@Table(name = "t_cart")
 public class Cart {
-
-//    @Transient
-//    private String ownerName;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -47,7 +43,7 @@ public class Cart {
     private LocalDateTime creatAt;
 
     public Cart() {
-        this.cartUnitList = new ArrayList<>();
+//        this.cartUnitList = new ArrayList<>();
         this.creatAt = LocalDateTime.now();
     }
 //

@@ -17,10 +17,9 @@ public class MySessionListener implements HttpSessionListener {
 
     @Override
     public void sessionCreated(HttpSessionEvent event) {
-        event.getSession().setMaxInactiveInterval(500);
+        event.getSession().setMaxInactiveInterval(50);
         event.getSession().setAttribute(REDIS_KEY, event.getSession().getId());
         CartDto cartDto = new CartDto();
-//        cartDto.setOwnerName("anonymous");
         redisService.setCart(event.getSession().getId(), cartDto);
     }
 
@@ -32,7 +31,6 @@ public class MySessionListener implements HttpSessionListener {
             redisService.deleteCart(event.getSession().getId());
         } else {
             CartDto cartDto =  redisService.getOpsForValue().getAndDelete(usernameOrSessionId);
-            System.out.println("sessionDestroyed - " + cartDto);
             cartRestClient.saveCart(cartDto);
         }
     }

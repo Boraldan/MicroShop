@@ -5,6 +5,7 @@ import boraldan.entitymicro.storage.dto.ListStorageDto;
 import boraldan.entitymicro.storage.entity.Storage;
 import boraldan.entitymicro.toolbox.builder.ListStorageDtoBuilder;
 import boraldan.entitymicro.specification.SpecItem;
+import boraldan.entitymicro.toolbox.builder.StorageBuilder;
 import boraldan.shop.controller.feign.StorageFeign;
 import boraldan.shop.repository.ItemUnifiedRepo;
 import boraldan.shop.service.i_service.CategoryService;
@@ -61,7 +62,7 @@ public class ItemUnifiedServiceV1<T extends Item> implements ItemUnifiedService<
         if (originalList.isEmpty()) return originalList;
         ListStorageDto listStorageDto = this.getListStorageDto(originalList);
         if (listStorageDto == null) return originalList;
-        return addStorageToListT(originalList, listStorageDto);
+        return addStorageToListT(originalList, listStorageDto.getStorageList());
     }
 
     @Override
@@ -72,13 +73,22 @@ public class ItemUnifiedServiceV1<T extends Item> implements ItemUnifiedService<
         if (originalList.isEmpty()) return originalPage;
         ListStorageDto listStorageDto = this.getListStorageDto(originalList);
         if (listStorageDto == null) return originalPage;
-        originalList = addStorageToListT(originalList, listStorageDto);
+        originalList = addStorageToListT(originalList, listStorageDto.getStorageList());
         return new PageImpl<>(originalList, originalPage.getPageable(), originalPage.getTotalElements());
     }
 
+//    @Override
+//    public List<T> getByUuidList(List<UUID> uuidList) {
+//        return ItemUnifiedService.super.getByUuidList(uuidList);
+//    }
+
     @Override
     public List<T> getByUuidList(List<UUID> uuidList) {
-        return ItemUnifiedService.super.getByUuidList(uuidList);
+        List<T> originalList = ItemUnifiedService.super.getByUuidList(uuidList);
+        if (originalList.isEmpty()) return originalList;
+        ListStorageDto listStorageDto = this.getListStorageDto(originalList);
+        return addStorageToListT(originalList, listStorageDto != null ? listStorageDto.getStorageList() : List.of());
+
     }
 
     @Override
@@ -115,13 +125,18 @@ public class ItemUnifiedServiceV1<T extends Item> implements ItemUnifiedService<
                 .getBody();
     }
 
-    private List<T> addStorageToListT(List<T> itemList, ListStorageDto listStorageDto) {
+    private List<T> addStorageToListT(List<T> itemList, List<Storage> storageList) {
         Map<UUID, Storage> storageMap = new HashMap<>();
-        for (Storage storage : listStorageDto.getStorageList()) {
+        for (Storage storage : storageList) {
             storageMap.put(storage.getItemId(), storage);
         }
         return itemList.stream().map(item -> {
-            item.setStorage(storageMap.get(item.getId()));
+            item.setStorage(storageMap.get(item.getId()) != null ? storageMap.get(item.getId())
+                    : StorageBuilder.creat(Storage.class)
+                    .setItemId(item.getId())
+                    .setQuantity(0)
+                    .setReserve(0)
+                    .build());
             return item;
         }).toList();
     }

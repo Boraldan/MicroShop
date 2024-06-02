@@ -10,7 +10,7 @@ public class LotDto {
     private UUID itemId;
     private String itemClassName;
 
-    private Integer quantity;
+    private Integer lotQuantity;
     private Integer limitQuantity;
 
     public void setItemId(UUID itemId) {
@@ -21,8 +21,8 @@ public class LotDto {
         this.itemClassName = itemClassName;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+    public void setLotQuantity(Integer lotQuantity) {
+        this.lotQuantity = lotQuantity;
     }
 
     public void setLimitQuantity(Integer limitQuantity) {

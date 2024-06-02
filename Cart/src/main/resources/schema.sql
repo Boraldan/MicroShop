@@ -1,5 +1,5 @@
 
-CREATE TABLE cart (
+CREATE TABLE t_cart (
                       id UUID PRIMARY KEY  ,
                       customer_id UUID,
                       coupon_name varchar,
@@ -15,6 +15,6 @@ CREATE TABLE cart_unit (
                            quantity INT,
 --                            price_item DECIMAL(10, 2),
 --                            price DECIMAL(10, 2),
-                           FOREIGN KEY (cart_id) REFERENCES cart(id)
+                           FOREIGN KEY (cart_id) REFERENCES t_cart(id)
 );
 

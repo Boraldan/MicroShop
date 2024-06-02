@@ -12,6 +12,7 @@ import boraldan.entitymicro.cart.entity.CartUnit;
 import boraldan.entitymicro.shop.entity.item.Item;
 import boraldan.entitymicro.toolbox.builder.CartBuilder;
 import boraldan.entitymicro.toolbox.builder.CartDtoBuilder;
+import boraldan.entitymicro.toolbox.builder.CartUnitBuilder;
 import boraldan.entitymicro.toolbox.builder.UnitCartDtoBuilder;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
@@ -50,23 +51,28 @@ public class CartService {
 
     @Transactional
     public Cart convertToCartAndSave(CartDto cartDto) {
-        List<CartUnit> cartUnitList = cartDto.getCartUnitDtoList().stream()
-                .map(cartUnitDto -> {
-                    CartUnit cartUnit = new CartUnit();
-                    cartUnit.setItemId(cartUnitDto.getItem().getId());
-                    cartUnit.setQuantity(cartUnitDto.getQuantity());
-                    return cartUnit;
-                }).toList();
         Optional<Cart> cartOptional = cartRepo.findByCustomerId(cartDto.getCustomer().getId());
         cartOptional.ifPresent(cartRepo::delete);
-        Cart cart = CartBuilder.creat()
+
+        Cart cart = cartRepo.save(CartBuilder.creat()
                 .setCustomerId(cartDto.getCustomer().getId())
                 .setCouponName(cartDto.getCoupon() != null ? cartDto.getCoupon().getCouponName() : null)
-                .setCartUnitList(cartUnitList)
-                .build();
-        return cartRepo.save(cart);
-    }
+                .build());
 
+        List<CartUnit> cartUnitList = cartDto.getCartUnitDtoList().stream()
+                .map(cartUnitDto -> {
+                    CartUnit cartUnit = CartUnitBuilder.create()
+                            .setItemId(cartUnitDto.getItem().getId())
+                            .setQuantity(cartUnitDto.getUnitQuantity())
+                            .build();
+                    cartUnit.setCart(cart);
+                    return cartUnit;
+                }).toList();
+
+        cart.setCartUnitList(cartUnitList);
+
+        return cart;
+    }
 
     /**
      * Из сохраненной Cart для Customer преобразуем в CartDto.

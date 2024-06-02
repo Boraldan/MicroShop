@@ -26,18 +26,18 @@ public class LotdtoValidator implements Validator {
 
     public void validateQuantityCart(CartDto cartDto, Object target, Errors errors) {
         LotDto lotDto = (LotDto) target;
-        if (lotDto.getQuantity() == null) lotDto.setQuantity(0);
+        if (lotDto.getLotQuantity() == null) lotDto.setLotQuantity(0);
 
-        if (lotDto.getQuantity() > lotDto.getLimitQuantity() || lotDto.getQuantity() < 1) {
-            errors.rejectValue("quantity", "", "Ошибочное количество.");
+        if (lotDto.getLotQuantity() > lotDto.getLimitQuantity() || lotDto.getLotQuantity() < 1) {
+            errors.rejectValue("lotQuantity", "", "Ошибочное количество.");
             return;
         }
         Optional<CartUnitDto> cartUnitDto = cartDto.getCartUnitDtoList().stream()
                 .filter(unit -> unit.getItem().getId().equals(lotDto.getItemId()))
                 .findFirst();
         if (cartUnitDto.isPresent()) {
-            if ((cartUnitDto.get().getQuantity() + lotDto.getQuantity()) > lotDto.getLimitQuantity()) {
-                errors.rejectValue("quantity", "", "Нет на складе такого количества");
+            if ((cartUnitDto.get().getUnitQuantity() + lotDto.getLotQuantity()) > lotDto.getLimitQuantity()) {
+                errors.rejectValue("lotQuantity", "", "Нет на складе такого количества");
             }
         }
     }

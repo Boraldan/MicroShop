@@ -41,8 +41,15 @@ public class CartDto {
     public int lotInCart() {
         return cartUnitDtoList != null ? cartUnitDtoList.stream()
                 .filter(Objects::nonNull)
-                .mapToInt(CartUnitDto::getQuantity)
+                .mapToInt(CartUnitDto::getUnitQuantity)
                 .sum() : 0;
     }
 
+    public List<CartUnitDto> getCartUnitDtoList() {
+        return cartUnitDtoList;
+    }
+
+    public void setCartUnitDtoList(List<CartUnitDto> cartUnitDtoList) {
+        this.cartUnitDtoList = cartUnitDtoList;
+    }
 }

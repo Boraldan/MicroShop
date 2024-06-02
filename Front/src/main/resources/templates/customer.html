@@ -15,10 +15,10 @@
 
 <h2>Cart Information</h2>
 <div>
-    <p>Owner cart: <span th:text="${cart.customer.username}"></span></p>
-    <p>Sub Total: <span th:text="${cart.subTotalPrice}"></span></p>
-    <p>Total: <span th:text="${cart.totalPrice()}"></span></p>
-    <p>Lot in cart: <span th:text="${cart.lotInCart()}"></span></p>
+    <p>Owner cart: <span th:text="${cartDto.customer.username}"></span></p>
+    <p>Sub Total: <span th:text="${cartDto.subTotalPrice}"></span></p>
+    <p>Total: <span th:text="${cartDto.totalPrice()}"></span></p>
+    <p>Lot in cart: <span th:text="${cartDto.lotInCart()}"></span></p>
 </div>
 </body>
 </html>

@@ -18,7 +18,7 @@ public class LotDtoBuilder {
 
     public LotDtoBuilder setQuantity(Integer quantity) {
         if (quantity == null) quantity = 0;
-        this.lotDto.setQuantity(quantity);
+        this.lotDto.setLotQuantity(quantity);
         return this;
     }
 

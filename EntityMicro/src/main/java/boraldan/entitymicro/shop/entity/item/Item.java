@@ -3,6 +3,7 @@ package boraldan.entitymicro.shop.entity.item;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.price.Price;
 import boraldan.entitymicro.storage.entity.Storage;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -59,6 +60,7 @@ public class Item {
     protected Price price;
 
     @Transient
+    @JsonProperty
     protected Storage storage;
 
     @Transient

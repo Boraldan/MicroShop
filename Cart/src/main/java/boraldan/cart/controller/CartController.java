@@ -4,7 +4,6 @@ import boraldan.cart.service.CartService;
 import boraldan.entitymicro.account.entity.person.Customer;
 import boraldan.entitymicro.cart.dto.CartDto;
 import boraldan.entitymicro.cart.dto.CartListDTO;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +22,12 @@ public class CartController {
 
     @PostMapping("/get")
     public ResponseEntity<CartDto> getCartByCustomer(@RequestBody Customer customer) {
-        return ResponseEntity.ok(cartService.getCartDtoByCustomer(customer));
+        CartDto cartDto = cartService.getCartDtoByCustomer(customer);
+        System.out.println("   @PatchMapping(/get) -- > " + cartDto);
+        return ResponseEntity.ok(cartDto);
     }
 
-    @PatchMapping("/save")
+    @PutMapping("/save")
     public ResponseEntity<Void> saveCartDto(@RequestBody CartDto cartDto) {
         System.out.println("   @PatchMapping(/save) -- > " + cartDto);
         cartService.convertToCartAndSave(cartDto);

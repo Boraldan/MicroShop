@@ -21,7 +21,7 @@ public class CartUnitDtoBuilder {
     }
 
     public CartUnitDtoBuilder setQuantity(Integer quantity) {
-        this.cartUnitDto.setQuantity(quantity);
+        this.cartUnitDto.setUnitQuantity(quantity);
         return this;
     }
 

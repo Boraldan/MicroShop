@@ -8,11 +8,11 @@
 
 <div><h2>Cart</h2>
 
-    <div th:if="${cart.customer}">
-        <p>ID customer: <span th:text="${cart.customer.id}"></span></p>
-        <p>Name: <span th:text="${cart.customer.username}"></span></p>
+    <div th:if="${cartDto.customer}">
+        <p>ID customer: <span th:text="${cartDto.customer.id}"></span></p>
+        <p>Name: <span th:text="${cartDto.customer.username}"></span></p>
     </div>
-    <div th:if="${cart.getCartUnitDtoList()}">
+    <div th:if="${cartDto.getCartUnitDtoList()}">
         <table border="1">
             <thead>
             <tr>
@@ -24,10 +24,10 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="unit : ${cart.getCartUnitDtoList()}">
+            <tr th:each="unit : ${cartDto.getCartUnitDtoList()}">
                 <td th:text="${unit.item.getId()}">ID</td>
                 <td th:text="${unit.item.getTitle()}">title</td>
-                <td th:text="${unit.getQuantity()}">Storage</td>
+                <td th:text="${unit.getUnitQuantity()}">Storage</td>
                 <td th:text="${unit.item.price.getCustomPrice()}">price</td>
                 <td>
                     <form th:method="POST" th:action="@{/cart/item/del}" >
@@ -39,10 +39,12 @@
             </tbody>
         </table>
     </div>
-    <h3>Volume Item: <span th:text="${cart.lotInCart()}"></span></h3>
-    <h3>SubTotal Price: <span th:text="${cart.totalPrice()}"></span></h3>
+    <h3>Volume Item: <span th:text="${cartDto.lotInCart()}"></span></h3>
+    <h3>SubTotal Price: <span th:text="${cartDto.totalPrice()}"></span></h3>
     <br>
     <hr>
+
+
 </div>
 
 <div>

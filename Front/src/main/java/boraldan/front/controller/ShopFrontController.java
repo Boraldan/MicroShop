@@ -2,7 +2,6 @@ package boraldan.front.controller;
 
 
 import boraldan.entitymicro.cart.dto.CartDto;
-import boraldan.entitymicro.cart.entity.Cart;
 import boraldan.entitymicro.shop.dto.LotDto;
 import boraldan.entitymicro.shop.dto.SpecificationDto;
 import boraldan.entitymicro.shop.entity.category.Category;
@@ -13,7 +12,7 @@ import boraldan.entitymicro.shop.entity.item.transport.car.Car;
 import boraldan.entitymicro.toolbox.builder.LotDtoBuilder;
 import boraldan.entitymicro.toolbox.builder.SpecificationDtoBuilder;
 import boraldan.front.rest_client.ShopRestClient;
-import boraldan.front.service.ItemFrontService;
+import boraldan.front.service.ItemFrontServiceV_1;
 import boraldan.front.utilit.LotdtoValidator;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -38,19 +37,19 @@ public class ShopFrontController {
     private final ShopRestClient restClient;
     private final HttpSession httpSession;
     private final ModelMapper modelMapper;
-    private final ItemFrontService itemFrontService;
+    private final ItemFrontServiceV_1 itemFrontService;
 
     private final LotdtoValidator lotDtoValidator;
 
-    @GetMapping("/carttest")
-    public String test(Model model, @AuthenticationPrincipal Principal principal, @ModelAttribute("cart") Cart cart) {
-        return "cart";
-    }
+//    @GetMapping("/carttest")
+//    public String test(Model model, @AuthenticationPrincipal Principal principal, @ModelAttribute("cart") Cart cart) {
+//        return "cart";
+//    }
 
     @GetMapping("/catalog")
-    public String getCatalog(Model model, @ModelAttribute("cart") CartDto cartDto) {
+    public String getCatalog(Model model, @ModelAttribute("cartDto") CartDto cartDto) {
         model.addAttribute("category", new Category());
-        model.addAttribute("cart", cartDto); // добавляем для удобства работы с полями cartDto
+        model.addAttribute("cartDto", cartDto); // добавляем для удобства работы с полями cartDto
 //        model.addAttribute("lotDto", new LotDto());
         return "catalog";
     }

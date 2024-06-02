@@ -22,7 +22,7 @@ public class UnitCartDtoBuilder {
 
     public UnitCartDtoBuilder setQuantity(Integer quantity) {
         if (quantity == null) return this;
-        this.cartUnitDto.setQuantity(quantity);
+        this.cartUnitDto.setUnitQuantity(quantity);
         return this;
     }
 
