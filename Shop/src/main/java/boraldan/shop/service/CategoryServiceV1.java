@@ -3,7 +3,7 @@ package boraldan.shop.service;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.category.CategoryName;
 import boraldan.entitymicro.shop.entity.item.Item;
-import boraldan.entitymicro.storage.dto.ListStorageDto;
+import boraldan.entitymicro.storage.dto.StorageListDto;
 import boraldan.entitymicro.toolbox.builder.ListStorageDtoBuilder;
 import boraldan.entitymicro.storage.entity.Storage;
 import boraldan.shop.controller.feign.StorageFeign;
@@ -33,20 +33,20 @@ public class CategoryServiceV1 implements CategoryService {
         Category category = categoryRepo.findByCategoryName(categoryName).orElse(null);
         if (category != null && !category.getItems().isEmpty()) {
             List<UUID> itemIdList = category.getItems().stream().map(Item::getId).toList();
-            ListStorageDto listStorageDto = storageFeign.getListByCategory(ListStorageDtoBuilder.creat()
+            StorageListDto storageListDto = storageFeign.getListByCategory(ListStorageDtoBuilder.creat()
                             .setStorageCategory(categoryName)
                             .setItemIdList(itemIdList)
                             .build())
                     .getBody();
-            if (listStorageDto == null) return category.getItems();
-            return addStorageToListT(category.getItems(), listStorageDto);
+            if (storageListDto == null) return category.getItems();
+            return addStorageToListT(category.getItems(), storageListDto);
         }
         return new ArrayList<>();
     }
 
-    private List<Item> addStorageToListT(List<Item> itemList, ListStorageDto listStorageDto) {
+    private List<Item> addStorageToListT(List<Item> itemList, StorageListDto storageListDto) {
         Map<UUID, Storage> storageMap = new HashMap<>();
-        for (Storage storage : listStorageDto.getStorageList()) {
+        for (Storage storage : storageListDto.getStorageList()) {
             storageMap.put(storage.getItemId(), storage);
         }
         return itemList.stream().map(el -> {

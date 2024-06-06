@@ -3,18 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart Information</title>
+    <title>Checkout</title>
 </head>
 <body>
 <div>
     <h2>Cart</h2>
-
     <div th:if="${cartDto.customer}">
         <p>ID customer: <span th:text="${cartDto.customer.id}"></span></p>
         <p>Name: <span th:text="${cartDto.customer.username}"></span></p>
     </div>
-
-    <form th:action="@{/cart/checkout}" th:method="POST" >
+    <form th:action="@{/cart/booked}" th:method="GET">
         <div th:if="${cartDto.cartUnitDtoList}">
             <table border="1">
                 <thead>
@@ -23,7 +21,6 @@
                     <th>Title</th>
                     <th>Quantity</th>
                     <th>Price</th>
-                    <th>Delete Item</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -31,34 +28,31 @@
                     <td th:text="${cartUnit.item.id}">ID</td>
                     <td th:text="${cartUnit.item.title}">Title</td>
                     <td>
-                        <input type="number" th:field="*{cartDto.cartUnitDtoList[__${stat.index}__].unitQuantity}"
-                               th:value="${cartDto.cartUnitDtoList[__${stat.index}__].unitQuantity}"
-                               min="1" th:max="${cartUnit.item.storage.quantity}" step="1"/>
+                        <input type="text" th:field="*{cartDto.cartUnitDtoList[__${stat.index}__].unitQuantity}"/>
+                        <!--                               th:value="${cartDto.cartUnitDtoList[__${stat.index}__].unitQuantity}"-->
+                        <!--                               min="1" th:max="${cartUnit.item.storage.quantity}" step="1"/>-->
                         <div style="color: red"
                              th:if="${#fields.hasErrors('cartDto.cartUnitDtoList[' + __${stat.index}__ + '].unitQuantity')}"
                              th:errors="*{cartDto.cartUnitDtoList[__${stat.index}__].unitQuantity}">Ошибка в количестве
                         </div>
                     </td>
                     <td th:text="${cartUnit.item.price.customPrice}">Price</td>
-                    <td>
-                        <a th:href="@{/cart/item/del(itemId=${cartUnit.item.id})}">Delete</a>
-<!--                        вложенные формы не срабатывают -->
-                        <!--    <form th:method="POST" th:action="@{/cart/item/del}">-->
-<!--                            <input type="hidden" name="itemId" th:value="${cartUnit.item.id}"/>-->
-<!--                            <input type="submit" value="Delete"/>-->
-<!--                        </form>-->
-                    </td>
                 </tr>
                 </tbody>
             </table>
-            <br>
-            <input type="submit" value="Перейти к оформлению"/>
         </div>
+        <h3>Volume Item: <span th:text="${cartDto.lotInCart()}"></span></h3>
+        <h3>SubTotal Price: <span th:text="${cartDto.totalPrice()}"></span></h3>
+        <br>
+        <input type="submit" value="Оформить заказ"/>
     </form>
-    <h3>Volume Item: <span th:text="${cartDto.lotInCart()}"></span></h3>
-    <h3>SubTotal Price: <span th:text="${cartDto.totalPrice()}"></span></h3>
     <br>
-    <hr>
 </div>
+<div>
+    <form th:action="@{/cart/show}" th:method="GET">
+        <input type="submit" value="Исправить заказ"/>
+    </form>
+</div>
+    <hr>
 </body>
 </html>

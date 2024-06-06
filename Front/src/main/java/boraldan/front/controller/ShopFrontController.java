@@ -14,10 +14,15 @@ import boraldan.entitymicro.toolbox.builder.SpecificationDtoBuilder;
 import boraldan.front.rest_client.ShopRestClient;
 import boraldan.front.service.ItemFrontServiceV_1;
 import boraldan.front.utilit.LotdtoValidator;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,13 +31,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Log4j2
 @Controller
 @RequiredArgsConstructor
-public class ShopFrontController {
+public class ShopFrontController  implements ErrorController {
 
     private final ShopRestClient restClient;
     private final HttpSession httpSession;
@@ -41,10 +48,31 @@ public class ShopFrontController {
 
     private final LotdtoValidator lotDtoValidator;
 
-//    @GetMapping("/carttest")
-//    public String test(Model model, @AuthenticationPrincipal Principal principal, @ModelAttribute("cart") Cart cart) {
-//        return "cart";
-//    }
+    private static final Logger logger = LoggerFactory.getLogger(ShopFrontController.class);
+
+    @RequestMapping("/error")
+    public String handleError(HttpServletRequest request, Map<String, Object> model) {
+        Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+        Object exception = request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
+        Object errorMessage = request.getAttribute(RequestDispatcher.ERROR_MESSAGE);
+        Object requestUri = request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI);
+
+        model.put("status", status);
+        model.put("exception", exception != null ? exception.toString() : "N/A");
+        model.put("errorMessage", errorMessage != null ? errorMessage.toString() : "N/A");
+        model.put("requestUri", requestUri != null ? requestUri.toString() : "N/A");
+        model.put("timestamp", new Date());
+
+        logger.error("Error with status code: " + status + ", message: " + errorMessage + ", URI: " + requestUri);
+
+        return "error"; // возвращает представление error.html
+    }
+
+    @ExceptionHandler(Exception.class)
+    public String handleException(Exception ex) {
+        logger.error("Exception occurred: ", ex);
+        return "error"; // возвращает представление error.html
+    }
 
     @GetMapping("/catalog")
     public String getCatalog(Model model, @ModelAttribute("cartDto") CartDto cartDto) {

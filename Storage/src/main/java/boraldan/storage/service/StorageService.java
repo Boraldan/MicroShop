@@ -1,14 +1,14 @@
 package boraldan.storage.service;
 
-import boraldan.entitymicro.storage.dto.ListStorageDto;
-import boraldan.entitymicro.toolbox.builder.ListStorageDtoBuilder;
+import boraldan.entitymicro.storage.dto.ReserveDto;
+import boraldan.entitymicro.storage.dto.ReserveDtoList;
+import boraldan.entitymicro.storage.dto.StorageListDto;
 import boraldan.entitymicro.storage.entity.Storage;
+import boraldan.entitymicro.toolbox.builder.ListStorageDtoBuilder;
 import boraldan.storage.repository.GlobalJpaRepository;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public interface StorageService<T extends Storage, R extends GlobalJpaRepository<T>> {
 
@@ -22,8 +22,8 @@ public interface StorageService<T extends Storage, R extends GlobalJpaRepository
         return getStorageRepo().findByItemId(itemId);
     }
 
-    default ListStorageDto getByList(ListStorageDto listStorageDto) {
-        List<UUID> itemIdList = listStorageDto.getItemIdList().stream().filter(Objects::nonNull).toList();
+    default StorageListDto getByList(StorageListDto storageListDto) {
+        List<UUID> itemIdList = storageListDto.getItemIdList().stream().filter(Objects::nonNull).toList();
         List<T> storageList = getStorageRepo().findAllByItemIdIn(itemIdList);
         return ListStorageDtoBuilder.creat().setStorageList(storageList).build();
     }
@@ -32,8 +32,53 @@ public interface StorageService<T extends Storage, R extends GlobalJpaRepository
         return getStorageRepo().save(convertToStorageItem(storage, storage.getStorageClazz()));
     }
 
-    default void deleteByItemId(UUID itemId){
+    default void deleteByItemId(UUID itemId) {
         getStorageRepo().deleteByItemId(itemId);
+    }
+
+
+   default void setReserve(ReserveDtoList reserveDtoList) {
+        List<UUID> itemIdList = reserveDtoList.getReserveDtoList().stream()
+                .filter(Objects::nonNull)
+                .map(ReserveDto::getItemId)
+                .toList();
+
+        List<T> storageList = getStorageRepo().findAllByItemIdIn(itemIdList);
+
+        Map<UUID, Storage> storageMap = storageList.stream()
+                .collect(Collectors.toMap(Storage::getItemId, storage -> storage));
+
+       reserveDtoList.getReserveDtoList().forEach (reserveDto -> {
+           Storage storage = storageMap.get(reserveDto.getItemId());
+           if (storage != null) {
+               storage.setQuantity(storage.getQuantity() - reserveDto.getCartReserve());
+               storage.setReserve(storage.getReserve() + reserveDto.getCartReserve());
+           }
+       });
+
+        getStorageRepo().saveAll(storageList);
+    }
+
+    default void deleteReserve(ReserveDtoList reserveDtoList) {
+        List<UUID> itemIdList = reserveDtoList.getReserveDtoList().stream()
+                .filter(Objects::nonNull)
+                .map(ReserveDto::getItemId)
+                .toList();
+
+        List<T> storageList = getStorageRepo().findAllByItemIdIn(itemIdList);
+
+        Map<UUID, Storage> storageMap = storageList.stream()
+                .collect(Collectors.toMap(Storage::getItemId, storage -> storage));
+
+        reserveDtoList.getReserveDtoList().forEach (reserveDto -> {
+            Storage storage = storageMap.get(reserveDto.getItemId());
+            if (storage != null) {
+                storage.setQuantity(storage.getQuantity() + reserveDto.getCartReserve());
+                storage.setReserve(storage.getReserve() - reserveDto.getCartReserve());
+            }
+        });
+
+        getStorageRepo().saveAll(storageList);
     }
 
     T convertToStorageItem(Storage storage, Class<? extends Storage> clazz);

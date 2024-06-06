@@ -1,6 +1,7 @@
 package boraldan.storage.service;
 
-import boraldan.entitymicro.storage.dto.ListStorageDto;
+import boraldan.entitymicro.storage.dto.ReserveDtoList;
+import boraldan.entitymicro.storage.dto.StorageListDto;
 import boraldan.entitymicro.storage.entity.Storage;
 import boraldan.storage.repository.GlobalJpaRepository;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -36,7 +37,7 @@ public class UniversalStorageService<T extends Storage> implements StorageServic
     }
 
     @Override
-    public ListStorageDto getByList(ListStorageDto listItemDto) {
+    public StorageListDto getByList(StorageListDto listItemDto) {
         return StorageService.super.getByList(listItemDto);
     }
 
@@ -52,10 +53,19 @@ public class UniversalStorageService<T extends Storage> implements StorageServic
         StorageService.super.deleteByItemId(itemId);
     }
 
+    @Transactional
+    @Override
+    public void setReserve(ReserveDtoList reserveDtoList) {
+        StorageService.super.setReserve(reserveDtoList);
+    }
+    @Transactional
+    @Override
+    public void deleteReserve(ReserveDtoList reserveDtoList) {
+        StorageService.super.deleteReserve(reserveDtoList);
+    }
+
     public T convertToStorageItem(Storage storage, Class<? extends Storage> clazz) {
         Type targetType = TypeFactory.rawClass(clazz);
         return modelMapper.map(storage, targetType);
     }
-
-
 }

@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ListItemDto {
+public class ItemListDto {
 
     List<Item> itemList;
 

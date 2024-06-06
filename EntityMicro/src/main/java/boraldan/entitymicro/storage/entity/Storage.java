@@ -23,10 +23,10 @@ public class Storage {
     protected UUID itemId;
 
     @Column(name = "quantity")
-    protected long quantity;
+    protected Integer quantity;
 
     @Column(name = "reserve")
-    protected long reserve;
+    protected Integer reserve;
 
     @Transient
     protected Class<? extends Storage> storageClazz;

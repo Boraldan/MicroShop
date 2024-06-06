@@ -6,6 +6,8 @@ import boraldan.entitymicro.cart.dto.CartUnitDto;
 import boraldan.front.redis.RedisService;
 import boraldan.front.rest_client.AccountRestClient;
 import boraldan.front.rest_client.CartRestClient;
+import boraldan.front.service.i_service.CartFrontService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.security.Principal;
 
+//@RequestScope // указывает, что бины контроллера должны быть созданы на каждый HTTP-запрос
 @RequiredArgsConstructor
 @ControllerAdvice
 public class GlobalController {
@@ -21,13 +24,18 @@ public class GlobalController {
     private final RedisService redisService;
     private final CartRestClient cartRestClient;
     private final AccountRestClient accountRestClient;
+    private final CartFrontService cartFrontService;
     private final HttpSession httpSession;
+    private final HttpServletRequest httpRequest;
 
     @ModelAttribute("cartDto")
     public CartDto setCart(Principal principal) {
+        String requestURI = httpRequest.getRequestURI().replaceAll("/+$", "");
+        System.out.println(requestURI);
         CartDto cartDto;
         if (principal != null) {
-            cartDto = redisService.getCart(principal.getName().toLowerCase()); // корзина из redis
+//            cartDto = redisService.getCart(principal.getName().toLowerCase()); // корзина из redis
+            cartDto = selectCartFromRedisByUri(principal, requestURI);  // корзина из redis c проверкой резерва
             if (cartDto == null) {
                 Customer customer = accountRestClient.getCustomerAccount();
                 cartDto = cartRestClient.getCart(customer); // корзина из db
@@ -59,6 +67,20 @@ public class GlobalController {
             }
             redisService.deleteCart(oldSessionId);
         }
+    }
+
+    private CartDto selectCartFromRedisByUri(Principal principal, String requestURI) {
+        String cartReserveKey = String.format("%s_reserve", principal.getName().toLowerCase());
+        CartDto reserveCartDto = redisService.getCart(cartReserveKey);              // корзина reserve из redis
+        if (reserveCartDto != null) {
+            if (!(requestURI.equals("/cart/checkout") || requestURI.equals("/cart/booked"))) {
+                cartFrontService.interruptReserveTimer(reserveCartDto);             // удаляем резерв
+                return redisService.getCart(principal.getName().toLowerCase());     // корзина из redis
+            } else {
+                return reserveCartDto;
+            }
+        }
+        return redisService.getCart(principal.getName().toLowerCase());             // корзина из redis
     }
 
 

@@ -17,7 +17,8 @@ public class MySessionListener implements HttpSessionListener {
 
     @Override
     public void sessionCreated(HttpSessionEvent event) {
-        event.getSession().setMaxInactiveInterval(50);
+        int maxInactiveInterval = 70;
+        event.getSession().setMaxInactiveInterval(maxInactiveInterval);
         event.getSession().setAttribute(REDIS_KEY, event.getSession().getId());
         CartDto cartDto = new CartDto();
         redisService.setCart(event.getSession().getId(), cartDto);

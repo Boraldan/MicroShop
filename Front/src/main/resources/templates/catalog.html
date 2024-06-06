@@ -30,10 +30,7 @@
                 <td th:text="${unit.getUnitQuantity()}">Storage</td>
                 <td th:text="${unit.item.price.getCustomPrice()}">price</td>
                 <td>
-                    <form th:method="POST" th:action="@{/cart/item/del}" >
-                        <input type="hidden" name="itemId" th:value="${unit.item.getId()}"/>
-                        <input type="submit" value="Delete"/>
-                    </form>
+                    <a th:href="@{/cart/item/del(itemId=${unit.item.id})}">Delete</a>
                 </td>
             </tr>
             </tbody>

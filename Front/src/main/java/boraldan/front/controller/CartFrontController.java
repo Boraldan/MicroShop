@@ -16,11 +16,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,28 +30,74 @@ public class CartFrontController {
 
     private final CartRestClient restClient;
     private final LotdtoValidator lotDtoValidator;
+    private final CartDtoValidator cartDtoValidator;
     private final ItemFrontService itemFrontService;
     private final CartFrontService cartFrontService;
     private final RedisService redisService;
     private final HttpSession httpSession;
 
 
-    private final CartDtoValidator cartDtoValidator;
+    //    @ResponseBody
+//    @GetMapping("/start")
+//    public String startTask() {
+//        asyncService.executeTaskWithInterrupt2("test_interrupt");
+//        return "Задача  запущена";
+//    }
+//
+//    @ResponseBody
+//    @GetMapping("/stop")
+//    public String interruptTask2() {
+//        asyncService.interruptTask2("test_interrupt");
+//        return "Задача прервана";
+//    }
+
+
+//    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/checkout")
+    public String checkoutCart(Principal principal,
+                               @ModelAttribute("cartDto") CartDto cartDto, BindingResult bindingResult) {
+
+        String cartReserveKey = String.format("%s_reserve", principal.getName().toLowerCase());
+        CartDto reserveCartDto = redisService.getCart(cartReserveKey);
+        if (reserveCartDto != null) {
+            return "checkout";
+        }
+        cartDtoValidator.validate(cartDto, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "redirect:/cart";
+        }
+        cartFrontService.setReserveWithInterrupt(cartDto); // логика перевода товаров в резерв
+        return "checkout";
+    }
+
+//    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/booked")
+    public String creatOrder(Principal principal,
+                             @ModelAttribute("cartDto") CartDto cartDto) {
+
+        String cartReserveKey = String.format("%s_reserve", principal.getName().toLowerCase());
+        CartDto reserveCartDto = redisService.getCart(cartReserveKey);
+        if (reserveCartDto == null) {
+            return "redirect:/cart";
+        }
+
+        // TODO: 06.06.2024 логика создания резерва
+
+
+        return "booked";
+    }
 
     @GetMapping("/show")
     public String showCart(@ModelAttribute("cartDto") CartDto cartDto, BindingResult bindingResult) {
         cartDtoValidator.validate(cartDto, bindingResult);
-        if (bindingResult.hasErrors()) {
-            return "cart";
-        }
         return "cart";
     }
+
 
     @PostMapping("/item/add")
     public String addItemToCart(Model model,
                                 @ModelAttribute("cartDto") CartDto cartDto,
-                                @ModelAttribute("lotDto") @Valid LotDto lotDto,
-                                BindingResult bindingResult) {
+                                @ModelAttribute("lotDto") @Valid LotDto lotDto, BindingResult bindingResult) {
         Item item = itemFrontService.getAndConvertItem(lotDto.getItemId(), lotDto.getItemClassName());
         lotDtoValidator.validateQuantityCart(cartDto, lotDto, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -70,13 +114,25 @@ public class CartFrontController {
         return "redirect:/shop/item?itemId=%s&itemClassName=%s".formatted(lotDto.getItemId().toString(), lotDto.getItemClassName());
     }
 
-    @PostMapping("/item/del")
-    public String addItemToCart(@ModelAttribute("cartDto") CartDto cartDto,
-                                @ModelAttribute("itemId") UUID itemId) {
+    @GetMapping("/item/del")
+    public String delItemToCart(@ModelAttribute("cartDto") CartDto cartDto,
+                                @RequestParam(name = "itemId", required = false) UUID itemId) {
+        if (itemId == null) {
+            return "redirect:/catalog";
+        }
         CartDto updateCartDto = cartFrontService.deleteFromCart(cartDto, itemId);
         redisUpdateCartDto(cartDto, updateCartDto);
         return "redirect:/catalog";
     }
+
+//  вложенные формы не срабатваеют
+//    @PostMapping("/item/del")
+//    public String delItemToCart(@ModelAttribute("cartDto") CartDto cartDto,
+//                                @ModelAttribute("itemId") UUID itemId) {
+//        CartDto updateCartDto = cartFrontService.deleteFromCart(cartDto, itemId);
+//        redisUpdateCartDto(cartDto, updateCartDto);
+//        return "redirect:/catalog";
+//    }
 
     private void redisUpdateCartDto(CartDto oldCartDto, CartDto updateCartDto) {
         if (oldCartDto.getCustomer() != null) {

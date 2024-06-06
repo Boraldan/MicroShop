@@ -1,11 +1,8 @@
 package boraldan.front.config;
 
+import boraldan.front.rest_client.*;
 import boraldan.front.rest_client.interceptor.MainRedisHttpInterceptor;
 import boraldan.front.rest_client.interceptor.OAuth2HttpInterceptor;
-import boraldan.front.rest_client.AccountRestClient;
-import boraldan.front.rest_client.AuthorizeRestClient;
-import boraldan.front.rest_client.CartRestClient;
-import boraldan.front.rest_client.ShopRestClient;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -58,6 +55,13 @@ public class RestClientBean {
         return new ShopRestClient(RestClient.builder()
                 .baseUrl(gatewayBaseUri)
                 .requestInterceptor(new MainRedisHttpInterceptor(httpSession))
+                .build());
+    }
+
+    @Bean
+    public StorageRestClient storageRestClient(@Value("${microshop.service.shop.uri:http://localhost:8765}") String gatewayBaseUri) {
+        return new StorageRestClient(RestClient.builder()
+                .baseUrl(gatewayBaseUri)
                 .build());
     }
 

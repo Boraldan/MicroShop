@@ -2,7 +2,7 @@ package boraldan.shop.controller;
 
 
 import boraldan.entitymicro.bank.entity.BankAccount;
-import boraldan.entitymicro.shop.dto.ListItemDto;
+import boraldan.entitymicro.shop.dto.ItemListDto;
 import boraldan.entitymicro.shop.dto.SpecificationDto;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.category.CategoryName;
@@ -13,7 +13,7 @@ import boraldan.entitymicro.shop.entity.item.transport.car.Car;
 import boraldan.entitymicro.shop.entity.item.transport.car.Types;
 import boraldan.entitymicro.shop.entity.price.item_price.BikePrice;
 import boraldan.entitymicro.shop.entity.price.item_price.CarPrice;
-import boraldan.entitymicro.storage.dto.ListStorageDto;
+import boraldan.entitymicro.storage.dto.StorageListDto;
 import boraldan.entitymicro.storage.entity.Storage;
 import boraldan.entitymicro.storage.entity.transport.bike.BikeStorage;
 import boraldan.entitymicro.storage.entity.transport.car.CarStorage;
@@ -220,16 +220,16 @@ public class ShopController {
     }
 
     // добавляем Storage в Item
-    private ListItemDto mapToItemList(List<Item> itemList, ListStorageDto listStorageDto) {
+    private ItemListDto mapToItemList(List<Item> itemList, StorageListDto storageListDto) {
         Map<UUID, Storage> storageMap = new HashMap<>();
-        for (Storage storage : listStorageDto.getStorageList()) {
+        for (Storage storage : storageListDto.getStorageList()) {
             storageMap.put(storage.getItemId(), storage);
         }
         List<Item> newItemList = itemList.stream().map(i -> {
             i.setStorage(storageMap.get(i.getId()));
             return i;
         }).toList();
-        return new ListItemDtoBuilder().setItemList(newItemList).build();
+        return new ItemDtoListBuilder().setItemList(newItemList).build();
     }
 
     private SpecItem convertToSpecItem(SpecificationDto specDto) {

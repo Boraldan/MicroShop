@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-public class ListStorageDto {
+public class StorageListDto {
     private Class<? extends Storage> storageClazz;
     private CategoryName categoryName;
     private List<Storage> storageList;

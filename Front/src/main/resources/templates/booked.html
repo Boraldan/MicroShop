@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booked</title>
+</head>
+<body>
+<div>
+    <h2>Cart</h2>
+    <div th:if="${cartDto.customer}">
+        <p>ID customer: <span th:text="${cartDto.customer.id}"></span></p>
+        <p>Name: <span th:text="${cartDto.customer.username}"></span></p>
+    </div>
+    <div th:if="${cartDto.cartUnitDtoList}">
+        <table border="1">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="cartUnit, stat : ${cartDto.cartUnitDtoList}">
+                <td th:text="${cartUnit.item.id}">ID</td>
+                <td th:text="${cartUnit.item.title}">Title</td>
+                <td>
+                    <input type="number" th:field="*{cartDto.cartUnitDtoList[__${stat.index}__].unitQuantity}"
+                           th:value="${cartDto.cartUnitDtoList[__${stat.index}__].unitQuantity}"
+                           min="1" th:max="${cartUnit.item.storage.quantity}" step="1"/>
+                    <div style="color: red"
+                         th:if="${#fields.hasErrors('cartDto.cartUnitDtoList[' + __${stat.index}__ + '].unitQuantity')}"
+                         th:errors="*{cartDto.cartUnitDtoList[__${stat.index}__].unitQuantity}">Ошибка в количестве
+                    </div>
+                </td>
+                <td th:text="${cartUnit.item.price.customPrice}">Price</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <h3>Volume Item: <span th:text="${cartDto.lotInCart()}"></span></h3>
+    <h3>SubTotal Price: <span th:text="${cartDto.totalPrice()}"></span></h3>
+    <br>
+    <hr>
+</div>
+<div>
+    <form th:action="@{/shop/items/spec}" th:method="GET">
+        <input type="submit" value="Продолжить покупки."/>
+    </form>
+</div>
+</body>
+</html>

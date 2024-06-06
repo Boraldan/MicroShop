@@ -8,12 +8,12 @@ public class StorageBuilder {
 
     private final Storage storage;
 
-    private StorageBuilder(Class<? extends Storage> clazz){
+    private StorageBuilder(Class<? extends Storage> clazz) {
         this.storage = new Storage();
         this.storage.setStorageClazz(clazz);
     }
 
-    public static StorageBuilder creat(Class<? extends Storage> clazz){
+    public static StorageBuilder creat(Class<? extends Storage> clazz) {
         return new StorageBuilder(clazz);
     }
 
@@ -32,12 +32,14 @@ public class StorageBuilder {
 //        return this;
 //    }
 
-    public StorageBuilder setQuantity(long quantity) {
+    public StorageBuilder setQuantity(Integer quantity) {
+        if (quantity == null) quantity = 0;
         this.storage.setQuantity(quantity);
         return this;
     }
 
-    public StorageBuilder setReserve(long reserve) {
+    public StorageBuilder setReserve(Integer reserve) {
+        if (reserve == null) reserve = 0;
         this.storage.setReserve(reserve);
         return this;
     }

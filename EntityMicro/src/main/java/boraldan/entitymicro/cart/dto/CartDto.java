@@ -45,11 +45,4 @@ public class CartDto {
                 .sum() : 0;
     }
 
-    public List<CartUnitDto> getCartUnitDtoList() {
-        return cartUnitDtoList;
-    }
-
-    public void setCartUnitDtoList(List<CartUnitDto> cartUnitDtoList) {
-        this.cartUnitDtoList = cartUnitDtoList;
-    }
 }

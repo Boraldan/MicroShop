@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error Page</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h1>Error Occurred</h1>
+<p th:text="'Status code: ' + ${status}"></p>
+<p th:text="'Error message: ' + ${errorMessage}"></p>
+<p th:text="'Exception: ' + ${exception}"></p>
+<p th:text="'Request URI: ' + ${requestUri}"></p>
+<p th:text="'Timestamp: ' + ${timestamp}"></p>
+</body>
+</html>

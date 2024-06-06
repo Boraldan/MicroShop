@@ -26,7 +26,7 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(customizer -> customizer
 //                        .requestMatchers("/auth/singup").permitAll()
-                        .requestMatchers("/account/**").authenticated()
+                        .requestMatchers("/account/**", "/cart/checkout").authenticated()
 //                        .anyRequest().authenticated()
 //                        .anyRequest().hasRole("CUSTOMER")
                         .anyRequest().permitAll()

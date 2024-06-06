@@ -1,7 +1,7 @@
 package boraldan.shop.controller.feign;
 
 
-import boraldan.entitymicro.storage.dto.ListStorageDto;
+import boraldan.entitymicro.storage.dto.StorageListDto;
 import boraldan.entitymicro.storage.entity.Storage;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Primary;
@@ -26,10 +26,10 @@ public interface StorageFeign {
     ResponseEntity<Storage> getQuantity(@RequestBody UUID itemId);
 
     @PostMapping("/list")
-    ResponseEntity<ListStorageDto> getByList(@RequestBody ListStorageDto listStorageDto);
+    ResponseEntity<StorageListDto> getByList(@RequestBody StorageListDto storageListDto);
 
     @PostMapping("/listbycategory")
-    ResponseEntity<ListStorageDto> getListByCategory(@RequestBody ListStorageDto listStorageDto);
+    ResponseEntity<StorageListDto> getListByCategory(@RequestBody StorageListDto storageListDto);
 
     @PutMapping("/save")
     ResponseEntity<Storage> saveStorage(@RequestBody Storage storage);
@@ -53,13 +53,13 @@ class StorageFeignFallback implements StorageFeign {
     }
 
     @Override
-    public ResponseEntity<ListStorageDto> getByList(@RequestBody ListStorageDto listStorageDto) {
-        return new ResponseEntity<>(new ListStorageDto(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<StorageListDto> getByList(@RequestBody StorageListDto storageListDto) {
+        return new ResponseEntity<>(new StorageListDto(), HttpStatus.BAD_REQUEST);
     }
 
     @Override
-    public ResponseEntity<ListStorageDto> getListByCategory(ListStorageDto listStorageDto) {
-        return new ResponseEntity<>(new ListStorageDto(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<StorageListDto> getListByCategory(StorageListDto storageListDto) {
+        return new ResponseEntity<>(new StorageListDto(), HttpStatus.BAD_REQUEST);
     }
 
     @Override
