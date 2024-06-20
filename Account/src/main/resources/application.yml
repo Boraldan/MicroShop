@@ -9,7 +9,21 @@ spring:
         jwt:
           issuer-uri: http://localhost:18079/realms/master
   profiles:
-    active: kc
+    active: kc, rabbit
+  cloud:
+    ## Rabbit MQ
+    function:
+      definition: inputFrontToAccount
+    stream:
+      bindings:
+        inputFrontToAccount-in-0:
+          destination: account-destination
+
+#      rabbit:
+#        bindings:
+#          input:
+#            consumer:
+#              autoBindDlq: true
 
 #  h2:
 #    console:

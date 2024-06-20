@@ -22,17 +22,17 @@ public class CustomerServiceV1 implements CustomerService {
 
     @Override
     public Customer findById(UUID id) {
-
-        Customer customer =  customerRepo.findById(id).orElse(null);
-//        if (customer != null) {
-//            List<Order> orderList =customer.getOrders();
-//        }
-        return customer;
+        return customerRepo.findById(id).orElse(null);
     }
 
     @Override
     public Optional<Customer> findByUsername(String username) {
           return customerRepo.findByUsernameIgnoreCase(username);
+    }
+
+    @Override
+    public Optional<Customer> getCustomerWhitOrder(String username) {
+        return  customerRepo.fetchCustomerWithOrdersByUsername(username);
     }
 
     @Transactional

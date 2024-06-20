@@ -1,9 +1,12 @@
 package boraldan.front.controller;
 
+import boraldan.entitymicro.account.entity.order.Order;
 import boraldan.entitymicro.cart.dto.CartDto;
 import boraldan.entitymicro.shop.dto.LotDto;
 import boraldan.entitymicro.shop.entity.item.Item;
+import boraldan.front.mq.account.MqOutFrontToAccountService;
 import boraldan.front.redis.RedisService;
+import boraldan.front.rest_client.AccountRestClient;
 import boraldan.front.rest_client.CartRestClient;
 import boraldan.front.service.i_service.CartFrontService;
 import boraldan.front.service.i_service.ItemFrontService;
@@ -13,6 +16,8 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,6 +33,7 @@ import java.util.UUID;
 @RequestMapping("/cart")
 public class CartFrontController {
 
+    private final AccountRestClient accountRestClient;
     private final CartRestClient restClient;
     private final LotdtoValidator lotDtoValidator;
     private final CartDtoValidator cartDtoValidator;
@@ -35,24 +41,9 @@ public class CartFrontController {
     private final CartFrontService cartFrontService;
     private final RedisService redisService;
     private final HttpSession httpSession;
+    private final MqOutFrontToAccountService mqOutFrontToAccountService;
 
-
-    //    @ResponseBody
-//    @GetMapping("/start")
-//    public String startTask() {
-//        asyncService.executeTaskWithInterrupt2("test_interrupt");
-//        return "Задача  запущена";
-//    }
-//
-//    @ResponseBody
-//    @GetMapping("/stop")
-//    public String interruptTask2() {
-//        asyncService.interruptTask2("test_interrupt");
-//        return "Задача прервана";
-//    }
-
-
-//    @PreAuthorize("isAuthenticated()")
+    //    @PreAuthorize("isAuthenticated()")  // не отправляет на аутентификацию, а просто блокирует доступ к методу
     @PostMapping("/checkout")
     public String checkoutCart(Principal principal,
                                @ModelAttribute("cartDto") CartDto cartDto, BindingResult bindingResult) {
@@ -70,10 +61,9 @@ public class CartFrontController {
         return "checkout";
     }
 
-//    @PreAuthorize("isAuthenticated()")
     @GetMapping("/booked")
     public String creatOrder(Principal principal,
-                             @ModelAttribute("cartDto") CartDto cartDto) {
+                             @RegisteredOAuth2AuthorizedClient("keycloak") OAuth2AuthorizedClient authorizedClient) {
 
         String cartReserveKey = String.format("%s_reserve", principal.getName().toLowerCase());
         CartDto reserveCartDto = redisService.getCart(cartReserveKey);
@@ -81,14 +71,20 @@ public class CartFrontController {
             return "redirect:/cart";
         }
 
-        // TODO: 06.06.2024 логика создания резерва
+//// вариант с отправкой через Rabbit
+//        String jwtToken = authorizedClient.getAccessToken().getTokenValue();
+//        mqOutFrontToAccountService.sendMessage(reserveCartDto, jwtToken); // Rabbit отправляем на оформление ордера
 
+        Order order = accountRestClient.creatOrder(reserveCartDto);
+
+        cartFrontService.interruptReserveTimerByBooked(reserveCartDto); // прерываем таймер резерва и очищаем корзину
 
         return "booked";
     }
 
     @GetMapping("/show")
     public String showCart(@ModelAttribute("cartDto") CartDto cartDto, BindingResult bindingResult) {
+
         cartDtoValidator.validate(cartDto, bindingResult);
         return "cart";
     }
@@ -98,6 +94,7 @@ public class CartFrontController {
     public String addItemToCart(Model model,
                                 @ModelAttribute("cartDto") CartDto cartDto,
                                 @ModelAttribute("lotDto") @Valid LotDto lotDto, BindingResult bindingResult) {
+
         Item item = itemFrontService.getAndConvertItem(lotDto.getItemId(), lotDto.getItemClassName());
         lotDtoValidator.validateQuantityCart(cartDto, lotDto, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -107,9 +104,7 @@ public class CartFrontController {
             return "item";
         }
 
-        System.out.println("/item/add -->  " + item);
-
-        CartDto updateCartDto = cartFrontService.addToCart(cartDto, item, lotDto);
+        CartDto updateCartDto = cartFrontService.addItemToCart(cartDto, item, lotDto);
         redisUpdateCartDto(cartDto, updateCartDto);
         return "redirect:/shop/item?itemId=%s&itemClassName=%s".formatted(lotDto.getItemId().toString(), lotDto.getItemClassName());
     }
@@ -120,7 +115,7 @@ public class CartFrontController {
         if (itemId == null) {
             return "redirect:/catalog";
         }
-        CartDto updateCartDto = cartFrontService.deleteFromCart(cartDto, itemId);
+        CartDto updateCartDto = cartFrontService.delItemFromCart(cartDto, itemId);
         redisUpdateCartDto(cartDto, updateCartDto);
         return "redirect:/catalog";
     }

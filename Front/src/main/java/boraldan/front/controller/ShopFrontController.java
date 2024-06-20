@@ -24,8 +24,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +42,7 @@ import java.util.UUID;
 @Log4j2
 @Controller
 @RequiredArgsConstructor
-public class ShopFrontController  implements ErrorController {
+public class ShopFrontController implements ErrorController {
 
     private final ShopRestClient restClient;
     private final HttpSession httpSession;
@@ -49,6 +52,21 @@ public class ShopFrontController  implements ErrorController {
     private final LotdtoValidator lotDtoValidator;
 
     private static final Logger logger = LoggerFactory.getLogger(ShopFrontController.class);
+
+    @ResponseBody
+    @GetMapping("/mq")
+    public ResponseEntity<String> test(Principal principal,
+                                       @ModelAttribute("cartDto") CartDto cartDto,
+                                       @RegisteredOAuth2AuthorizedClient("keycloak") OAuth2AuthorizedClient authorizedClient) {
+
+        if (principal != null) {
+            String tokenValue = authorizedClient.getAccessToken().getTokenValue();
+            restClient.testMq(tokenValue);
+            return ResponseEntity.ok("отправлен тестовый mq в аккаунт");
+        }
+        return ResponseEntity.ok("principal = null");
+    }
+
 
     @RequestMapping("/error")
     public String handleError(HttpServletRequest request, Map<String, Object> model) {

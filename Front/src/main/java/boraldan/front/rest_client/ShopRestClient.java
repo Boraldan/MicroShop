@@ -9,6 +9,7 @@ import boraldan.front.config.RestResponsePage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
@@ -30,6 +31,16 @@ public class ShopRestClient {
         PAGE_PARAMETERIZED = new ParameterizedTypeReference<>() {
         };
     }
+
+    public ResponseEntity<Void> testMq(String token) {
+        return this.restClient
+                .put()
+                .uri("/shop/mq")
+                .header("Authorization", token)
+                .retrieve()
+                .toBodilessEntity();
+    }
+
 
     public List<Item> findByCategory(Category category) {
         return this.restClient

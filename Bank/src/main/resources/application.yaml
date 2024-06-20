@@ -9,10 +9,10 @@ spring:
   cloud:
 ## Rabbit MQ
     function:
-      definition: inputMessageBank
+      definition: inputFrontToBank
     stream:
       bindings:
-        inputMessageBank-in-0:
+        inputFrontToBank-in-0:
           destination: bank-destination
 
 #  security:

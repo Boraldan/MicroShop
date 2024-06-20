@@ -1,4 +1,4 @@
-package boraldan.shop.mq.bank;
+package boraldan.front.mq.bank;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,12 +9,12 @@ import reactor.core.publisher.Sinks;
 @Service
 @Getter
 @RequiredArgsConstructor
-public class MqShopService {
+public class MqOutFrontToBankService {
 
-    private final MqShopConfig mqShopConfig;
+    private final MqOutFrontToBankConfig mqOutFrontToBankConfig;
 
     public void sendMessage(Long card) {
-        mqShopConfig.getTunnelBus().emitNext(MessageBuilder.withPayload(card).build(), Sinks.EmitFailureHandler.FAIL_FAST);
+        mqOutFrontToBankConfig.getTunnelBus().emitNext(MessageBuilder.withPayload(card).build(), Sinks.EmitFailureHandler.FAIL_FAST);
         System.out.println("Сообщение отправлено: " + card);
     }
 }

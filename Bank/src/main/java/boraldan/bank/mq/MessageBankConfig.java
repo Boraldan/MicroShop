@@ -1,7 +1,6 @@
 package boraldan.bank.mq;
 
-import boraldan.bank.service.TransferService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
@@ -9,14 +8,15 @@ import org.springframework.messaging.Message;
 import java.util.function.Consumer;
 
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Configuration
 public class MessageBankConfig {
 
-    private final TransferService transferService;
+//    private final TransferService transferService;
 
     @Bean
-    public Consumer<Message<Long>> inputMessageBank(){
-       return message -> System.out.println(transferService.getByCard(message.getPayload()));
+    public Consumer<Message<Long>> inputFrontToBank(){
+//       return message -> System.out.println(transferService.getByCard(message.getPayload()));
+       return message -> System.out.println(message.getPayload());
     }
 }

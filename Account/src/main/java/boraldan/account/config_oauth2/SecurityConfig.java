@@ -19,6 +19,7 @@ public class SecurityConfig {
         return http.authorizeHttpRequests(configurer -> configurer
                                 .requestMatchers("/authorize/singup").permitAll()
                                 .requestMatchers("/coupon/get").permitAll()
+//                                .anyRequest().permitAll()
                                 .anyRequest().authenticated()
 //                                .anyRequest().hasRole("CUSTOMER")
 //                        .anyRequest().access(allOf(hasRole("CUSTOMER"), hasAuthority("SCOPE_view_catalog")))

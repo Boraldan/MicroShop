@@ -34,7 +34,6 @@ public class GlobalController {
         System.out.println(requestURI);
         CartDto cartDto;
         if (principal != null) {
-//            cartDto = redisService.getCart(principal.getName().toLowerCase()); // корзина из redis
             cartDto = selectCartFromRedisByUri(principal, requestURI);  // корзина из redis c проверкой резерва
             if (cartDto == null) {
                 Customer customer = accountRestClient.getCustomerAccount();
@@ -74,13 +73,13 @@ public class GlobalController {
         CartDto reserveCartDto = redisService.getCart(cartReserveKey);              // корзина reserve из redis
         if (reserveCartDto != null) {
             if (!(requestURI.equals("/cart/checkout") || requestURI.equals("/cart/booked"))) {
-                cartFrontService.interruptReserveTimer(reserveCartDto);             // удаляем резерв
-                return redisService.getCart(principal.getName().toLowerCase());     // корзина из redis
+                cartFrontService.interruptReserveTimer(reserveCartDto);             // удаляем reserve из redis
+                return redisService.getCart(principal.getName().toLowerCase());     // корзина cartDto из redis
             } else {
                 return reserveCartDto;
             }
         }
-        return redisService.getCart(principal.getName().toLowerCase());             // корзина из redis
+        return redisService.getCart(principal.getName().toLowerCase());             // корзина cartDto из redis
     }
 
 

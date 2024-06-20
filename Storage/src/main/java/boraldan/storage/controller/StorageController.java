@@ -40,6 +40,11 @@ public class StorageController {
 //       this.beanMap = beanExtractor.extractStorageServicesFromClass(ServiceStorageConfig.class);
 //    }
 
+    @PutMapping("/reserve/sale")
+    public ResponseEntity<Void> deleteReserveAfterSale(@RequestBody ReserveDtoList reserveDtoList) {
+        storageServiceClass.getService(Storage.class).deleteReserveAfterSale(reserveDtoList);
+        return ResponseEntity.noContent().build();
+    }
 
     @PatchMapping("/reserve/set")
     public ResponseEntity<Void> setReserve(@RequestBody ReserveDtoList reserveDtoList) {

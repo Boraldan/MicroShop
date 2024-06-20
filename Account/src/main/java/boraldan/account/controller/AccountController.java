@@ -18,19 +18,17 @@ public class AccountController {
 
     private final CustomerService customerService;
 
-
     @GetMapping("/customer")
     public ResponseEntity<Customer> getCustomerAccount(Principal principal) {
         Customer customer = customerService.findByUsername(principal.getName()).orElse(null);
         return ResponseEntity.ok(customer);
     }
 
-//    @PostMapping("/getbyusername")
-//    public ResponseEntity<Customer> getCustomerByUsername(@RequestBody String username) {
-//        Customer customer = customerService.findByUsername(username).get();
-//        System.out.println( "AccountController   --> " +  customer);
-//        return ResponseEntity.ok(customer);
-//
-//    }
+    @GetMapping("/customer/orders")
+    public ResponseEntity<Customer> getCustomerWhitOrder(Principal principal) {
+        Customer customer = customerService.getCustomerWhitOrder(principal.getName()).orElse(null);
+        return ResponseEntity.ok(customer);
+    }
+
 
 }

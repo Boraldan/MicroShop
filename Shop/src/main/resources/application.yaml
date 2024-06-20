@@ -11,11 +11,15 @@ spring:
       circuitbreaker:
         enabled: true
     function:              ## Rabbit MQ
-      definition: newMessageShop
+      definition: outputMessageFrontToAccount
     stream:
       bindings:
-        newMessageShop-out-0:
-          destination: bank-destination
+#        newMessageShop-out-0:
+#          destination: bank-destination
+        outputMessageFrontToAccount-out-0:
+          destination: account-destination
+
+
   h2:
     console:
       enabled: true

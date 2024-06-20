@@ -13,15 +13,16 @@ import boraldan.entitymicro.shop.entity.item.transport.car.Car;
 import boraldan.entitymicro.shop.entity.item.transport.car.Types;
 import boraldan.entitymicro.shop.entity.price.item_price.BikePrice;
 import boraldan.entitymicro.shop.entity.price.item_price.CarPrice;
+import boraldan.entitymicro.specification.SpecItem;
 import boraldan.entitymicro.storage.dto.StorageListDto;
 import boraldan.entitymicro.storage.entity.Storage;
 import boraldan.entitymicro.storage.entity.transport.bike.BikeStorage;
 import boraldan.entitymicro.storage.entity.transport.car.CarStorage;
 import boraldan.entitymicro.test.Lot;
 import boraldan.entitymicro.toolbox.builder.*;
-import boraldan.entitymicro.specification.SpecItem;
 import boraldan.shop.controller.feign.BankFeign;
 import boraldan.shop.controller.feign.StorageFeign;
+import boraldan.shop.mq.account.OutputMqFrontService;
 import boraldan.shop.mq.bank.MqShopService;
 import boraldan.shop.redis.RedisService;
 import boraldan.shop.service.i_service.CategoryService;
@@ -52,6 +53,17 @@ public class ShopController {
     private final MqShopService mqShopService;
     private final RedisService redisService;
 
+    private final OutputMqFrontService outputMqFrontService;
+
+
+    @PutMapping("/mq")
+    public ResponseEntity<Void> mqTest(@RequestHeader("Authorization") String token) {
+
+        outputMqFrontService.sendMessage(token);
+
+        return ResponseEntity.noContent().build();
+    }
+
 
     @PostMapping("/uuidlist")
     public ResponseEntity<List<Item>> getByUuidList(@RequestBody List<UUID> uuidList) {
@@ -60,8 +72,15 @@ public class ShopController {
 
     @PostMapping("/category")
     public ResponseEntity<List<Item>> getAllByCategory(@RequestBody Category category,
-                                                       Principal principal,
-                                                       @RequestHeader("REDIS") String redisKey) {
+                                                       Principal principal
+            ,                                                      @RequestHeader("REDIS") String redisKey
+
+    ) {
+
+
+
+        mqShopService.sendMessage(1010101010101L);
+
 
         System.out.println("category    1 -->  " + category);
         System.out.println("principal   2 -->  " + principal);

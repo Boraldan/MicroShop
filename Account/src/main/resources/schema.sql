@@ -65,10 +65,10 @@ CREATE TABLE IF NOT EXISTS t_order
     FOREIGN KEY (seller_id) REFERENCES t_seller (id)
 );
 
-CREATE TABLE IF NOT EXISTS unit_order
+CREATE TABLE IF NOT EXISTS order_unit
 (
     id         UUID PRIMARY KEY,
-    item_id    BIGINT,
+    item_id VARCHAR(36),
     item_title VARCHAR,
     quantity   INTEGER,
     price_item NUMERIC,
@@ -78,8 +78,9 @@ CREATE TABLE IF NOT EXISTS unit_order
 );
 
 
+
 -- INSERT INTO t_person (id, username, fio, age, phone, email, card)
 -- VALUES ('da2ab780-6686-4f60-87e1-95b8e32aeb3a', 'tom', 'ФИО', 20, 911, 'tom@mail.ru', 1235321);
 --
--- INSERT INTO customer (id, cart_id)
--- VALUES ('da2ab780-6686-4f60-87e1-95b8e32aeb3a', '747e74ce-0ed8-46a5-9ff5-981814d52076');
+-- INSERT INTO customer (id)
+-- VALUES ('da2ab780-6686-4f60-87e1-95b8e32aeb3a');

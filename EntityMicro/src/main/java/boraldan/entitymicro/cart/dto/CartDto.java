@@ -20,12 +20,13 @@ public class CartDto {
         this.cartUnitDtoList = new ArrayList<>();
     }
 
-
     public BigDecimal subTotalPrice() {
         BigDecimal subTotal = new BigDecimal(0);
         if (cartUnitDtoList != null) {
             for (CartUnitDto unit : cartUnitDtoList) {
-                subTotal = subTotal.add(unit.getItem().getPrice().getCustomPrice());
+                for (int i = 1; i <= unit.getUnitQuantity(); i++) {
+                    subTotal = subTotal.add(unit.getItem().getPrice().getCustomPrice());
+                }
             }
         }
         return subTotal;

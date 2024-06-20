@@ -80,7 +80,26 @@ public class CartFrontServiceV_1 implements CartFrontService {
     }
 
 
-    public CartDto addToCart(CartDto cartDto, Item item, LotDto lotDto) {
+    public void interruptReserveTimerByBooked(CartDto reserveCartDto) {
+        String cartReserveKey = String.format("%s_reserve", reserveCartDto.getCustomer().getUsername().toLowerCase());
+
+        ScheduledFuture<?> scheduledFuture = scheduledTasks.get(cartReserveKey);
+        if (scheduledFuture != null) {
+
+            reserveCartDto.getCartUnitDtoList().clear();
+            redisService.setCart(reserveCartDto.getCustomer().getUsername().toLowerCase(), reserveCartDto);
+            redisService.deleteCart(cartReserveKey);
+
+            scheduledFuture.cancel(true);  // Отменяет задачу
+            scheduledTasks.remove(cartReserveKey);  // Удаляет задачу из ConcurrentHashMap
+            System.out.println("Задача " + cartReserveKey + " была прервана по факту оформления заказа.");
+        } else {
+            System.out.println("interruptReserveTimer --> " + "Такой задачи не существует.");
+        }
+    }
+
+
+    public CartDto addItemToCart(CartDto cartDto, Item item, LotDto lotDto) {
         cartDto.getCartUnitDtoList().stream()
                 .filter(unit -> unit.getItem().getId().equals(lotDto.getItemId()))
                 .findFirst()
@@ -94,13 +113,12 @@ public class CartFrontServiceV_1 implements CartFrontService {
         return cartDto;
     }
 
-    public CartDto deleteFromCart(CartDto cartDto, UUID itemId) {
+    public CartDto delItemFromCart(CartDto cartDto, UUID itemId) {
         cartDto.setCartUnitDtoList(cartDto.getCartUnitDtoList().stream()
                 .filter(unit -> !(unit.getItem().getId().equals(itemId)))
                 .toList());
         return cartDto;
     }
-
 
     private ReserveDtoList convertListReserveDto(CartDto cartDto) {
         List<ReserveDto> reserveDtoList = cartDto.getCartUnitDtoList().stream()

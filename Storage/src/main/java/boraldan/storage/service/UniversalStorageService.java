@@ -58,10 +58,17 @@ public class UniversalStorageService<T extends Storage> implements StorageServic
     public void setReserve(ReserveDtoList reserveDtoList) {
         StorageService.super.setReserve(reserveDtoList);
     }
+
     @Transactional
     @Override
     public void deleteReserve(ReserveDtoList reserveDtoList) {
         StorageService.super.deleteReserve(reserveDtoList);
+    }
+
+    @Transactional
+    @Override
+    public void deleteReserveAfterSale(ReserveDtoList reserveDtoList) {
+        StorageService.super.deleteReserveAfterSale(reserveDtoList);
     }
 
     public T convertToStorageItem(Storage storage, Class<? extends Storage> clazz) {

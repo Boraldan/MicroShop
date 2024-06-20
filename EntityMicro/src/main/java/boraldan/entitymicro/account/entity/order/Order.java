@@ -3,6 +3,7 @@ package boraldan.entitymicro.account.entity.order;
 import boraldan.entitymicro.account.entity.Coupon;
 import boraldan.entitymicro.account.entity.person.Customer;
 import boraldan.entitymicro.account.entity.seller.Seller;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jdk.jfr.Timestamp;
 import lombok.AllArgsConstructor;
@@ -47,38 +48,59 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // убирает зацикливание в JSON
     private Customer customer;
 
     @ManyToOne
     @JoinColumn(name = "seller_id", referencedColumnName = "id")
     private Seller seller;
 
-    @OneToMany(mappedBy = "order")
-    private List<UnitOrder> items;
+//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // убирает зацикливание в JSON
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderUnit> items;
 
     @ManyToOne
     @JoinColumn(name = "coupon_id", referencedColumnName = "id")
     private Coupon coupon;
 
-    public BigDecimal getSubTotal() {
+    public BigDecimal subTotalPrice() {
         BigDecimal subTotal = BigDecimal.ZERO;
         if (items != null) {
-            for (UnitOrder unitOrder : items) {
-                subTotal = subTotal.add(unitOrder.getPriceUnit());
+            for (OrderUnit orderUnit : items) {
+                subTotal = subTotal.add(orderUnit.getPriceUnit().multiply(BigDecimal.valueOf(orderUnit.getQuantity())));
             }
         }
         return subTotal;
     }
 
-    public BigDecimal getTotal() {
+    public BigDecimal totalPrice() {
         if (coupon != null) {
             return subTotal = subTotal.subtract(subTotal.multiply(BigDecimal.valueOf(coupon.getDiscount() / 100)));
         }
         return subTotal;
     }
 
+    public void initPrices() {
+        this.subTotal = subTotalPrice();
+        this.total = totalPrice();
+    }
+
     public String orderInfo() {
-        return "Заказ №%d от %d.%d.%d\nСтатус заказа: %s\nСтатус оплаты: %s".formatted(id, creatAt.getDayOfMonth(),
+        return "Заказ №%s от %d.%d.%d\nСтатус заказа: %s\nСтатус оплаты: %s" .formatted(id, creatAt.getDayOfMonth(),
                 creatAt.getMonthValue(), creatAt.getYear(), orderStatus.name(), pay.name());
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", subTotal=" + subTotal +
+                ", total=" + total +
+                ", orderStatus=" + orderStatus +
+                ", pay=" + pay +
+                ", creatAt=" + creatAt +
+                ", items=" + items +
+                ", coupon=" + coupon +
+                '}';
     }
 }

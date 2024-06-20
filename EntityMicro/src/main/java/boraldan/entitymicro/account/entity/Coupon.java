@@ -3,6 +3,7 @@ package boraldan.entitymicro.account.entity;
 
 import boraldan.entitymicro.account.entity.order.Order;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jdk.jfr.Timestamp;
 import lombok.*;
@@ -38,6 +39,7 @@ public class Coupon {
     @Column(name = "creat_at")
     private LocalDateTime creatAt;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // убирает зацикливание в JSON
     @OneToMany(mappedBy = "coupon")
     private List<Order> orders;
 

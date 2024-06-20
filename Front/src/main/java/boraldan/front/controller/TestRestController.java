@@ -1,15 +1,21 @@
 package boraldan.front.controller;
 
 import boraldan.entitymicro.cart.dto.CartDto;
+import boraldan.front.mq.account.MqOutFrontToAccountService;
+import boraldan.front.mq.bank.MqOutFrontToBankService;
 import boraldan.front.redis.RedisService;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,8 +29,32 @@ public class TestRestController {
 
     private final HttpSession session;
     private final RedisService redisService;
-//    private final HeaderService headerService;
+    //    private final HeaderService headerService;
+    private final MqOutFrontToAccountService mqOutFrontToAccountService;
+    private final MqOutFrontToBankService mqOutFrontToBankService;
 
+
+    @GetMapping("/mq")
+    public ResponseEntity<String> test(Principal principal,
+                                       @ModelAttribute("cartDto") CartDto cartDto,
+                                       @RegisteredOAuth2AuthorizedClient("keycloak") OAuth2AuthorizedClient authorizedClient
+    ) {
+
+        if (principal != null) {
+            String jwtToken = authorizedClient.getAccessToken().getTokenValue();
+            mqOutFrontToAccountService.sendMessage(cartDto, jwtToken);
+            return ResponseEntity.ok(cartDto.getCustomer().getEmail());
+        }
+        return ResponseEntity.ok("principal = null");
+    }
+
+    @GetMapping("/mq-bank")
+    public ResponseEntity<String> testBank() {
+
+        mqOutFrontToBankService.sendMessage(202020202L);
+
+        return ResponseEntity.ok("bank sent 202020202L");
+    }
 
 
     @GetMapping

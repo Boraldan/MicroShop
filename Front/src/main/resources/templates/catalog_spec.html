@@ -54,6 +54,7 @@
             <th>price</th>
             <th>Category</th>
             <th>Storage</th>
+            <th>Reserve</th>
             <th>Item</th>
             <th>Delete</th>
         </tr>
@@ -65,6 +66,7 @@
             <td th:text="${item.price.customPrice}">Price</td>
             <td th:text="${item.category.categoryName}">CategoryName</td>
             <td th:text="${item.storage.quantity}">Storage</td>
+            <td th:text="${item.storage.reserve}">Reserve</td>
             <td>
                 <form th:action="@{/shop/item}" th:method="GET">
                     <input type="hidden" name="itemId" th:value="${item.id}"/>

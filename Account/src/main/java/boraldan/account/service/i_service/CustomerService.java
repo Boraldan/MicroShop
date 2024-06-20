@@ -11,6 +11,8 @@ public interface CustomerService {
 
     Optional<Customer> findByUsername(String username);
 
+    Optional<Customer> getCustomerWhitOrder(String username);
+
     Customer save(Customer customer);
     Customer saveNew(Customer customer);
 

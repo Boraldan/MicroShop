@@ -13,6 +13,21 @@ microshop:
       registration-id: keycloak
 
 spring:
+  profiles:
+    active: rabbit
+  cloud:
+    ## Rabbit MQ
+    function:
+      definition: outputFrontToAccount; outputFrontToBank
+    stream:
+      bindings:
+        outputFrontToAccount-out-0:
+          destination: account-destination
+        outputFrontToBank-out-0:
+          destination: bank-destination
+##          group: microshop-group
+
+  ## OAuth2 Keycloak
   security:
     oauth2:
       client:

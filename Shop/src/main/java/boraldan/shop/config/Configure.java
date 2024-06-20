@@ -11,5 +11,4 @@ public class Configure {
         return new ModelMapper();
     }
 
-
 }

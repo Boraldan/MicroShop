@@ -1,5 +1,6 @@
 package boraldan.entitymicro.account.entity.order;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,30 +15,31 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "unit_order")
-public class UnitOrder {
+@Table(name = "order_unit")
+public class OrderUnit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @JoinColumn(name = "item_id")
-    private Long itemId;
+    private String itemId;
 
     @JoinColumn(name = "item_title")   // чтобы не подкачивать всю информацию об объекте
     private String itemTitle;
 
     @Column(name = "quantity")
-    private int quantity;
+    private Integer quantity;
 
     @Column(name = "price_item")
     private BigDecimal priceItem;
 
-    @Column(name = "price")
+    @Column(name = "price_unit")
     private BigDecimal priceUnit;
 
     @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // убирает зацикливание в JSON
     private Order order;
 
 
@@ -47,5 +49,17 @@ public class UnitOrder {
         } else {
             return BigDecimal.ZERO;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "UnitOrder{" +
+                "id=" + id +
+                ", itemId=" + itemId +
+                ", itemTitle='" + itemTitle + '\'' +
+                ", quantity=" + quantity +
+                ", priceItem=" + priceItem +
+                ", priceUnit=" + priceUnit +
+                '}';
     }
 }

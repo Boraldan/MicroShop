@@ -2,6 +2,7 @@ package boraldan.front.controller;
 
 import boraldan.entitymicro.account.dto.PersonDTO;
 import boraldan.entitymicro.account.entity.person.Customer;
+import boraldan.entitymicro.cart.dto.CartDto;
 import boraldan.front.redis.RedisService;
 import boraldan.front.rest_client.AccountRestClient;
 import jakarta.servlet.http.HttpSession;
@@ -10,6 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -24,11 +26,15 @@ public class AccountFrontController {
     private final RedisService redisService;
     private final HttpSession httpSession;
 
-//    @ModelAttribute("cartDto")
-//    public CartDto setCart() {
-//        String redisKey = (String) httpSession.getAttribute("REDIS_KEY");
-//        return redisService.getCart(redisKey);
-//    }
+
+    @GetMapping("/customer/orders")
+    public String getOrderCustomer(Model model,
+                                   @ModelAttribute("cartDto") CartDto cartDto) {
+        Customer customer = restClient.getCustomerAccountWhitOrder();
+        model.addAttribute("customer", customer);
+        return "order";
+    }
+
 
     @GetMapping("/kc/all")
     public String getAccount(Model model) {
@@ -38,11 +44,12 @@ public class AccountFrontController {
     }
 
     @GetMapping("/customer")
-    public String getCustomerAccount(Model model) {
+    public String getCustomer(Model model) {
         Customer customer = restClient.getCustomerAccount();
         model.addAttribute("customer", customer);
         return "customer";
     }
+
 
     @GetMapping("/kc/add")
     public String addAccount(Model model) {

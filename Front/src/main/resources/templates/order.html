@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Information</title>
+</head>
+<body>
+<h2>Customer Information</h2>
+
+<h2>Cart Information</h2>
+<div>
+    <p>Owner cart: <span th:text="${cartDto.customer.username}"></span></p>
+    <p>Sub Total: <span th:text="${cartDto.subTotalPrice}"></span></p>
+    <p>Total: <span th:text="${cartDto.totalPrice()}"></span></p>
+    <p>Lot in cart: <span th:text="${cartDto.lotInCart()}"></span></p>
+    <br>
+    <hr>
+</div>
+
+<div class="container">
+    <h2>Person account</h2>
+    <div th:if="${customer != null}">
+        <div class="card mt-3">
+            <div class="card-header">
+                <h3 th:text="${customer.fio}">Person Name</h3>
+            </div>
+            <div class="card-body">
+                <p><strong>Username:</strong> <span th:text="${customer.username}">Username</span></p>
+                <!-- <p><strong>Email:</strong> <span th:text="${customer.email}">Email</span></p>
+                <p><strong>Age:</strong> <span th:text="${customer.age}">Age</span></p>
+                <p><strong>Phone:</strong> <span th:text="${customer.phone}">Phone</span></p>
+                <p><strong>Card:</strong> <span th:text="${customer.card}">Card</span></p> -->
+                <h4>Orders:</h4>
+                <ul th:if="${customer.orders != null}">
+                    <li th:each="order : ${customer.orders}">
+                        <p><strong>Order ID:</strong> <span th:text="${order.id}">Order ID</span></p>
+                        <p><strong>Sub Total:</strong> <span th:text="${order.subTotal}">Sub Total</span></p>
+                        <p><strong>Total:</strong> <span th:text="${order.total}">Total</span></p>
+                        <p><strong>Order Status:</strong> <span th:text="${order.orderStatus}">Order Status</span></p>
+                        <p><strong>Pay:</strong> <span th:text="${order.pay}">Pay</span></p>
+                        <p><strong>Created At:</strong> <span th:text="${order.creatAt}">Created At</span></p>
+                        <h4>Order Items:</h4>
+                        <ul th:if="${order.items != null}">
+                            <li th:each="item : ${order.items}">
+                                <p><strong>Item:</strong>
+                                    <span th:text="${item.itemTitle}">Item Title</span>,
+                                    <strong>Quantity:</strong> <span th:text="${item.quantity}">Quantity</span>,
+                                    <strong>Price Item:</strong> <span th:text="${item.priceItem}">Price Item</span>,
+                                    <strong>Price Unit:</strong> <span th:text="${item.priceUnit}">Price Unit</span>
+                                </p>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

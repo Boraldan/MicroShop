@@ -20,13 +20,15 @@ public class Customer extends Person {
 //    @Column(name = "cart_id")
 //    private UUID cartId;
 
-    @OneToMany (mappedBy = "customer")
+//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // убирает зацикливание в JSON
+    @OneToMany(mappedBy = "customer")
     private List<Order> orders;
 
     @Override
     public String toString() {
         return "Customer{" +
-                " id=" + id +
+                "orders=" + orders +
+                ", id=" + id +
                 ", username='" + username + '\'' +
                 ", fio='" + fio + '\'' +
                 ", age=" + age +
