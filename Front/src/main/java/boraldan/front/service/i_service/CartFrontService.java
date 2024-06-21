@@ -11,7 +11,6 @@ public interface CartFrontService {
     CartDto delItemFromCart(CartDto cartDto, UUID itemId);
     void setReserveWithInterrupt(CartDto cartDto);
     void interruptReserveTimer(CartDto cartDto);
-
     void interruptReserveTimerByBooked(CartDto cartDto);
 
 }

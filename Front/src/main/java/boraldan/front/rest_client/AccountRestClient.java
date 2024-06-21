@@ -16,13 +16,13 @@ public class AccountRestClient {
 
     private final RestClient restClient;
 
+
     public Customer getCustomerAccountWhitOrder() {
         return this.restClient.get()
                 .uri("/account/customer/orders")
                 .retrieve()
                 .body(Customer.class);
     }
-
 
     public Customer getCustomerAccount() {
         return this.restClient.get()

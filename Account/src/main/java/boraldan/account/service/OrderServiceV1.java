@@ -45,8 +45,6 @@ public class OrderServiceV1 implements OrderService {
         Customer customer = customerRepo.findById(cartDto.getCustomer().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
 
-        System.out.println("creatOrder customer -->" + customer);
-
         Order order = orderRepo.save(OrderBuilder.create()
                 .setCustomer(customer)
                 .setCoupon(cartDto.getCoupon() != null ? couponRepo.findById(cartDto.getCoupon().getId())
@@ -55,26 +53,19 @@ public class OrderServiceV1 implements OrderService {
                 .setOrderPay(OrderPay.NOT_PAID)
                 .build());
 
-        System.out.println("creatOrder order -->" + order);
-
         List<OrderUnit> orderUnitList = cartDto.getCartUnitDtoList().stream()
                 .map(unit -> UnitOrderBuilder.create()
                         .setItemId(unit.getItem().getId().toString())
                         .setItemTitle(unit.getItem().getTitle())
                         .setQuantity(unit.getUnitQuantity())
                         .setPriceItem(unit.getItem().getPrice().getCustomPrice())
-                        .setPriceUnit(unit.getItem().getPrice().getCustomPrice()
-                                .multiply(BigDecimal.valueOf(unit.getUnitQuantity())))
+                        .setPriceUnit(unit.getItem().getPrice().getCustomPrice().multiply(BigDecimal.valueOf(unit.getUnitQuantity())))
                         .setOrder(order)
                         .build()
                 ).toList();
 
-//        System.out.println("creatOrder unitOrderList -->" + unitOrderList);
-//
 //        unitOrderList =  unitOrderRepo.saveAll(unitOrderList);
-
         order.setItems(orderUnitList);
-
         order.initPrices();
 
         if (order.getId() != null) {

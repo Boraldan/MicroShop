@@ -50,7 +50,7 @@
     <div th:each="fieldName : ${fieldNames}">
         <p th:text="${fieldName}"></p>
     </div>
-    <h3 th:text="${'Price:' +  item.getPrice().getBasePrice()}"></h3>
+    <h3 th:text="${'Price:' +  item.getPrice().getCustomPrice()}"></h3>
     <h3 th:text="${'Storage: ' + item.getStorage().getQuantity()}"></h3>
 
     <form th:action="@{/cart/item/add}" th:method="POST" th:object="${lotDto}">

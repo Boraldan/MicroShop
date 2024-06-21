@@ -46,6 +46,12 @@
     <hr>
 </div>
 <div>
+    <h2>Order</h2>
+    <div th:if="${order}">
+        <p>Order <span th:text="${order.orderInfo()}"></span></p>
+    </div>
+</div>
+<div>
     <form th:action="@{/shop/items/spec}" th:method="GET">
         <input type="submit" value="Продолжить покупки."/>
     </form>

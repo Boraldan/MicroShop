@@ -55,6 +55,9 @@ public class GlobalController {
         if (oldSessionId.equals(customerName)) return;
         CartDto oldCartRedis = redisService.getCart(oldSessionId);
         if (oldCartRedis != null) {
+            if (oldCartRedis.getCoupon() != null) {
+                cartDto.setCoupon(oldCartRedis.getCoupon());
+            }
             if (!oldCartRedis.getCartUnitDtoList().isEmpty()) {
                 for (CartUnitDto cartUnitDto : oldCartRedis.getCartUnitDtoList()) {
                     cartDto.getCartUnitDtoList().stream()

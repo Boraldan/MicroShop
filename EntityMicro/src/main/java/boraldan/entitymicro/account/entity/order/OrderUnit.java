@@ -44,11 +44,10 @@ public class OrderUnit {
 
 
     public BigDecimal getPriceUnit() {
-        if (priceItem != null) {
-            return priceItem.multiply(BigDecimal.valueOf(quantity));
-        } else {
+        if (priceItem == null || quantity == null) {
             return BigDecimal.ZERO;
         }
+        return priceUnit;
     }
 
     @Override

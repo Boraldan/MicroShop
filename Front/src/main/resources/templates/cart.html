@@ -14,7 +14,7 @@
         <p>Name: <span th:text="${cartDto.customer.username}"></span></p>
     </div>
 
-    <form th:action="@{/cart/checkout}" th:method="POST" >
+    <form th:action="@{/cart/checkout}" th:method="POST">
         <div th:if="${cartDto.cartUnitDtoList}">
             <table border="1">
                 <thead>
@@ -42,11 +42,11 @@
                     <td th:text="${cartUnit.item.price.customPrice}">Price</td>
                     <td>
                         <a th:href="@{/cart/item/del(itemId=${cartUnit.item.id})}">Delete</a>
-<!--                        вложенные формы не срабатывают -->
+                        <!--                        вложенные формы не срабатывают -->
                         <!--    <form th:method="POST" th:action="@{/cart/item/del}">-->
-<!--                            <input type="hidden" name="itemId" th:value="${cartUnit.item.id}"/>-->
-<!--                            <input type="submit" value="Delete"/>-->
-<!--                        </form>-->
+                        <!--                            <input type="hidden" name="itemId" th:value="${cartUnit.item.id}"/>-->
+                        <!--                            <input type="submit" value="Delete"/>-->
+                        <!--                        </form>-->
                     </td>
                 </tr>
                 </tbody>
@@ -57,8 +57,21 @@
     </form>
     <h3>Volume Item: <span th:text="${cartDto.lotInCart()}"></span></h3>
     <h3>SubTotal Price: <span th:text="${cartDto.totalPrice()}"></span></h3>
+    <div th:if="${cartDto.coupon}"><h3> Coupon used: <span th:text="${cartDto.coupon.couponName}"></span></h3></div>
     <br>
     <hr>
 </div>
+<h2>Enter Coupon</h2>
+<form th:action="@{/cart/coupon/get}" th:object="${coupon}" th:method="POST">
+    <div>
+        <label for="couponName">Coupon Name:</label>
+        <input type="text" id="couponName" th:field="*{couponName}"/>
+        <div style="color: red"
+             th:if="${#fields.hasErrors('couponName')}" th:errors="*{couponName}">Coupon name error
+        </div>
+    </div>
+    <button type="submit">Submit</button>
+</form>
+<div th:if="${cartDto.coupon}"><a th:href="@{/cart/coupon/del}">Delete coupon</a></div>
 </body>
 </html>

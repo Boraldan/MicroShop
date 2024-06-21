@@ -1,5 +1,6 @@
 package boraldan.front.controller;
 
+import boraldan.entitymicro.account.entity.Coupon;
 import boraldan.entitymicro.account.entity.order.Order;
 import boraldan.entitymicro.cart.dto.CartDto;
 import boraldan.entitymicro.shop.dto.LotDto;
@@ -11,6 +12,7 @@ import boraldan.front.rest_client.CartRestClient;
 import boraldan.front.service.i_service.CartFrontService;
 import boraldan.front.service.i_service.ItemFrontService;
 import boraldan.front.utilit.CartDtoValidator;
+import boraldan.front.utilit.CouponValidator;
 import boraldan.front.utilit.LotdtoValidator;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -42,8 +44,35 @@ public class CartFrontController {
     private final RedisService redisService;
     private final HttpSession httpSession;
     private final MqOutFrontToAccountService mqOutFrontToAccountService;
+    private final CouponValidator couponValidator;
 
-    //    @PreAuthorize("isAuthenticated()")  // не отправляет на аутентификацию, а просто блокирует доступ к методу
+    @PostMapping("/coupon/get")
+    public String getCoupon(@ModelAttribute("cartDto") CartDto cartDto,
+                            @Valid Coupon coupon, BindingResult bindingResult) {
+        System.out.println(coupon);
+        Coupon validCoupon = couponValidator.validateCoupon(coupon, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            return "cart";
+        }
+
+        cartDto.setCoupon(validCoupon);
+        updateRedisCartDto(cartDto);
+
+        return "redirect:/cart/show";
+
+    }
+
+    @GetMapping("/coupon/del")
+    public String deleteCoupon(@ModelAttribute("cartDto") CartDto cartDto) {
+        cartDto.setCoupon(null);
+        updateRedisCartDto(cartDto);
+        return "redirect:/cart/show";
+
+    }
+
+
+    // @PreAuthorize("isAuthenticated()")  // не отправляет на аутентификацию, а просто блокирует доступ к методу
     @PostMapping("/checkout")
     public String checkoutCart(Principal principal,
                                @ModelAttribute("cartDto") CartDto cartDto, BindingResult bindingResult) {
@@ -55,20 +84,21 @@ public class CartFrontController {
         }
         cartDtoValidator.validate(cartDto, bindingResult);
         if (bindingResult.hasErrors()) {
-            return "redirect:/cart";
+            return "redirect:/cart/show";
         }
         cartFrontService.setReserveWithInterrupt(cartDto); // логика перевода товаров в резерв
         return "checkout";
     }
 
     @GetMapping("/booked")
-    public String creatOrder(Principal principal,
+    public String creatOrder(Model model,
+                             Principal principal,
                              @RegisteredOAuth2AuthorizedClient("keycloak") OAuth2AuthorizedClient authorizedClient) {
 
         String cartReserveKey = String.format("%s_reserve", principal.getName().toLowerCase());
         CartDto reserveCartDto = redisService.getCart(cartReserveKey);
         if (reserveCartDto == null) {
-            return "redirect:/cart";
+            return "redirect:/cart/show";
         }
 
 //// вариант с отправкой через Rabbit
@@ -76,16 +106,20 @@ public class CartFrontController {
 //        mqOutFrontToAccountService.sendMessage(reserveCartDto, jwtToken); // Rabbit отправляем на оформление ордера
 
         Order order = accountRestClient.creatOrder(reserveCartDto);
+        model.addAttribute("order", order);
 
         cartFrontService.interruptReserveTimerByBooked(reserveCartDto); // прерываем таймер резерва и очищаем корзину
+        model.addAttribute("cartDto", redisService.getCart(principal.getName().toLowerCase()));
 
         return "booked";
     }
 
     @GetMapping("/show")
-    public String showCart(@ModelAttribute("cartDto") CartDto cartDto, BindingResult bindingResult) {
+    public String showCart(Model model,
+                           @ModelAttribute("cartDto") CartDto cartDto, BindingResult bindingResult) {
 
         cartDtoValidator.validate(cartDto, bindingResult);
+        model.addAttribute("coupon", new Coupon());
         return "cart";
     }
 
@@ -105,7 +139,7 @@ public class CartFrontController {
         }
 
         CartDto updateCartDto = cartFrontService.addItemToCart(cartDto, item, lotDto);
-        redisUpdateCartDto(cartDto, updateCartDto);
+        updateRedisCartDto(cartDto, updateCartDto);
         return "redirect:/shop/item?itemId=%s&itemClassName=%s".formatted(lotDto.getItemId().toString(), lotDto.getItemClassName());
     }
 
@@ -116,7 +150,7 @@ public class CartFrontController {
             return "redirect:/catalog";
         }
         CartDto updateCartDto = cartFrontService.delItemFromCart(cartDto, itemId);
-        redisUpdateCartDto(cartDto, updateCartDto);
+        updateRedisCartDto(cartDto, updateCartDto);
         return "redirect:/catalog";
     }
 
@@ -129,11 +163,19 @@ public class CartFrontController {
 //        return "redirect:/catalog";
 //    }
 
-    private void redisUpdateCartDto(CartDto oldCartDto, CartDto updateCartDto) {
+    private void updateRedisCartDto(CartDto oldCartDto, CartDto updateCartDto) {
         if (oldCartDto.getCustomer() != null) {
             redisService.setCart(oldCartDto.getCustomer().getUsername().toLowerCase(), updateCartDto);
         } else {
             redisService.setCart(httpSession.getId(), updateCartDto);
+        }
+    }
+
+    private void updateRedisCartDto(CartDto cartDto) {
+        if (cartDto.getCustomer() != null) {
+            redisService.setCart(cartDto.getCustomer().getUsername().toLowerCase(), cartDto);
+        } else {
+            redisService.setCart(httpSession.getId(), cartDto);
         }
     }
 

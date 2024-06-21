@@ -67,7 +67,7 @@ public class Order {
         BigDecimal subTotal = BigDecimal.ZERO;
         if (items != null) {
             for (OrderUnit orderUnit : items) {
-                subTotal = subTotal.add(orderUnit.getPriceUnit().multiply(BigDecimal.valueOf(orderUnit.getQuantity())));
+                subTotal = subTotal.add(orderUnit.getPriceUnit());
             }
         }
         return subTotal;

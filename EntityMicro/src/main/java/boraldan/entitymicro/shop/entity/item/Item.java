@@ -3,6 +3,7 @@ package boraldan.entitymicro.shop.entity.item;
 import boraldan.entitymicro.shop.entity.category.Category;
 import boraldan.entitymicro.shop.entity.price.Price;
 import boraldan.entitymicro.storage.entity.Storage;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,7 @@ import java.util.UUID;
 //        // Добавьте сюда другие подклассы Item при необходимости
 //})
 
-//@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 
 @Getter
 @Setter

@@ -6,7 +6,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jdk.jfr.Timestamp;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,7 +46,14 @@ public class Coupon {
     @OneToMany(mappedBy = "coupon")
     private List<Order> orders;
 
-
-
-
+    @Override
+    public String toString() {
+        return "Coupon{" +
+                "id=" + id +
+                ", couponName='" + couponName + '\'' +
+                ", discount=" + discount +
+                ", valid=" + valid +
+                ", creatAt=" + creatAt +
+                '}';
+    }
 }

@@ -16,6 +16,13 @@ import org.springframework.web.client.RestClient;
 public class RestClientBean {
 
     @Bean
+    public CouponRestClient couponRestClient(@Value("${microshop.service.shop.uri:http://localhost:8765}") String gatewayBaseUri) {
+        return new CouponRestClient(RestClient.builder()
+                .baseUrl(gatewayBaseUri)
+                .build());
+    }
+
+    @Bean
     public AccountRestClient accountRestClient(
             @Value("${microshop.service.shop.uri:http://localhost:8765}") String gatewayBaseUri,
             ClientRegistrationRepository clientRegistrationRepository,
